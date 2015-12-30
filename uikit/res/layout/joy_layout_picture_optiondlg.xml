@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="200dp"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:layout_gravity="center"
+    android:background="@drawable/rounded_white_stroke_gray_bg"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:id="@+id/gallery_btn_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:background="@drawable/btn_semi_lightwhite_selector">
+        <ImageView
+            android:layout_marginTop="5dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/gallery"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="从相册获取"
+            android:textSize="18sp"
+            android:textColor="@color/joy_theme_color"
+            android:layout_marginTop="5dp"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/camera_btn_ll"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:background="@drawable/btn_semi_lightwhite_selector"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_marginTop="5dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/camera"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="拍摄"
+            android:textSize="18sp"
+            android:textColor="@color/joy_theme_color"
+            android:layout_marginTop="5dp"/>
+    </LinearLayout>
+</LinearLayout>

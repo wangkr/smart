@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+        <com.netease.nim.uikit.common.ui.imageview.HeadImageView
+            android:id="@+id/local_item_head"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="left|top">
+            <TextView
+                android:id="@+id/local_item_nick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="@color/text_dark"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+            <TextView
+                android:id="@+id/local_item_contactname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray_white"
+                android:textSize="14sp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:layout_marginTop="5dp"/>
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            >
+            <TextView
+                android:id="@+id/local_item_addhint_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/gray_white"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+            <Button
+                android:id="@+id/local_item_add_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="@drawable/btn_smallcorner_theme_bg"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:layout_gravity="center"
+                android:text="@string/add"
+                android:visibility="gone"
+                />
+        </FrameLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/adapter_divider_color"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
+</LinearLayout>

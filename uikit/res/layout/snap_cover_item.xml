@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="150dp"
+    android:layout_height="115dp"
+    android:gravity="center"
+    android:padding="5dp">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/snap_cover_imageView"
+            android:layout_width="@dimen/joy_snap_cover_icn_width"
+            android:layout_height="@dimen/joy_snap_cover_icn_height"
+            android:scaleType="fitXY"
+            android:layout_gravity="center"
+            />
+        <ImageView
+            android:id="@+id/snap_cover_selected"
+            android:src="@drawable/joy_check_box"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            android:layout_gravity="right|top"
+            android:visibility="visible"/>
+    </FrameLayout>
+</LinearLayout>

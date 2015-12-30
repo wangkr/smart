@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="anhui_university">
+        <item>中国科学技术大学</item>
+        <item>安徽大学</item>
+        <item>安徽医科大学</item>
+        <item>安徽中医药大学</item>
+        <item>合肥工业大学</item>
+        <item>安徽农业大学</item>
+        <item>安徽师范大学</item>
+        <item>安徽财经大学</item>
+        <item>合肥师范学院</item>
+        <item>安徽外国语学院</item>
+        <item>安徽三联学院</item>
+        <item>安徽理工大学</item>
+        <item>合肥学院</item>
+        <item>安徽工程大学</item>
+        <item>安徽工业大学</item>
+        <item>安徽建筑工业学院</item>
+        <item>安徽文达信息工程学院</item>
+        <item>安徽新华学院</item>
+        <item>其它</item>
+    </string-array>
+</resources>

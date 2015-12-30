@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/profile_settings_menu"
+        android:icon="@drawable/more_icn"
+        app:showAsAction="always"
+        android:title=""
+        >
+        <menu>
+            <item android:id="@+id/profile_settings_submenu_feedback"
+                android:title="反馈"/>
+            <item android:id="@+id/profile_settings_submenu_chkupdate"
+                android:title="检查更新"/>
+        </menu>
+    </item>
+</menu>

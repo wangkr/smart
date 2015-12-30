@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="@dimen/zan_headimage_size"
+    android:layout_height="@dimen/zan_headimage_size"
+    android:gravity="center_vertical">
+    <com.netease.nim.uikit.common.ui.imageview.HeadImageView
+        android:id="@+id/zan_head_image"
+        android:layout_width="@dimen/zan_headimage_size"
+        android:layout_height="@dimen/zan_headimage_size" />
+</LinearLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:visibility="gone">
+    <ListView
+        android:id="@+id/university_list"
+        android:background="@color/white"
+        android:padding="5dp"
+        android:scrollbars="none"
+        android:listSelector="@drawable/list_item_bg_selecter"
+        android:divider="@color/adapter_divider_color"
+        android:dividerHeight="2px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        />
+</LinearLayout>

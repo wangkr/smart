@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:visibility="gone">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@color/white"
+        >
+        <TextView
+            android:id="@+id/undergraduate"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/text_gray_dark"
+            android:background="@drawable/select_item_background"
+            android:text="本科"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+        <View style="@style/InputBoxDivider1"/>
+
+        <TextView
+            android:id="@+id/graduate"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/text_gray_dark"
+            android:background="@drawable/select_item_background"
+            android:text="研究生"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+        <View style="@style/InputBoxDivider1"/>
+
+        <TextView
+            android:id="@+id/phd"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/text_gray_dark"
+            android:background="@drawable/select_item_background"
+            android:text="博士"
+            android:textSize="18sp"
+            android:gravity="center"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+    >
+
+    <include layout="@layout/layout_action_bar"
+        android:id="@+id/select_eduinfo_actionbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/transparent"
+        android:gravity="center_horizontal">
+        <!-- 选择省份信息-->
+        <include layout="@layout/layout_select_province"
+            android:id="@+id/select_province_layout"/>
+
+        <!-- 选择学校信息-->
+        <include layout="@layout/layout_select_university"
+            android:id="@+id/select_university_layout" />
+
+        <!-- 选择学历信息-->
+        <include layout="@layout/layout_select_grade"
+            android:id="@+id/select_grade_layout"/>
+
+        <!-- 选择入学年信息-->
+        <include layout="@layout/layout_select_entryyear"
+            android:id="@+id/select_entryyear_layout"/>
+
+        <!-- 核实信息-->
+        <include layout="@layout/layout_confirm_info"
+            android:id="@+id/confirm_info_layout"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="@dimen/actionBar_height"
+    android:theme="@android:style/Theme.NoTitleBar"
+    android:background="@drawable/actionbar_bg">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        style="@style/actionBar_leftTitle_style">
+        <ImageView
+            android:id="@+id/centerBack"
+            style="@style/actionBar_backBtn_style"/>
+        <TextView
+            android:id="@+id/leftTitle"
+            style="@style/actionBar_backTxt_style"/>
+    </LinearLayout>
+
+    <include layout="@layout/fragment_friend_tab"
+        android:id="@+id/friend_tab"
+        android:layout_width="@dimen/friend_tab_width"
+        android:layout_height="@dimen/friend_tab_height"
+        android:layout_centerInParent="true"/>
+
+    <LinearLayout
+        android:id="@+id/rightTitle"
+        style="@style/actionBar_nextStep_style">
+    </LinearLayout>
+
+</RelativeLayout>

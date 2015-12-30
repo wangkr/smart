@@ -4,23 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white2">
-
-    <!-- action bar-->
-    <android.support.percent.PercentRelativeLayout
-        style="@style/actionBar_style"
-        app:layout_heightPercent="8%p">
-        <ImageView
-            android:id="@+id/send_request_back"
-            style="@style/actionBar_back_style"
-            app:layout_heightPercent="50%p"/>
-        <View
-            android:layout_toRightOf="@id/send_request_back"
-            style="@style/actionBar_divider_style"
-            app:layout_heightPercent="55%p"
-            app:layout_marginLeftPercent="1%p"
-            app:layout_marginRightPercent="2%p"/>
-    </android.support.percent.PercentRelativeLayout>
+    android:background="@color/light_gray">
 
     <com.cqyw.smart.widget.PercentLinearLayout
         style="@style/PercentWidthPercentHeight"
@@ -47,9 +31,9 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             app:layout_widthPercent="40%"
-            android:background="@drawable/rounded_green_bg"
+            android:background="@drawable/rounded_theme_bg"
             android:text="发送"
-            android:textColor="@drawable/btn_white_text_color"
+            android:textColor="@drawable/white_text_drawable"
             app:layout_marginTopPercent="20%"
             android:layout_gravity="right"
             />

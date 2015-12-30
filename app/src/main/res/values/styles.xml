@@ -1,8 +1,62 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="@style/LightBaseActionBarTheme">
         <!-- Customize your theme here. -->
+    </style>
+
+    <!-- Light ActionBar -->
+    <style name="LightBaseActionBarTheme" parent="@style/Theme.AppCompat.Light">
+        <!-- ActionBar样式，包括背景颜色，标题颜色 ,logo,高度等 -->
+        <item name="actionBarStyle">@style/LightBaseActionBarStyle</item>
+        <item name="actionButtonStyle">@style/ActionButtonStyle</item>
+        <!-- unused overflow的样式 -->
+        <item name="popupMenuStyle">@style/PopMenuStyle</item>
+        <!-- unused overflow展开的样式 -->
+        <item name="dropDownListViewStyle">@style/DropDownStyle</item>
+        <!-- 返回箭头icon的样式 -->
+        <item name="homeAsUpIndicator">@drawable/btn_actionbar_back</item>
+        <!-- 搜索框背景样式替换 -->
+        <!--<item name="searchViewTextField">@drawable/actionbar_search_view_bg</item>-->
+        <!-- 搜索框的icon图标替换 -->
+        <!--<item name="searchViewSearchIcon">@drawable/action_bar_search_view_icon</item>-->
+        <item name="android:actionBarStyle">@style/LightBaseActionBarStyle</item>
+        <item name="android:actionButtonStyle">@style/ActionButtonStyle</item>
+        <item name="android:popupMenuStyle">@style/PopMenuStyle</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownStyle</item>
+        <item name="android:homeAsUpIndicator">@drawable/btn_actionbar_back</item>
+        <!-- 去掉actionbar底部阴影 -->
+        <item name="android:windowContentOverlay">@null</item>
+        <!-- menu字体 -->
+        <!--  高版本api 上，需要这样设置，否则没效果-->
+        <item name="android:textAppearanceLargePopupMenu">@style/CustomActionBarTextStyle</item>
+        <!-- 第版本api-->
+        <item name="textAppearanceLargePopupMenu">@style/CustomActionBarTextStyle</item>
+    </style>
+
+    <style name="CustomActionBarTextStyle" parent="@style/TextAppearance.Widget.AppCompat.ExpandedMenu.Item">
+        <!-- actionbar menu字体设置-->
+        <item name="android:textColor">@color/color_black_333333</item>
+        <item name="android:textSize">@dimen/text_size_15</item>
+    </style>
+
+    <style name="ActionButtonStyle" parent="@style/Widget.AppCompat.ActionButton">
+        <item name="android:background">@drawable/semitransparent_black_bg</item>
+        <item name="android:minWidth">35dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="PopMenuStyle" parent="@style/Widget.AppCompat.Light.PopupMenu">
+        <item name="android:popupBackground">@drawable/actionbar_dropdown_bg</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="DropDownStyle" parent="@style/Widget.AppCompat.Light.ListView.DropDown">
+        <item name="android:listSelector">@color/color_grey_eaeaea</item>
+        <item name="android:animationDuration">500</item>
+        <item name="android:dividerHeight">@dimen/split_one_pixels</item>
+        <item name="android:divider">@color/color_gray_d9d9d9</item>
     </style>
 
     <!-- 父样式-->
@@ -21,6 +75,30 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>
     </style>
+    <!-- ActionBar style -->
+    <style name="LightBaseActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="background">@drawable/actionbar_bg</item>
+        <item name="height">@dimen/actionBar_height</item>
+        <item name="titleTextStyle">@style/LightActionBarTitleTextStyle</item>
+        <item name="subtitleTextStyle">@style/LightSubTitleTextStyle</item>
+        <item name="contentInsetStart">0dp</item>
+        <item name="contentInsetEnd">0dp</item>
+        <item name="android:background">@drawable/actionbar_bg</item>
+        <item name="android:height">@dimen/actionBar_height</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:titleTextStyle">@style/LightActionBarTitleTextStyle</item>
+        <item name="android:subtitleTextStyle">@style/LightSubTitleTextStyle</item>
+    </style>
+
+    <style name="LightActionBarTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">@dimen/actionBar_title_Size</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="LightSubTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">@dimen/actionBar_subTitle_size</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
     <!-- 标题栏背景样式-->
     <style name="actionBar_style" parent="@style/ParentWidthPercentHeight">
         <item name="android:background">@color/theme_color</item>
@@ -28,31 +106,69 @@
     <!-- 标题栏分割线样式-->
     <style name="actionBar_divider_style">
         <item name="android:layout_height">0dp</item>
-        <item name="android:layout_width">2px</item>
-        <item name="android:background">@color/divider_color</item>
+        <item name="android:layout_width">1dip</item>
+        <item name="android:background">@color/divider_theme_color</item>
         <item name="android:layout_centerVertical">true</item>
     </style>
     <!-- 标题栏“标题”样式-->
     <style name="actionBar_title_style" parent="@style/WrapWidthPercentHeight">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:layout_centerInParent">true</item>
-        <item name="android:textSize">@dimen/activity_bar_title_size</item>
+        <item name="android:textSize">@dimen/actionBar_title_Size</item>
         <item name="android:gravity">center</item>
     </style>
     <!-- 标题栏“上一步”样式-->
-    <style name="actionBar_back_style" parent="@style/WrapWidthPercentHeight">
+    <style name="actionBar_leftTitle_style">
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:divider">@drawable/divider_darktheme</item>
+        <item name="android:showDividers">middle</item>
+        <item name="android:dividerPadding">10dp</item>
+    </style>
+
+    <!-- 标题栏“上一步”样式2-->
+    <style name="actionBar_leftTitle_style2">
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:divider">@drawable/divider_darktheme</item>
+        <item name="android:showDividers">end</item>
+        <item name="android:dividerPadding">10dp</item>
+    </style>
+
+    <style name="actionBar_backBtn_style">
+        <item name="android:layout_width">@dimen/actionbar_backbtn_width</item>
+        <item name="android:layout_height">@dimen/actionBar_height</item>
+        <item name="android:padding">13dp</item>
         <item name="android:src">@drawable/btn_back</item>
-        <item name="android:layout_centerVertical">true</item>
+        <item name="android:background">@drawable/semitransparent_black_bg</item>
+    </style>
+
+    <style name="actionBar_backTxt_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/actionBar_height</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:textSize">@dimen/actionBar_title_Size</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <!-- 标题栏“下一步”样式-->
-    <style name="actionBar_nextStep_style" parent="@style/WrapWidthPercentHeight">
-        <item name="android:textColor">@drawable/btn_white_text_color</item>
-        <item name="android:layout_centerVertical">true</item>
+    <style name="actionBar_nextStep_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:orientation">horizontal</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_alignParentRight">true</item>
-        <item name="android:layout_marginRight">10dp</item>
-        <item name="android:textSize">@dimen/activity_bar_btn_text_size</item>
+        <item name="android:background">@drawable/semitransparent_black_bg</item>
+    </style>
+
+    <!-- 标题栏“下一步”样式2-->
+    <style name="actionBar_nextStep_textStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textColor">@drawable/white_text_drawable</item>
+        <item name="android:textSize">@dimen/actionBar_btn_textSize</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:gravity">center</item>
     </style>
     <!-- 白色背景输入框-->
     <style name="WhiteBkInputBox" parent="@style/WrapWidthPercentHeight">
@@ -63,18 +179,37 @@
     <style name="InputBoxDivider1">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/input_box_divider_width</item>
-        <item name="android:background">@color/hint_color</item>
+        <item name="android:background">@color/adapter_divider_color</item>
+        <item name="android:layout_alignParentBottom">true</item>
+    </style>
+    <!-- adapter 分割线样式-->
+    <style name="AdapterDividerStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">2px</item>
+        <item name="android:background">@color/adapter_divider_color</item>
     </style>
     <!-- 白色selector信息显示背景-->
-    <style name="WhiteSelectorBk">
+    <style name="UserProfileItemSelectorBg">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">50dp</item>
         <item name="android:background">@drawable/white_bk_selector</item>
-        <item name="android:paddingLeft">@dimen/profile_attr_padding</item>
-        <item name="android:paddingRight">@dimen/profile_attr_padding</item>
+    </style>
+    <!-- 输入框左侧标题-->
+    <style name="InputBoxItemAttr">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/input_box_attr_padding</item>
+        <item name="android:textColor">@color/text_dark</item>
+        <item name="android:textSize">@dimen/profile_attr_text_size</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
     </style>
     <!-- 信息条左侧标题-->
-    <style name="InfoLeftTitle">
+    <style name="UserProfileItemAttr">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/profile_attr_padding</item>
         <item name="android:textColor">@color/text_dark</item>
         <item name="android:textSize">@dimen/profile_attr_text_size</item>
         <item name="android:gravity">center</item>
@@ -82,7 +217,22 @@
         <item name="android:layout_alignParentLeft">true</item>
     </style>
     <!-- 信息条右侧内容-->
-    <style name="InfoRightTxtContent">
+    <style name="UserProfileIteamValue">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">@dimen/profile_attr_padding</item>
+        <item name="android:textColor">@color/text_gray_dark</item>
+        <item name="android:textSize">@dimen/profile_attr_text_size</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+    </style>
+    <!-- 编辑信息条右侧内容-->
+    <style name="UserEditProfileIteamValue">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">@dimen/edit_profile_attr_rightpadding</item>
+        <item name="android:drawableRight">@drawable/nim_arrow_right</item>
+        <item name="android:drawablePadding">10dp</item>
         <item name="android:textColor">@color/text_gray_dark</item>
         <item name="android:textSize">@dimen/profile_attr_text_size</item>
         <item name="android:layout_centerVertical">true</item>
@@ -96,20 +246,78 @@
     <!-- 圆角白底绿边按钮主题色字体-->
     <style name="RoundedStrokeBtnStyle2" parent="@style/PercentWidthPercentHeight">
         <item name="android:textColor">@color/theme_color</item>
-        <item name="android:background">@drawable/rounded_stroke_rect_bg2</item>
+        <item name="android:background">@drawable/rounded_theme_stroke_white_bg</item>
     </style>
     <!-- 单行输入框样式-->
     <style name="SingleLineEditBox">
         <item name="android:singleLine">true</item>
-        <item name="android:textColorHint">@color/hint_color</item>
+        <item name="android:textColorHint">@color/gray_white</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:paddingLeft">@dimen/edit_textview_padding</item>
         <item name="android:paddingRight">@dimen/edit_textview_padding</item>
     </style>
-    <!-- 圆形ImageView-->
-    <declare-styleable name="CircleImageView">
-        <attr name="border_width" format="dimension" />
-        <attr name="border_color" format="color" />
-    </declare-styleable>
+
+        <!-- 好友列表表头-->
+        <style name="ListCatalog">
+            <item name="android:textSize">14dp</item>
+            <item name="android:textStyle">bold</item>
+            <item name="android:textColor">@color/text_gray_dark</item>
+            <item name="android:gravity">center_vertical</item>
+            <item name="android:orientation">horizontal</item>
+            <item name="android:background">@color/light_gray</item>
+            <item name="android:paddingLeft">10dp</item>
+            <item name="android:paddingTop">5dp</item>
+            <item name="android:paddingBottom">5dp</item>
+            <item name="android:layout_width">match_parent</item>
+            <item name="android:layout_height">wrap_content</item>
+        </style>
+        <style name="ContactListItem">
+            <item name="android:gravity">center_vertical</item>
+            <item name="android:orientation">horizontal</item>
+            <item name="android:paddingLeft">8.0dip</item>
+            <item name="android:paddingRight">4.0dip</item>
+            <item name="android:layout_width">match_parent</item>
+            <item name="android:layout_height">wrap_content</item>
+        </style>
+        <style name="ContactFontTitleInListNick">
+            <item name="android:textSize">16.0dip</item>
+            <item name="android:textColor">@color/gray_white</item>
+            <item name="android:ellipsize">end</item>
+            <item name="android:gravity">center_vertical</item>
+            <item name="android:layout_width">wrap_content</item>
+            <item name="android:layout_height">wrap_content</item>
+            <item name="android:singleLine">true</item>
+        </style>
+        <style name="ContactFontTitleInListName">
+            <item name="android:textSize">13.0dip</item>
+            <item name="android:textColor">@color/text_dark</item>
+            <item name="android:ellipsize">end</item>
+            <item name="android:gravity">center_vertical</item>
+            <item name="android:layout_width">wrap_content</item>
+            <item name="android:layout_height">wrap_content</item>
+            <item name="android:layout_marginBottom">5dp</item>
+            <item name="android:singleLine">true</item>
+        </style>
+        <!-- 性别选择对话框-->
+        <style name="joy_custom_dialog_style" parent="@android:style/Theme.Holo.Light.Dialog.NoActionBar.MinWidth">
+            <item name="android:windowBackground">@color/transparent</item>
+            <item name="android:windowFrame">@null</item>
+            <item name="android:windowNoTitle">true</item>
+            <item name="android:windowIsFloating">true</item>
+            <item name="android:windowIsTranslucent">true</item>
+            <item name="android:backgroundDimEnabled">true</item>
+            <item name="android:windowContentOverlay">@null</item>
+        </style>
+
+        <!-- 圆形ImageView-->
+        <declare-styleable name="CircleImageView">
+            <attr name="border_width" format="dimension" />
+            <attr name="border_color" format="color" />
+        </declare-styleable>
+
+    <style name="WelcomeEntranceActionBarTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@drawable/welcome_bg_layer</item>
+    </style>
 
 </resources>

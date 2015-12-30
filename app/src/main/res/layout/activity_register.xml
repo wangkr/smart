@@ -1,113 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.cqyw.smart.widget.PercentLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white2">
-    <!-- action bar-->
-    <android.support.percent.PercentRelativeLayout
-        style="@style/actionBar_style"
-        app:layout_heightPercent="8%p">
-        <ImageView
-            android:id="@+id/register_phone_back"
-            style="@style/actionBar_back_style"
-            app:layout_heightPercent="50%p"/>
-        <TextView
-            app:layout_heightPercent="50%p"
-            android:text="注册"
-            style="@style/actionBar_title_style"
-            />
-        <TextView
-            android:id="@+id/register_phone_next"
-            app:layout_heightPercent="50%p"
-            style="@style/actionBar_nextStep_style"
-            android:text="下一步"
-            />
-    </android.support.percent.PercentRelativeLayout>
+    android:background="@color/light_gray">
 
     <!-- 三个信息输入框-->
-    <android.support.percent.PercentRelativeLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_heightPercent="8%p"
-        app:layout_marginTopPercent="8%p"
+        android:layout_height="55dp"
+        android:layout_marginTop="50dp"
         android:paddingRight="10dp"
         android:background="@android:color/white">
         <TextView
-            android:layout_width="0dp"
-            app:layout_widthPercent="25%"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/InfoLeftTitle"
+            style="@style/InputBoxItemAttr"
             android:text="手机号码"
             />
         <EditText
             android:id="@+id/register_phone"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             style="@style/SingleLineEditBox"
-            app:layout_widthPercent="75%"
-            app:layout_marginLeftPercent="25%p"
+            android:paddingLeft="100dp"
             android:inputType="phone"
             android:hint="输入手机号"/>
         <Button
-            android:id="@+id/register_get_code"
+            android:id="@+id/register_send_code"
+            android:layout_width="80dp"
+            android:layout_height="35dp"
             android:background="@drawable/btn_get_verti_code"
-            app:layout_widthPercent="25%p"
-            app:layout_heightPercent="70%p"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:enabled="false"
             android:text="获取验证码"
-            android:textSize="15sp"
-            android:textColor="@color/theme_color" />
-    </android.support.percent.PercentRelativeLayout>
+            android:textSize="12sp"
+            android:textColor="@drawable/theme_text_drawable" />
+    </RelativeLayout>
 
     <View style="@style/InputBoxDivider1"/>
 
-    <com.cqyw.smart.widget.PercentLinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_heightPercent="8%"
+        android:layout_height="55dp"
+        android:paddingRight="10dp"
         android:background="@android:color/white">
         <TextView
-            android:layout_width="0dp"
-            app:layout_widthPercent="25%"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/InfoLeftTitle"
+            style="@style/InputBoxItemAttr"
             android:text="设置密码"
             />
         <EditText
             android:id="@+id/register_set_passwd"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_widthPercent="75%p"
             style="@style/SingleLineEditBox"
+            android:paddingLeft="100dp"
             android:inputType="textPassword"
-            android:hint="设置登录密码"/>
-    </com.cqyw.smart.widget.PercentLinearLayout>
+            android:hint="设置登录密码(6~16位)"/>
+    </RelativeLayout>
 
     <View style="@style/InputBoxDivider1"/>
 
-    <com.cqyw.smart.widget.PercentLinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_heightPercent="8%"
+        android:layout_height="55dp"
+        android:paddingRight="10dp"
         android:background="@android:color/white">
         <TextView
-            android:layout_width="0dp"
-            app:layout_widthPercent="25%"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/InfoLeftTitle"
+            style="@style/InputBoxItemAttr"
             android:text="验证码"
             />
         <EditText
-            android:id="@+id/register_set_code"
-            android:layout_width="0dp"
+            android:id="@+id/register_verify_code"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             style="@style/SingleLineEditBox"
-            app:layout_widthPercent="75%p"
+            android:paddingLeft="100dp"
             android:inputType="number"
             android:hint="输入短信验证码"/>
-    </com.cqyw.smart.widget.PercentLinearLayout>
+    </RelativeLayout>
 
-</com.cqyw.smart.widget.PercentLinearLayout>
+</LinearLayout>

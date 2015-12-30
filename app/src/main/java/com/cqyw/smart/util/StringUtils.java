@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 import com.loopj.android.http.RequestParams;
@@ -22,6 +23,8 @@ import android.text.TextUtils;
  * @created 2012-3-21
  */
 public class StringUtils {
+    public final static String Empty = "";
+
     private final static Pattern emailer = Pattern
             .compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 
@@ -42,6 +45,7 @@ public class StringUtils {
             return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         }
     };
+
 
     private final static ThreadLocal<SimpleDateFormat> dateFormater2 = new ThreadLocal<SimpleDateFormat>() {
         @Override
@@ -70,6 +74,10 @@ public class StringUtils {
      */
     public static Date toDate(String sdate) {
         return toDate(sdate, dateFormater.get());
+    }
+
+    public static Date toDate2(String sdate) {
+        return toDate(sdate, dateFormater2.get());
     }
     
     public static int getDay(Date date) {
@@ -513,4 +521,42 @@ public class StringUtils {
         }
         return params;
     }
+
+    /**
+     * 获取当前的时间（1970年到现在的秒数）
+     * @return
+     */
+    public static String curTime(){
+        return String.valueOf(new Date().getTime() / 1000L);
+    }
+
+    /**
+     * 获取n位的随机数
+     * @param digCount 位数
+     * @return
+     */
+    public static String getRandomNumber(int digCount) {
+        Random rnd = new Random(new Date().getTime());
+        StringBuilder sb = new StringBuilder(digCount);
+        for(int i=0; i < digCount; i++)
+            sb.append((char)('0' + rnd.nextInt(10)));
+        return sb.toString();
+    }
+
+    /**
+     * 随机生成字符串
+     * @param length 长度
+     * @return
+     */
+    public static String getRandomString(int length) { //length表示生成字符串的长度
+        String base = "abcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random(new Date().getTime());
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < length; i++) {
+            int number = random.nextInt(base.length());
+            sb.append(base.charAt(number));
+        }
+        return sb.toString();
+    }
+
 }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:visibility="gone">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        >
+        <TextView
+            android:id="@+id/entry_2015"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/text_gray_dark"
+            android:background="@drawable/select_item_background"
+            android:text="2015 年"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+        <View style="@style/InputBoxDivider1"/>
+
+        <TextView
+            android:id="@+id/entry_2014"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/text_gray_dark"
+            android:background="@drawable/select_item_background"
+            android:text="2014 年"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+        <View style="@style/InputBoxDivider1"/>
+
+        <TextView
+            android:id="@+id/entry_2013"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/text_gray_dark"
+            android:background="@drawable/select_item_background"
+            android:text="2013 年"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+        <View style="@style/InputBoxDivider1"/>
+
+        <TextView
+            android:id="@+id/entry_2012"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/text_gray_dark"
+            android:background="@drawable/select_item_background"
+            android:text="2012 年"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+        <View style="@style/InputBoxDivider1"/>
+
+        <TextView
+            android:id="@+id/entry_2011"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/text_gray_dark"
+            android:background="@drawable/select_item_background"
+            android:text="2011 年"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+        <View style="@style/InputBoxDivider1"/>
+
+        <TextView
+            android:id="@+id/entry_other"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/text_gray_dark"
+            android:background="@drawable/select_item_background"
+            android:text="其 它"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+    </LinearLayout>
+</LinearLayout>

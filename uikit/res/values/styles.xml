@@ -1,0 +1,185 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="list_view" parent="@android:style/Widget.ListView">
+        <item name="android:scrollbarThumbVertical">@drawable/nim_scrollbar_handle_holo_dark</item>
+        <item name="android:scrollbarThumbHorizontal">@drawable/nim_scrollbar_handle_holo_dark</item>
+    </style>
+
+    <style name="horizontal_light_thin_divider">
+        <item name="android:layout_height">2px</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:background">@color/gray_white</item>
+    </style>
+
+    <style name="horizontal_deep_thick_divider">
+        <item name="android:layout_height">@dimen/split_one_dip</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:background">@color/color_gray_d9d9d9</item>
+    </style>
+
+    <style name="custom_dialog_message_text_style">
+        <item name="android:textSize">@dimen/normal_text_size</item>
+        <item name="android:textColor">@color/color_black_333333</item>
+        <item name="android:paddingLeft">@dimen/dialog_text_margin_horizontal</item>
+        <item name="android:paddingRight">@dimen/dialog_text_margin_horizontal</item>
+        <item name="android:paddingTop">@dimen/custom_dialog_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/custom_dialog_padding_vertical</item>
+        <item name="android:background">@drawable/nim_list_item_selector</item>
+    </style>
+
+    <style name="dialog_title_text_style">
+        <item name="android:textSize">@dimen/big_text_size</item>
+        <item name="android:textColor">@color/joy_theme_color</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">@dimen/dialog_text_margin_horizontal</item>
+        <item name="android:paddingRight">@dimen/dialog_text_margin_horizontal</item>
+        <item name="android:paddingTop">@dimen/dialog_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/dialog_padding_vertical</item>
+    </style>
+
+    <style name="dialog_message_text_style">
+        <item name="android:textSize">@dimen/normal_text_size</item>
+        <item name="android:textColor">@color/color_black_333333</item>
+        <item name="android:paddingLeft">@dimen/dialog_text_margin_horizontal</item>
+        <item name="android:paddingRight">@dimen/dialog_text_margin_horizontal</item>
+        <item name="android:paddingTop">@dimen/dialog_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/dialog_padding_vertical</item>
+    </style>
+
+    <style name="dialog_default_style" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="dialog_button_text_style">
+        <item name="android:textSize">@dimen/big_text_size</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@drawable/nim_list_item_selector</item>
+        <item name="android:paddingTop">@dimen/custom_dialog_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/custom_dialog_padding_vertical</item>
+    </style>
+
+    <!-- 右下角有输入字符长度限制 用于对话框 -->
+    <style name="easy_dialog_edit_text_style" parent="@android:style/Widget.EditText">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:background">@drawable/nim_easy_edit_text_dialog_bg</item>
+        <item name="android:paddingLeft">6dp</item>
+        <item name="android:paddingRight">30dp</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+
+    <style name="transparent_dialog_style" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="grid_view" parent="@android:style/Widget.GridView">
+    </style>
+
+    <style name="sdk_share_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="easy_dialog_style" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <!-- 边框 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <!-- 半透明 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 无标题 -->
+        <item name="android:windowBackground">@color/transparent</item>
+        <!-- 背景透明 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 后面的activity变暗 -->
+    </style>
+
+    <style name="scroll_view" parent="@android:style/Widget.ScrollView">
+        <item name="android:scrollbarThumbVertical">@drawable/nim_scrollbar_handle_holo_dark</item>
+        <item name="android:scrollbarThumbHorizontal">@drawable/nim_scrollbar_handle_holo_dark</item>
+    </style>
+
+    <style name="blue_bottom_line_edit_text_style" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/nim_blue_edit_text_bg</item>
+        <item name="android:paddingLeft">6dp</item>
+        <item name="android:paddingRight">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <!-- Joy 自定义样式-->
+    <!-- 标题栏分割线样式-->
+    <style name="actionBar_divider_style">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_width">1dip</item>
+        <item name="android:background">@color/joy_divider_color</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+    <!-- 标题栏“上一步”样式-->
+    <style name="joy_actionBar_leftTitle_style">
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:divider">@drawable/joy_divider_darktheme</item>
+        <item name="android:showDividers">middle</item>
+        <item name="android:dividerPadding">10dp</item>
+    </style>
+    <style name="joy_actionBar_backBtn_style">
+        <item name="android:layout_width">@dimen/actionbar_backbtn_width</item>
+        <item name="android:layout_height">@dimen/action_bar_height</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:src">@drawable/btn_back</item>
+        <item name="android:background">@drawable/joy_semitransparent_black_bg</item>
+    </style>
+    <!-- 标题栏“上一步”样式2-->
+    <style name="actionBar_leftTitle_style2">
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:divider">@drawable/joy_divider_darktheme</item>
+        <item name="android:showDividers">end</item>
+        <item name="android:dividerPadding">10dp</item>
+    </style>
+    <style name="joy_actionBar_backTxt_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/action_bar_height</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:textSize">@dimen/joy_actionBar_title_Size</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <!-- 标题栏“下一步”样式-->
+    <style name="snap_actionBar_nextStep_textStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textColor">@color/joy_theme_color</item>
+        <item name="android:textSize">@dimen/joy_actionBar_title_Size</item>
+        <item name="android:background">@drawable/joy_semitransparent_black_bg</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <!-- 图片来源选择对话框样式-->
+    <style name="picture_optDialog_style" parent="@android:style/Theme.Holo.Light.Dialog.NoActionBar.MinWidth">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+</resources>

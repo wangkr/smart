@@ -3,10 +3,19 @@ package com.cqyw.smart.common;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Environment;
+import android.support.multidex.MultiDexApplication;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,14 +24,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cqyw.smart.AppSharedPreference;
 import com.cqyw.smart.R;
+import com.cqyw.smart.common.network.NetUtil;
+import com.netease.nim.uikit.common.util.sys.TimeUtil;
 
 /**
  * 应用启动基类
  * Created by YUHONG on 2015/9/20.
  * Email: hongyuahu@gmail.com
+ * Edited by Kyrong Wong
  */
-public class BaseApplication extends Application {
+public class BaseApplication extends MultiDexApplication {
     public static final String TAG = "BaseApplication";
 
     private static Resources _resource;
@@ -30,11 +43,14 @@ public class BaseApplication extends Application {
     private  static Context _context;
 
     private static String lastToast = "";
+
     private static long lastToastTime;
 
-    private static final String PREF_NAME = "smart_ustc.pref";
+    private static final String PREF_NAME = "joy_pref";
 
     private static boolean sIsAtLeastGB;
+
+    private static int mNetWorkState;
     static {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
             sIsAtLeastGB = true;
@@ -45,6 +61,15 @@ public class BaseApplication extends Application {
         super.onCreate();
         _resource = getResources();
         _context = getApplicationContext();
+        mNetWorkState =  NetUtil.getNetworkState(this);
+    }
+
+    public static void setNetWorkState(int mNetWorkState) {
+        BaseApplication.mNetWorkState = mNetWorkState;
+    }
+
+    public static int getNetWorkState() {
+        return mNetWorkState;
     }
 
     public static synchronized BaseApplication getContext() {
@@ -62,6 +87,12 @@ public class BaseApplication extends Application {
         } else {
             editor.commit();
         }
+    }
+
+    public static void set(String key, long value) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putLong(key, value);
+        apply(editor);
     }
 
     public static void set(String key, int value) {
@@ -104,9 +135,7 @@ public class BaseApplication extends Application {
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static SharedPreferences getPreferences() {
-        SharedPreferences pre = getContext().getSharedPreferences(PREF_NAME,
-                Context.MODE_PRIVATE);
-        return pre;
+        return getPreferences(PREF_NAME);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -210,5 +239,9 @@ public class BaseApplication extends Application {
                 lastToastTime = System.currentTimeMillis();
             }
         }
+    }
+
+    public static boolean isJoyTokenValid() {
+        return TimeUtil.isSameDay(AppSharedPreference.getTokenSavedTime(), TimeUtil.currentTimeMillis());
     }
 }

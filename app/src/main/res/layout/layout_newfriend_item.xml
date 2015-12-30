@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/top_line"
+        style="@style/AdapterDividerStyle"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/contact_item_height"
+        android:background="@drawable/setting_item_selector"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp">
+        <com.netease.nim.uikit.common.ui.imageview.HeadImageView
+            android:id="@+id/from_account_head_image"
+            android:layout_width="@dimen/avatar_size_default"
+            android:layout_height="@dimen/avatar_size_default"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/head_sample" />
+        <LinearLayout
+            android:id="@+id/operator_layout"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/agree"
+                android:layout_width="54dip"
+                android:layout_height="34dip"
+                android:background="@drawable/btn_smallcorner_theme_bg"
+                android:text="@string/agree"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_14" />
+
+            <Button
+                android:id="@+id/reject"
+                android:layout_width="54dip"
+                android:layout_height="34dip"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/btn_smallcorner_red_bg"
+                android:text="@string/reject"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_14"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/operator_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dp"
+                android:text="已处理"
+                android:textColor="@color/color_black_333333"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/title_content_layout"
+        android:layout_toRightOf="@id/from_account_head_image"
+        android:layout_toLeftOf="@id/operator_layout"
+        android:layout_alignTop="@id/from_account_head_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="left"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="8dip">
+        <TextView
+            android:id="@+id/from_account_text"
+            style="@style/ContactFontTitleInListName" />
+        <TextView
+            android:id="@+id/notification_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/from_account_text"
+            android:layout_marginLeft="10dip"
+            android:layout_toRightOf="@id/from_account_text"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/text_gray_dark"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/content_text"
+            android:layout_below="@id/from_account_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical|left"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="3dip"
+            android:lines="2"
+            android:ellipsize="end"
+            android:textColor="@color/text_gray_dark"
+            android:text=""
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    </RelativeLayout>
+    <View style="@style/AdapterDividerStyle" />
+
+</LinearLayout>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray">
+
+    <!-- 三个信息输入框-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="50dp"
+        android:paddingRight="10dp"
+        android:background="@android:color/white">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/InputBoxItemAttr"
+            android:text="手机号码"
+            />
+        <EditText
+            android:id="@+id/find_passwd_phone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/SingleLineEditBox"
+            android:paddingLeft="100dp"
+            android:inputType="phone"
+            android:hint="输入手机号"/>
+        <Button
+            android:id="@+id/find_passwd_send_code"
+            android:layout_width="80dp"
+            android:layout_height="35dp"
+            android:background="@drawable/btn_get_verti_code"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:enabled="false"
+            android:text="获取验证码"
+            android:textSize="12sp"
+            android:textColor="@drawable/theme_text_drawable" />
+    </RelativeLayout>
+
+    <View style="@style/InputBoxDivider1"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:paddingRight="10dp"
+        android:background="@android:color/white">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/InputBoxItemAttr"
+            android:text="验证码"
+            />
+        <EditText
+            android:id="@+id/find_passwd_verify_code"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/SingleLineEditBox"
+            android:paddingLeft="100dp"
+            android:inputType="number"
+            android:hint="输入短信验证码"/>
+    </RelativeLayout>
+
+
+    <View style="@style/InputBoxDivider1"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:paddingRight="10dp"
+        android:background="@android:color/white">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/InputBoxItemAttr"
+            android:text="设置密码"
+            />
+        <EditText
+            android:id="@+id/find_passwd_set_passwd"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/SingleLineEditBox"
+            android:paddingLeft="100dp"
+            android:inputType="textPassword"
+            android:hint="设置新登录密码(6~16位)"/>
+    </RelativeLayout>
+
+</LinearLayout>

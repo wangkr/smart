@@ -1,194 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.cqyw.smart.widget.PercentLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/user_profile_scrollview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white2">
-    <!-- action bar-->
-    <android.support.percent.PercentRelativeLayout
-        style="@style/actionBar_style"
-        app:layout_heightPercent="8%p">
-        <ImageView
-            android:id="@+id/register_profile_back"
-            style="@style/actionBar_back_style"
-            app:layout_heightPercent="50%p"/>
-        <TextView
-            style="@style/actionBar_title_style"
-            app:layout_heightPercent="50%p"
-            android:text="个人资料"
-            />
-        <com.cqyw.smart.widget.PercentLinearLayout
-            android:id="@+id/individual_info_more"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            app:layout_widthPercent="8%p"
-            android:background="@drawable/btn_transparent_bg"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:gravity="center">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_heightPercent="50%p"
-                android:src="@mipmap/more_icn"
-                />
-        </com.cqyw.smart.widget.PercentLinearLayout>
-    </android.support.percent.PercentRelativeLayout>
-
-    <ScrollView
+    android:background="@color/light_gray">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white2">
-        <LinearLayout
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+        <!-- 头像-->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="25dp"
-            android:orientation="vertical">
-            <!-- 头像-->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:background="@drawable/white_bk_selector"
-                android:paddingLeft="@dimen/profile_attr_padding"
-                android:paddingRight="@dimen/profile_attr_padding">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="头像"
-                    style="@style/InfoLeftTitle"/>
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:src="@mipmap/ic_launcher"
-                    android:id="@+id/profile_head"
-                    android:layout_centerVertical="true" />
-            </RelativeLayout>
+            android:layout_height="70dp"
+            android:background="@drawable/white_bk_selector"
+            android:paddingRight="@dimen/profile_attr_padding">
+            <TextView
+                android:id="@+id/friend_profile_head_attr"
+                style="@style/UserProfileItemAttr"/>
+            <com.netease.nim.uikit.common.ui.imageview.HeadImageView
+                android:layout_width="@dimen/activity_userProfile_headSize"
+                android:layout_height="@dimen/activity_userProfile_headSize"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/friend_profile_head"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
 
-            <View style="@style/InputBoxDivider1"/>
+        <View style="@style/InputBoxDivider1"/>
 
-            <!-- 昵称-->
-            <RelativeLayout
-                style="@style/WhiteSelectorBk">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="昵称"
-                    style="@style/InfoLeftTitle"/>
-                <TextView
-                    android:id="@+id/profile_nickname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_gray_dark"
-                    android:text="mildfeng"
-                    style="@style/InfoRightTxtContent"
-                    />
-            </RelativeLayout>
+        <!-- 昵称-->
+        <include android:id="@+id/friend_profile_nickname"
+            layout="@layout/user_profile_item"/>
 
-            <View style="@style/InputBoxDivider1"/>
 
-            <!-- 性别-->
-            <RelativeLayout
-                style="@style/WhiteSelectorBk">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="性别"
-                    style="@style/InfoLeftTitle"/>
-                <TextView
-                    android:id="@+id/profile_gender"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_gray_dark"
-                    android:text="男"
-                    style="@style/InfoRightTxtContent"
-                    />
-            </RelativeLayout>
+        <!-- 性别-->
+        <include android:id="@+id/friend_profile_gender"
+            layout="@layout/user_profile_item"/>
 
-            <View style="@style/InputBoxDivider1"/>
+        <!-- 年龄-->
+        <include android:id="@+id/friend_profile_age"
+            layout="@layout/user_profile_item"/>
 
-            <!-- 年龄-->
-            <RelativeLayout
-                style="@style/WhiteSelectorBk">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="年龄"
-                    style="@style/InfoLeftTitle"/>
-                <TextView
-                    android:id="@+id/profile_age"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_gray_dark"
-                    android:text="23"
-                    style="@style/InfoRightTxtContent"
-                    />
-            </RelativeLayout>
-
-            <View style="@style/InputBoxDivider1"/>
-
-            <!-- 学校信息-->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="@drawable/white_bk_selector"
-                android:paddingLeft="@dimen/profile_attr_padding"
-                android:paddingRight="@dimen/profile_attr_padding">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="学校信息"
-                    style="@style/InfoLeftTitle"/>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal">
-                    <TextView
-                        android:id="@+id/profile_university"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/text_gray_dark"
-                        android:text="中国科学技术大学"
-                        android:textSize="@dimen/profile_attr_text_size"
-                        />
-                    <TextView
-                        android:id="@+id/profile_grade_xueli"
-                        android:layout_marginTop="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/text_gray_dark"
-                        android:text="2012级   本科"
-                        android:textSize="@dimen/profile_attr_text_size"
-                        />
-                </LinearLayout>
-            </RelativeLayout>
-
-            <View style="@style/InputBoxDivider1"/>
-
+        <!-- 学校信息-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:background="@drawable/white_bk_selector"
+            android:paddingRight="@dimen/profile_attr_padding">
+            <TextView
+                android:id="@+id/friend_profile_university_attr"
+                style="@style/UserProfileItemAttr"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/profile_attr_padding"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:orientation="vertical"
-                android:background="@android:color/white">
+                android:gravity="center_horizontal">
                 <TextView
+                    android:id="@+id/friend_profile_university"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="相册"
-                    android:textColor="@color/theme_color"
-                    android:textSize="@dimen/profile_attr_text_size"/>
-                <GridView
+                    android:textColor="@color/text_gray_dark"
+                    android:textSize="@dimen/profile_attr_text_size"
+                    />
+                <TextView
+                    android:id="@+id/friend_profile_education"
+                    android:layout_marginTop="5dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                </GridView>
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_gray_dark"
+                    android:textSize="@dimen/profile_attr_text_size"
+                    />
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
+        </RelativeLayout>
+        <View style="@style/InputBoxDivider1"/>
 
-</com.cqyw.smart.widget.PercentLinearLayout>
+        <!-- Jo值-->
+        <include android:id="@+id/friend_profile_joValue"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            layout="@layout/user_profile_item"/>
+
+        <!-- 自曝值-->
+        <include android:id="@+id/friend_profile_snapValue"
+            layout="@layout/user_profile_item"/>
+
+        <!-- 相册-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white">
+            <TextView
+                android:id="@+id/friend_profile_gallery_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/profile_attr_text_size"
+                android:textColor="@color/theme_color"
+                android:paddingLeft="@dimen/profile_attr_padding"
+                android:text="相册"
+                android:gravity="center_vertical|left"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                />
+            <com.cqyw.smart.widget.MyGridView
+                android:id="@+id/friend_profile_gallery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/user_profile_gallery_hpadding"
+                android:paddingRight="@dimen/user_profile_gallery_hpadding"
+                android:paddingBottom="@dimen/user_profile_gallery_hpadding"
+                android:horizontalSpacing="@dimen/user_profile_gallery_spacing"
+                android:verticalSpacing="@dimen/user_profile_gallery_spacing"
+                android:columnWidth="@dimen/user_profile_gallery_columnWidth"
+                android:numColumns="3"
+                android:visibility="gone"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/friend_chat"
+                android:text="@string/chat"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_smallcorner_theme_bg"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/friend_profile_add"
+                android:text="@string/add_friend"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_smallcorner_theme_bg"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/friend_profile_remove"
+                android:text="@string/delete_friend"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_smallcorner_red_bg"
+                android:visibility="gone"/>
+        </LinearLayout>
+        <View android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@color/transparent"/>
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edit_profile_scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+        <!-- 头像-->
+        <RelativeLayout
+            android:id="@+id/edit_profile_head_layout"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@drawable/white_bk_selector"
+            android:paddingRight="@dimen/edit_profile_attr_rightpadding">
+            <TextView
+                android:id="@+id/edit_profile_head_attr"
+                style="@style/UserProfileItemAttr"/>
+            <com.netease.nim.uikit.common.ui.imageview.HeadImageView
+                android:layout_width="@dimen/activity_userProfile_headSize"
+                android:layout_height="@dimen/activity_userProfile_headSize"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="@dimen/profile_attr_padding"
+                android:id="@+id/edit_profile_head"
+                android:layout_centerVertical="true" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/nim_arrow_right" />
+        </RelativeLayout>
+
+        <View style="@style/InputBoxDivider1"/>
+
+        <!-- 昵称-->
+        <include android:id="@+id/edit_profile_nickname"
+            layout="@layout/user_profile_edit_item"/>
+
+
+        <!-- 性别-->
+        <include android:id="@+id/edit_profile_gender"
+            layout="@layout/user_profile_edit_item"/>
+
+        <!-- 年龄-->
+        <include android:id="@+id/edit_profile_age"
+            layout="@layout/user_profile_edit_item"/>
+
+        <!-- 学校信息-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/white_bk_selector"
+            android:paddingRight="@dimen/profile_attr_padding">
+            <TextView
+                android:id="@+id/edit_profile_university_attr"
+                style="@style/UserProfileItemAttr"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+                <TextView
+                    android:id="@+id/edit_profile_university"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_gray_dark"
+                    android:textSize="@dimen/profile_attr_text_size"
+                    />
+                <TextView
+                    android:id="@+id/edit_profile_education"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_gray_dark"
+                    android:textSize="@dimen/profile_attr_text_size"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <!-- Jo值-->
+        <include android:id="@+id/edit_profile_joValue"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            layout="@layout/user_profile_item"/>
+
+        <!-- 自曝值-->
+        <include android:id="@+id/edit_profile_snapValue"
+            layout="@layout/user_profile_item"/>
+
+        <!-- 相册-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <TextView
+                    android:id="@+id/edit_profile_gallery_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/profile_attr_text_size"
+                    android:textColor="@color/theme_color"
+                    android:layout_marginLeft="@dimen/profile_attr_padding"
+                    android:text="相册"
+                    android:gravity="left"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:id="@+id/edit_profile_gallery_cancell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_14"
+                    android:textColor="@color/text_gray_dark"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/edit_profile_gallery_edit"
+                    android:text="@string/cancel"
+                    android:padding="3dp"
+                    android:background="@drawable/list_item_bg_selecter"
+                    android:layout_marginRight="15dp"
+                    android:visibility="gone"/>
+                <TextView
+                    android:id="@+id/edit_profile_gallery_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="@dimen/text_size_14"
+                    android:textColor="@color/text_gray_dark"
+                    android:layout_centerVertical="true"
+                    android:text="@string/edit"
+                    android:padding="3dp"
+                    android:background="@drawable/list_item_bg_selecter"
+                    android:layout_marginRight="15dp"/>
+            </RelativeLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.cqyw.smart.widget.MyGridView
+                    android:id="@+id/edit_profile_gallery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/user_profile_gallery_hpadding"
+                    android:paddingRight="@dimen/user_profile_gallery_hpadding"
+                    android:paddingBottom="@dimen/user_profile_gallery_hpadding"
+                    android:horizontalSpacing="@dimen/user_profile_gallery_spacing"
+                    android:verticalSpacing="@dimen/user_profile_gallery_spacing"
+                    android:columnWidth="@dimen/user_profile_gallery_columnWidth"
+                    android:numColumns="3"
+                    android:visibility="gone"/>
+                <com.cqyw.smart.widget.MyGridView
+                    android:id="@+id/edit_profile_gallery_temp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/user_profile_gallery_hpadding"
+                    android:paddingRight="@dimen/user_profile_gallery_hpadding"
+                    android:paddingBottom="@dimen/user_profile_gallery_hpadding"
+                    android:horizontalSpacing="@dimen/user_profile_gallery_spacing"
+                    android:verticalSpacing="@dimen/user_profile_gallery_spacing"
+                    android:columnWidth="@dimen/user_profile_gallery_columnWidth"
+                    android:numColumns="3"
+                    android:visibility="gone"/>
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginTop="25dp"
+            android:gravity="center_horizontal">
+            <Button
+                android:id="@+id/logout"
+                android:text="@string/joy_logout"
+                android:textSize="18sp"
+                android:textColor="@color/theme_color"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_white_selector"
+                android:visibility="visible"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/app_version"
+            android:textColor="@color/gray_white"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        <TextView
+            android:text="@string/settings_activity_bottom"
+            android:textColor="@color/gray_white"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"/>
+    </LinearLayout>
+</ScrollView>

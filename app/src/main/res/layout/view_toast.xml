@@ -28,7 +28,7 @@
             android:layout_alignWithParentIfMissing="true"
             android:layout_toRightOf="@id/icon_iv"
             android:gravity="center_vertical"
-            android:textColor="@color/white2"
+            android:textColor="@color/light_gray"
             android:textSize="16.0dip" />
     </RelativeLayout>
 

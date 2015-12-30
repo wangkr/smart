@@ -1,20 +1,415 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cqyw.smart" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.cqyw.smart">
 
+    <!-- 权限声明 -->
+    <!-- 访问网络状态-->
+    <!-- 网络相关 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+
+    <!-- 手机状态 -->
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
+
+    <!-- 读写文件 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <!-- 多媒体 -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+    <!-- 手机通讯录-->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <!-- 这个权限用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- 这个权限用于访问GPS定位-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <!-- SD卡读取权限，用户写入离线定位数据-->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+
+    <!-- SDK 权限申明, 第三方 APP 接入时，请将 com.netease.nim.demo 替换为自己的包名 -->
+    <!-- 和下面的 uses-permission 一起加入到你的 AndroidManifest 文件中。 -->
+    <permission
+        android:name="com.cqyw.smart.permission.RECEIVE_MSG"
+        android:protectionLevel="signature"/>
+    <!-- 接收 SDK 消息广播权限， 第三方 APP 接入时，请将 com.netease.nim.demo 替换为自己的包名 -->
+    <uses-permission android:name="com.cqyw.smart.permission.RECEIVE_MSG"/>
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".AppContext"
-        android:theme="@style/AppTheme" >
-        <activity android:name="com.cqyw.smart.ui.activity.MainActivity" >
+        android:name=".config.AppContext"
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup">
+        <activity
+            android:name=".main.activity.WelcomeActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:hardwareAccelerated="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/WelcomeEntranceActionBarTheme"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.launcher" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- 主界面-->
+        <activity android:name=".main.activity.MainActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
+        </activity>
+
+        <!-- 登录界面-->
+        <activity android:name=".login.LoginActivity"
+            android:configChanges="orientation"
+            android:label="@string/login"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <!-- 关于 -->
+        <activity android:name=".friend.activity.AboutActivity"
+            android:configChanges="orientation"
+            android:label="@string/about"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".friend.activity.FriendActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:hardwareAccelerated="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
+        </activity>
+
+        <activity android:name=".contact.activity.UserProfileActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".contact.activity.UserProfileEditActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".contact.activity.UserProfileSettingActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".friend.activity.MultiportActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".contact.activity.WatchBiggerHeadImageActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".contact.activity.PictureViewerActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".contact.activity.LocalContactFriendActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".file.browser.FileBrowserActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".friend.activity.CustomNotificationActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".friend.activity.FeedBackActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".friend.activity.ReportActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".friend.activity.SystemMessageActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".main.activity.RecentNewsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".main.activity.SelectEduInfoActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".main.activity.SnapMsgCommentActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".main.activity.WatchSnapPublicSmartActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".session.activity.MessageHistoryActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".session.activity.WatchSnapChatSmartActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".login.FindPasswordActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name=".login.RegisterActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <!-- 会话窗口 -->
+        <!-- UI组件中包含了语音选文字功能，该界面是全屏显示，为了视觉上的美观，该界面主题ActionBar使用Overlay模式。
+             如果开发者不需要该功能或效果，使用普通主题即可。 同时，还需要将message_activity.xml这个layout中的根节点的paddingTop去掉。 -->
+        <activity
+            android:name="com.netease.nim.uikit.session.activity.P2PMessageActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name="com.netease.nim.uikit.session.activity.TeamMessageActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+
+        <!-- 群聊 -->
+        <activity
+            android:name="com.netease.nim.uikit.team.activity.NormalTeamInfoActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name="com.netease.nim.uikit.team.activity.AdvancedTeamInfoActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name="com.netease.nim.uikit.team.activity.AdvancedTeamMemberActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name="com.netease.nim.uikit.team.activity.AdvancedTeamAnnounceActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name="com.netease.nim.uikit.team.activity.AdvancedTeamMemberInfoActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name="com.netease.nim.uikit.team.activity.AdvancedTeamNicknameActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name="com.netease.nim.uikit.team.activity.AdvancedTeamCreateActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name="com.netease.nim.uikit.team.activity.AdvancedTeamCreateAnnounceActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name="com.netease.nim.uikit.team.activity.TeamPropertySettingActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+
+        <!-- 联系人选择器 -->
+        <activity
+            android:name="com.netease.nim.uikit.contact_selector.activity.ContactSelectActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/contact_selector"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
+
+        <!-- 照片选择 -->
+        <activity
+            android:name="com.netease.nim.uikit.common.media.picker.activity.PickImageActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.netease.nim.uikit.common.media.picker.activity.CropImageActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.netease.nim.uikit.common.media.picker.activity.PickerAlbumActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.netease.nim.uikit.common.media.picker.activity.PickerAlbumPreviewActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.netease.nim.uikit.common.media.picker.activity.PreviewImageFromLocalActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name="com.netease.nim.uikit.common.media.picker.activity.PreviewImageFromCameraActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/input_panel_take"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+
+        <!-- 视频 -->
+        <activity
+            android:name="com.netease.nim.uikit.session.activity.CaptureVideoActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+
+        <activity
+            android:name="com.netease.nim.uikit.session.activity.WatchVideoActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/video_play"/>
+
+        <!-- 查看大图 -->
+        <activity
+            android:name="com.netease.nim.uikit.session.activity.WatchMessagePictureActivity"
+            android:configChanges="keyboardHidden"/>
+
+        <!-- 选择smart封面-->
+        <activity android:name="com.netease.nim.uikit.joycustom.snap.SelectSnapCoverImageActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <!-- 获取新鲜事消息-->
+        <service android:name=".main.service.RecentNewsService">
+            <intent-filter>
+                <action android:name="com.cqyw.smart.main.service.RECENT_MSG"/>
+            </intent-filter>
+        </service>
+        <!-- 网络连接状态监听-->
+        <receiver android:name=".common.network.NetBroadcastReceiver"
+            android:process=":core"/>
+
+        <!-- 软件新版本下载服务-->
+        <service android:name=".main.update.DownloadServices"
+            android:process=":core"/>
+        <!-- 百度地图api-->
+        <!-- meta-data需要写在application中 -->
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="hnhI9BGysIwOl976Hbp3Hdp1" />
+        <!-- 百度定位 -->
+        <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">
+        </service>
+
+        <!-- 网易云信相关设置-->
+        <!-- APP key, 可以在这里设置，也可以在 SDKOptions 中提供。如果 SDKOptions 中提供了，取 SDKOptions 中的值。 -->
+        <meta-data
+            android:name="com.netease.nim.appKey"
+            android:value="0c29699aac46415d5fd9e3705613a6b3" />
+
+        <!-- 友盟统计-->
+        <meta-data android:value="564aa252e0f55a4185003136"
+            android:name="UMENG_APPKEY"/>
+        <meta-data android:value="${UMENG_CHANNEL_VALUE}" android:name="UMENG_CHANNEL"/>
+
+        <!-- NimService 组件。 如需保持后台推送，使用独立进程效果会更好。-->
+        <service android:name="com.netease.nimlib.service.NimService"
+            android:process=":core"/>
+        <!-- 运行后台辅助服务 -->
+        <service
+            android:name="com.netease.nimlib.service.NimService$Aux"
+            android:process=":core"/>
+
+        <!-- 状态监听 Receiver，保持和 NimService 同一进程 -->
+        <receiver android:name="com.netease.nimlib.service.NimReceiver"
+            android:process=":core"
+            android:exported="false">
+        <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+        </intent-filter>
+    </receiver>
+
+    <!-- 云信进程间通信 Receiver -->
+    <receiver android:name="com.netease.nimlib.service.ResponseReceiver"/>
+    <!-- cosine -->
+    <!--<service-->
+        <!--android:name="com.netease.cosine.core.CosineService"-->
+        <!--android:process=":cosine">-->
+    <!--</service>-->
+
+    <!--<receiver-->
+        <!--android:name="com.netease.cosine.target.CosineReceiver"-->
+        <!--android:exported="true"-->
+        <!--android:process=":cosine">-->
+    <!--</receiver>-->
     </application>
 
 </manifest>

@@ -9,6 +9,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
@@ -44,7 +47,6 @@ import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-
 /**
  * 图片操作工具包
  * @note 部分类使用注意之前的操作
@@ -230,8 +232,7 @@ public class ImageUtils {
 
     /**
      * 使用当前时间戳拼接一个唯一的文件名
-     * 
-     * @param format
+     *
      * @return
      */
     public static String getTempFileName() {
@@ -254,7 +255,7 @@ public class ImageUtils {
     /**
      * 判断当前Url是否标准的content://样式，如果不是，则返回绝对路径
      * 
-     * @param uri
+     * @param mUri
      * @return
      */
     public static String getAbsolutePathFromNoStandardUri(Uri mUri) {
@@ -263,8 +264,8 @@ public class ImageUtils {
         String mUriString = mUri.toString();
         mUriString = Uri.decode(mUriString);
 
-        String pre1 = "file://" + SDCARD + File.separator;
-        String pre2 = "file://" + SDCARD_MNT + File.separator;
+        String pre1 = "com.cqyw.smart.file://" + SDCARD + File.separator;
+        String pre2 = "com.cqyw.smart.file://" + SDCARD_MNT + File.separator;
 
         if (mUriString.startsWith(pre1)) {
             filePath = Environment.getExternalStorageDirectory().getPath()
@@ -649,8 +650,8 @@ public class ImageUtils {
      * 获取图片的类型信息
      * 
      * @param bytes
-     *            2~8 byte at beginning of the image file
-     * @return image mimetype or null if the file is not image
+     *            2~8 byte at beginning of the image com.cqyw.smart.file
+     * @return image mimetype or null if the com.cqyw.smart.file is not image
      */
     public static String getImageType(byte[] bytes) {
         if (isJPEG(bytes)) {
@@ -703,7 +704,7 @@ public class ImageUtils {
      * 获取图片路径 2014年8月12日
      * 
      * @param uri
-     * @param cursor
+     * @param context
      * @return E-mail:mr.huangwenwei@gmail.com
      */
     public static String getImagePath(Uri uri, Activity context) {
@@ -792,7 +793,7 @@ public class ImageUtils {
     public static void zipImage(Context ctx, String filePath) {
         int width = SystemTools.getDisplayMetrics().widthPixels;
         int height = SystemTools.getDisplayMetrics().heightPixels;
-        zipImage(ctx, filePath, height/4, width/4);
+        zipImage(ctx, filePath, height / 4, width / 4);
         
     }
     /**
@@ -890,4 +891,89 @@ public class ImageUtils {
         }
         return degree;
     }
+
+    /**
+     * 将字符串转成16 位MD5值
+     *
+     * @param string
+     * @return
+     */
+    public static String MD5(String string) {
+        byte[] hash;
+        try {
+            hash = MessageDigest.getInstance("MD5").digest(
+                    string.getBytes("UTF-8"));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return null;
+        }
+        StringBuilder hex = new StringBuilder(hash.length * 2);
+        for (byte b : hash) {
+            if ((b & 0xFF) < 0x10)
+                hex.append("0");
+            hex.append(Integer.toHexString(b & 0xFF));
+        }
+//        return hex.toString();// 32位
+        return hex.toString().substring(8, 24);// 16位
+    }
+
+    /**
+     * 转换图片成圆形
+     * @param bitmap 传入Bitmap对象
+     * @return
+     */
+    public static Bitmap toRoundBitmap(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float roundPx;
+        float left,top,right,bottom,dst_left,dst_top,dst_right,dst_bottom;
+        if (width <= height) {
+            roundPx = width / 2;
+            top = 0;
+            bottom = width;
+            left = 0;
+            right = width;
+            height = width;
+            dst_left = 0;
+            dst_top = 0;
+            dst_right = width;
+            dst_bottom = width;
+        } else {
+            roundPx = height / 2;
+            float clip = (width - height) / 2;
+            left = clip;
+            right = width - clip;
+            top = 0;
+            bottom = height;
+            width = height;
+            dst_left = 0;
+            dst_top = 0;
+            dst_right = height;
+            dst_bottom = height;
+        }
+
+        Bitmap output = Bitmap. createBitmap(width,
+                height, Config. ARGB_8888 );
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect src = new Rect(( int)left, ( int )top, ( int)right, (int )bottom);
+        final Rect dst = new Rect(( int)dst_left, ( int )dst_top, (int )dst_right, ( int)dst_bottom);
+        final RectF rectF = new RectF(dst);
+
+        paint.setAntiAlias( true );
+
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode( new PorterDuffXfermode(Mode. SRC_IN));
+        canvas.drawBitmap(bitmap, src, dst, paint);
+        return output;
+    }
+
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="@dimen/action_bar_height"
+    android:theme="@android:style/Theme.NoTitleBar"
+    android:background="@drawable/joy_actionbar_bg">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        style="@style/actionBar_leftTitle_style2">
+        <ImageView
+            android:id="@+id/chatBack"
+            style="@style/joy_actionBar_backBtn_style"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/chatName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="18sp"/>
+        <TextView
+            android:id="@+id/chatUniversity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dip"
+            android:textColor="@color/white"
+            android:textSize="10sp"/>
+    </LinearLayout>
+
+</RelativeLayout>

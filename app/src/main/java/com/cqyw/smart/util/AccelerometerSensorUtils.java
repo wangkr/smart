@@ -1,12 +1,12 @@
 package com.cqyw.smart.util;
 
-import com.iflytek.eduassisttask.util.log.LogUtils;
-
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
+import com.cqyw.smart.util.log.LogUtils;
 
 /**
  * 重力加速度传感器

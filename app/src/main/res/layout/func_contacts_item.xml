@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/white"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/semitransparent_black_bg"
+        android:minHeight="@dimen/contact_item_height">
+        <com.cqyw.smart.widget.roundedview.RoundedImageView
+            android:id="@+id/img_head"
+            android:layout_width="@dimen/contact_avatar_iv_size"
+            android:layout_height="@dimen/contact_avatar_iv_size"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="8dp"
+            android:contentDescription="@string/empty"
+            android:scaleType="fitStart"
+            app:riv_corner_radius="8dp"
+            android:src="@drawable/phone_contact_icn" />
+
+        <TextView
+            android:id="@+id/tv_func_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_toRightOf="@+id/img_head"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/phone_contact"
+            android:textColor="@color/text_dark"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tab_new_msg_label"
+            android:layout_toRightOf="@id/tv_func_name"
+            android:layout_centerVertical="true"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="8dip"
+            android:background="@drawable/nim_g_unread_badge"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            android:visibility="gone" />
+        <ImageView
+            android:id="@+id/func_settings"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/btn_settings"
+            android:visibility="gone"
+            />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/adapter_divider_color"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"/>
+
+</LinearLayout>

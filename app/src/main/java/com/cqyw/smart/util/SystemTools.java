@@ -4,22 +4,27 @@ import java.util.Date;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
+import android.os.Build;
 import android.os.Build.VERSION;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-import com.iflytek.eduassisttask.AppContext;
-import com.iflytek.eduassisttask.base.BaseApplication;
+import com.cqyw.smart.config.AppContext;
+import com.cqyw.smart.common.BaseApplication;
+
 /**
  * 常用的系统工具类
  * @author HongYu
+ * @author Kairong
  *
  * 2015年7月30日
  */
@@ -39,7 +44,7 @@ public class SystemTools {
     }
 
     public static String getPhoneIMEI(Context cxt) {
-        TelephonyManager tm = (TelephonyManager)cxt.getSystemService("phone");
+        TelephonyManager tm = (TelephonyManager)cxt.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getDeviceId();
     }
 
@@ -52,20 +57,19 @@ public class SystemTools {
     }
 
     public static boolean checkNet(Context context) {
-        ConnectivityManager cm = (ConnectivityManager)context.getSystemService("connectivity");
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = cm.getActiveNetworkInfo();
         return info != null;
     }
 
     public static boolean isWiFi(Context cxt) {
-        ConnectivityManager cm = (ConnectivityManager)cxt.getSystemService("connectivity");
+        ConnectivityManager cm = (ConnectivityManager)cxt.getSystemService(Context.CONNECTIVITY_SERVICE);
         State state = cm.getNetworkInfo(1).getState();
         return State.CONNECTED == state;
     }
 
     public static String getAppVersionName(Context context) {
         String version = "0";
-
         try {
             version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
             return version;
@@ -90,9 +94,16 @@ public class SystemTools {
     public static void hideSoftKeyboard(View view) {
         if (view == null)
             return;
-        ((InputMethodManager) BaseApplication.getApplication().getSystemService(
+        ((InputMethodManager) BaseApplication.getContext().getSystemService(
                 Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
-                        view.getWindowToken(), 0);
+                view.getWindowToken(), 0);
+    }
+
+    /**
+     *获取手机型号
+     */
+    public static String getDisplayVersion(){
+        return Build.MODEL;
     }
     
     /**
@@ -101,9 +112,30 @@ public class SystemTools {
      */
     public static DisplayMetrics getDisplayMetrics() {
         DisplayMetrics displaymetrics = new DisplayMetrics();
-        ((WindowManager) AppContext.getApplication().getSystemService(
+        ((WindowManager) AppContext.getContext().getSystemService(
                 Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(
-                        displaymetrics);
+                displaymetrics);
         return displaymetrics;
     }
+    /**
+     * 是否有闪光灯
+     */
+    public static boolean supportedFlashLight(){
+        return AppContext.getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+    }
+
+    /**
+     * 是否支持自动聚焦
+     */
+    public static boolean supportedAutoFocus(){
+        return AppContext.getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS);
+    }
+
+    /**
+     * 获取设备ID
+     */
+    public static String getDeviceID(){
+        return Settings.Secure.getString(AppContext.getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
 }

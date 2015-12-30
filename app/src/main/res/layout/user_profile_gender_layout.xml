@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/gender_dialog_width"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lightgray_stroke_white_bg"
+    android:padding="2px"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+    <include layout="@layout/nim_easy_alert_dialog_title"
+        android:id="@+id/gender_layout_title"/>
+
+    <RelativeLayout
+        android:id="@+id/male_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="17dp"
+        android:paddingTop="17dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:text="@string/male"
+            android:textColor="@color/text_dark"
+            android:textSize="@dimen/text_size_17" />
+
+        <ImageView
+            android:id="@+id/male_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/joy_check_box" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:layout_below="@+id/attribute"
+        android:background="@color/light_gray" />
+
+    <RelativeLayout
+        android:id="@+id/female_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="17dp"
+        android:paddingTop="17dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:text="@string/female"
+            android:textColor="@color/text_dark"
+            android:textSize="@dimen/text_size_17" />
+
+        <ImageView
+            android:id="@+id/female_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/check_box_off2" />
+    </RelativeLayout>
+
+
+
+</LinearLayout>

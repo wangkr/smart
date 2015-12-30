@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray">
+    <EditText
+        android:layout_marginTop="10dp"
+        android:id="@+id/report_content_edit"
+        android:textSize="16sp"
+        android:textColor="@color/text_dark"
+        android:textColorHint="@color/gray_white"
+        android:hint="请填写举报原因"
+        android:singleLine="false"
+        android:gravity="top"
+        android:background="@color/white"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="100dp" />
+</LinearLayout>

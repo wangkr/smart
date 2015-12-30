@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="@drawable/nim_semitransparency_selector">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/nim_semitransparency_selector">
+        <com.netease.nim.uikit.common.ui.imageview.HeadImageView
+            android:id="@+id/snap_news_headimage"
+            android:layout_margin="10dp"
+            android:layout_width="@dimen/snap_msg_detail_comment_headsize"
+            android:layout_height="@dimen/snap_msg_detail_comment_headsize" />
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+            <LinearLayout
+                android:id="@+id/snap_news_centercontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_gravity="right|top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/gray_white"
+                android:id="@+id/snap_news_intime"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/snap_news_rightcontent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center"
+            android:orientation="vertical">
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        android:background="@color/adapter_divider_color"
+        android:layout_width="match_parent"
+        android:layout_height="1.0dip"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
+</LinearLayout>

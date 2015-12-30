@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="profile_menu_item_ids">
+        <item>0x00112233</item>
+        <item>0x00112234</item>
+        <item>0x00112235</item>
+        <item>0x00112236</item>
+        <item>0x00112237</item>
+        <item>0x00112238</item>
+        <item>0x00112239</item>
+        <item>0x00112240</item>
+        <item>0x00112241</item>
+        <item>0x00112242</item>
+        <item>0x00112243</item>
+        <item>0x00112244</item>
+        <item>0x00112245</item>
+        <item>0x00112246</item>
+        <item>0x00112247</item>
+        <item>0x00112248</item>
+        <item>0x00112249</item>
+        <item>0x00112250</item>
+    </integer-array>
+</resources>

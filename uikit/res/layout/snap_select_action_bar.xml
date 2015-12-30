@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="@dimen/action_bar_height"
+    android:theme="@android:style/Theme.NoTitleBar"
+    android:background="@android:color/background_dark">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="left|center_vertical"
+        android:divider="@drawable/divider_black"
+        android:showDividers="end"
+        android:dividerPadding="10dp">
+        <ImageView
+            android:id="@+id/centerBack"
+            style="@style/joy_actionBar_backBtn_style"/>
+    </LinearLayout>
+
+    <TextView
+        android:text="选择封面图片"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="@dimen/joy_actionBar_title_Size"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/snap_send"
+        android:text="@string/send"
+        android:paddingRight="15dp"
+        android:paddingLeft="15dp"
+        android:layout_alignParentRight="true"
+        style="@style/snap_actionBar_nextStep_textStyle"
+        >
+    </TextView>
+
+</RelativeLayout>

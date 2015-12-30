@@ -1,9 +1,106 @@
 <resources>
-    <string name="app_name">smart</string>
+    <string name="app_name">Joy</string>
+    <string name="app_version">V 1.0.0</string>
     <string name="title_activity_test">TestActivity</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="mail_suffix">#064</string>
-    <string name="title_activity_base">BaseActivity</string>
+    <!-- 好友关系-->
+    <string name="userProfile">用户资料</string>
+    <string name="friendProfile">好友资料</string>
+    <string name="add_user">添加好友</string>
+    <string name="profile_head">头像</string>
+    <string name="profile_nick">昵称</string>
+    <string name="profile_gender">性别</string>
+    <string name="gender_male">男</string>
+    <string name="gender_female">女</string>
+    <string name="gender_unknown">未知</string>
+    <string name="profile_age">年龄</string>
+    <string name="profile_jovalue">Jo值</string>
+    <string name="profile_snapvalue">自曝值</string>
+    <string name="profile_university">学校信息</string>
+    <string name="profile_gallery">相册</string>
+    <string name="delete_friend">删除好友</string>
+    <string name="profile_menu_item_warning">只能显示前20个菜单</string>
+    <string name="get_userInfo_from_remote_failed">获取部分好友信息失败:</string>
+    <string name="get_userInfo_from_remote_exception">获取好友信息异常:</string>
+    <string name="confirm">确定</string>
+    <string name="next_step">下一步</string>
+    <string name="joy_logout">退出登录</string>
+    <string name="settings_activity_bottom">官网:http://huanian.org</string>
+
+
+    <string name="app_introduce">   介绍：初期主要服务大学生，如果能很好地做到信息过滤可以拓展至初、高中学生；借助学生搞怪、好奇、尝鲜的心理特质，同时兼具荷尔蒙。初期一些同学会尝鲜下载，不过得管理好
+初期内容。</string>
+    <string name="feedback">反馈</string>
+    <string name="feed_back_setimage">添加截图</string>
+    <string name="feedback_success_tip">反馈成功，感谢您的反馈,\n我们会尽快解决的哟，么么哒</string>
+    <string name="feedback_input_tip">请填写反馈意见</string>
+
+    <string name="message">消息</string>
+    <string name="contact">好友</string>
+    <string name="phone_contact">通讯录好友</string>
+    <string name="official_name">Joy小二</string>
+    <string name="like_hint_text">Jo了一下</string>
+    <string name="have_liked_hinttext">Jo过了</string>
+    <string name="comment_reply_hinttext">JoJo</string>
+
+    <!-- 注册登录-->
+    <string name="find_password">找回密码</string>
+    <string name="reset_password">重置密码</string>
+    <string name="newuser_register">新用户注册</string>
+    <string name="processing">处理中...</string>
+    <string name="reset_passwd_success">密码修改成功</string>
+    <string name="reset_passwd_failed">密码修改失败</string>
+
+
+    <string name="description">That&amp;apos;s the image to draw the progressbar around.</string>
+
+    <!-- 下拉刷新控件-->
+    <string name="xlistview_header_hint_normal">下拉刷新</string>
+    <string name="xlistview_header_hint_ready">松开刷新数据</string>
+    <string name="xlistview_header_hint_loading">正在加载...</string>
+    <string name="xlistview_header_last_time">上次更新时间：</string>
+    <string name="xlistview_footer_hint_normal">查看更多</string>
+    <string name="xlistview_footer_hint_ready">松开载入更多</string>
+    <string name="prepare_data">正在准备数据...</string>
+
+    <!--java 类里面的常量-->
+    <!--server-->
+    <string name="joy_server">http://huanian.org:8088/</string>
+    <!---->
+    <string name="api_name_logout">login/logout</string>
+    <string name="api_name_friends">relation/friends</string>
+    <string name="api_name_delfriends">relation/del_friend</string>
+    <string name="api_name_updateinfo">userinfo/update_user_info1</string>
+    <string name="api_name_updateedu">userinfo/update_education</string>
+    <string name="api_get_extensioninfo">userinfo/get_user_info</string>
+    <string name="api_userinfo_report">userinfo/report</string>
+    <string name="api_loccontact_match">userinfo/is_joy</string>
+    <string name="api_feedback_url">systems/feedback</string>
+    <string name="api_check_update">version/check_version</string>
+    <string name="api_down_newversion">sysmsg/download/</string>
+    <string name="api_comment_addlike">comment/add_like</string>
+    <string name="api_get_comment">comment/get_comment</string>
+    <string name="api_add_comment">comment/add_comment</string>
+    <string name="api_getnewby_nid">news/get_news_by_nid</string>
+    <string name="api_getnews_list">news/get_news</string>
+    <string name="api_getnews_oldlist">news/get_news_old</string>
+    <string name="api_delete_news">news/delete_news</string>
+    <string name="api_send_news">news/add_news</string>
+    <string name="api_getlikesby_nids">news/get_detail_by_nids</string>
+    <string name="api_news_mark">news/mark1</string>
+    <string name="api_news_report">news/report</string>
+    <string name="api_get_recentnew">heartbeat/index</string>
+    <string name="api_recentnews_mark">heartbeat/mark</string>
+    <string name="api_get_provinceinfo">conform/get_province</string>
+    <string name="api_get_schoolinfo">conform/get_university_by_pid</string>
+    <string name="api_set_unmatch">userinfo/unmatch</string>
+    <string name="api_set_match">userinfo/match</string>
+
+    <string name="api_name_register">register/index</string>
+    <string name="api_name_resetpassword">register/find_pass</string>
+    <string name="api_verify_code">register/code</string>
+    <string name="api_verify_code1">register/code1</string>
+
+    <string name="api_friendsnote_list_get">relation/get_friends_list</string>
+    <string name="api_friendsnote_list_set">relation/edit_friends_note</string>
 </resources>

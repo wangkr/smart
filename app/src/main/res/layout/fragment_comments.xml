@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="top">
+    <com.cqyw.smart.widget.xlistview.XListView
+        android:id="@+id/comment_comments_listview"
+        style="@style/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@null"
+        android:fadingEdge="none"
+        android:focusable="false"
+        android:listSelector="@android:color/transparent"
+        android:scrollbars="vertical"
+        android:background="@color/white"
+        />
+    <include android:id="@+id/comment_input_ll"
+        layout="@layout/layout_comment_inputbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
+</LinearLayout>

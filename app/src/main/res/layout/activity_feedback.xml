@@ -1,90 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.cqyw.smart.widget.PercentLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white2"
+    android:background="@color/light_gray"
     android:orientation="vertical">
 
-    <!-- action bar-->
-    <android.support.percent.PercentRelativeLayout
-        app:layout_heightPercent="8%p"
-        style="@style/actionBar_style"
-        >
-        <ImageView
-            android:id="@+id/feedback_back"
-            app:layout_heightPercent="50%p"
-            style="@style/actionBar_back_style"/>
-
-        <View
-            android:layout_toRightOf="@id/feedback_back"
-            style="@style/actionBar_divider_style"
-            app:layout_heightPercent="55%p"
-            app:layout_marginLeftPercent="1%p"
-            app:layout_marginRightPercent="2%p"/>
-
-        <TextView
-            app:layout_heightPercent="50%p"
-            android:text="反馈"
-            style="@style/actionBar_title_style"
-            />
-        <TextView
-            android:id="@+id/feedback_confirm"
-            android:text="确定"
-            app:layout_heightPercent="50%p"
-            style="@style/actionBar_nextStep_style"
-            />
-    </android.support.percent.PercentRelativeLayout>
-    <com.cqyw.smart.widget.PercentLinearLayout
+    <LinearLayout
         android:id="@+id/feedback_edit_layout"
-        style="@style/PercentWidthPercentHeight"
-        app:layout_widthPercent="80%p"
-        app:layout_heightPercent="50%p"
-        app:layout_marginTopPercent="8%p"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical"
-        android:background="@drawable/rounded_white_bg">
+        android:layout_marginTop="10dp"
+        android:background="@color/white">
         <EditText
             android:id="@+id/feedback_content"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_heightPercent="40%p"
-            android:hint="请填写反馈意见"
-            android:paddingLeft="@dimen/edit_textview_padding"
-            android:paddingRight="@dimen/edit_textview_padding"
-            android:textColorHint="@color/hint_color"
+            android:layout_height="match_parent"
+            android:hint="@string/feedback_input_tip"
+            android:padding="@dimen/edit_textview_padding"
+            android:textColorHint="@color/gray_white"
             android:background="@android:color/transparent"
             android:gravity="left"/>
-        <View
-            android:layout_width="0dp"
-            app:layout_widthPercent="98%p"
-            android:layout_height="@dimen/input_box_divider_width"
-            android:layout_gravity="center_horizontal"
-            android:background="@color/hint_color"/>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_marginTopPercent="5%p"
-            app:layout_marginLeftPercent="5%p"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-            <ImageView
-                android:id="@+id/feedback_image"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:background="@color/white2"
-                android:src="@mipmap/add_picture_icn"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="添加反馈截图"
-                android:textColor="@color/hint_color"/>
-        </LinearLayout>
-    </com.cqyw.smart.widget.PercentLinearLayout>
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/feedback_success_layout"
-        app:layout_marginTopPercent="20%p"
+        android:layout_marginTop="40dp"
         android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content"
@@ -94,7 +35,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/feedback"
+            android:src="@drawable/feedback"
             />
         <TextView
             android:layout_width="wrap_content"
@@ -102,7 +43,8 @@
             android:textColor="@color/theme_color"
             android:layout_marginTop="20dp"
             android:textSize="20sp"
-            android:text="反馈成功，感谢您的反馈,\r\n我们会尽快解决的哟，么么哒"
+            android:singleLine="false"
+            android:text="@string/feedback_success_tip"
             android:gravity="center"/>
     </LinearLayout>
-</com.cqyw.smart.widget.PercentLinearLayout>
+</LinearLayout>

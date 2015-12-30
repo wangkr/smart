@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/theme_color_dark"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/mainTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="开启通讯录"
+                android:textColor="@color/text_dark"
+                android:textSize="@dimen/text_size_15"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="15dp"
+                />
+            <TextView
+                android:id="@+id/subTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/mainTitle"
+                android:layout_alignLeft="@id/mainTitle"
+                android:layout_marginTop="2dp"
+                android:text="Ta能在通讯录好友看到你, 你也能看到Ta"
+                android:textSize="@dimen/text_size_11"
+                android:layout_marginBottom="15dp"/>
+
+            <com.netease.nim.uikit.common.ui.widget.SwitchButton
+                android:id="@+id/local_contact_switch"
+                android:layout_width="58dip"
+                android:layout_height="30dip"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/theme_color_dark"/>
+</LinearLayout>

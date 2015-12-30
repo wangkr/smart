@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="@dimen/friend_tab_width"
+    android:layout_height="@dimen/friend_tab_height"
+    android:background="@drawable/btn_rounded_white_bg"
+    android:padding="2dp">
+    <RelativeLayout
+        android:id="@+id/friend_tab_news_rl"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/friend_tab_session"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/message"
+            android:textSize="16sp"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:textColor="@color/white"
+            />
+        <TextView
+            android:id="@+id/tab_new_msg_label"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/nim_g_unread_badge"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="4dp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/friend_tab_friends_rl"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/friend_tab_contact"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/contact"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:textColor="@color/theme_color"
+            />
+        <TextView
+            android:id="@+id/tab_new_friend_label"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/nim_g_unread_badge"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="4dp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</LinearLayout>

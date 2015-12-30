@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/light_gray">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/gray_white"/>
+    <LinearLayout
+        android:gravity="top"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/comment_input_box"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/nim_message_input_edittext_box"
+            android:minHeight="30dp"
+            android:singleLine="false"
+            android:textSize="16sp"
+            android:textColor="@color/text_dark"
+            android:textColorHint="@color/gray_white"
+            />
+        <Button
+            android:id="@+id/comment_send_btn"
+            android:text="评论"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:enabled="false"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/joy_message_button_bottom_send_selector"/>
+    </LinearLayout>
+</LinearLayout>

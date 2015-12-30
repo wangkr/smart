@@ -1,26 +1,98 @@
 apply plugin: 'com.android.application'
 
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd-HH:mm:ss", TimeZone.getTimeZone("UTC+8"))
+}
+
+def keyStore = file('joyKeystore.jks')
+
 android {
-    compileSdkVersion 22
-    buildToolsVersion '23.0.1'
+    compileSdkVersion 23
+    buildToolsVersion '23.0.2'
 
     defaultConfig {
         applicationId "com.cqyw.smart"
         minSdkVersion 14
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 23
+        versionCode 6
+        versionName "1.0.4"
+        multiDexEnabled true
+    }
+    lintOptions{
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    productFlavors{
+        def path="./channel.txt"
+        file(path).eachLine{channel->
+            "$channel"{
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: channel]
+        }
+        }
+    }
+    signingConfigs {
+        app {
+            storeFile file('joyKeystore.jks')
+            storePassword project.hasProperty('STOREPASS') ? STOREPASS : '2ba3565ca39472da3b3c9357fb60'
+            keyAlias project.hasProperty('KEYALIAS') ? KEYALIAS : 'huanian_joy'
+            keyPassword project.hasProperty('KEYPASS') ? KEYPASS :'lafas48v!t8a**df3@wla9n7g2093j$aaiu23i1?#sdj'
+        }
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            zipAlignEnabled true
+            debuggable false
+            buildConfigField("boolean","LOG_DEBUG","false")
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (keyStore.exists()){
+                signingConfig signingConfigs.app
+            } else {
+                println("----------------------using default key---------------------")
+            }
+
+//            android.applicationVariants.all {
+//                variant ->
+//                    variant.outputs.each {
+//                        output -> def outputFile = output.outputFile
+//                            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+//                                def fileName = "joy_v${defaultConfig.versionName}_${releaseTime()}_${variant.productFlavors[0].name}.apk"
+//                                output.outputFile = new File(fileName)
+//                            }
+//                    }
+//            }
         }
+    }
+
+    sourceSets {
+        sourceSets {
+            main {
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+                java.srcDirs = ['src/main/java']
+                res.srcDirs = ['src/main/res']
+                assets.srcDirs = ['src/main/assets']
+                jniLibs.srcDirs = ['libs']
+            }
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
     }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:22.2.1'
-    compile 'com.android.support:percent:23.0.0'
+    compile fileTree(include: ['*.jar'], dir: 'libs', exclude: ['android-support-*.jar'])
+    compile project(path: ':uikit')
+    compile files('libs/pinyin4j-2.5.0.jar')
+    compile files('libs/httpcore-4.4.3.jar')
+    compile files('libs/httpclient-4.5.1.jar')
+
+    compile 'com.android.support:percent:23.0.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.android.support:support-annotations:23.0.1'
 }

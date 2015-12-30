@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="@color/light_gray">
+    <GridView
+        android:id="@+id/cover_item_list"
+        android:numColumns="2"
+        android:listSelector="@drawable/joy_semitransparency_theme_seletor"
+        android:layout_centerHorizontal="true"
+        android:columnWidth="150dp"
+        android:horizontalSpacing="10dp"
+        android:verticalSpacing="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

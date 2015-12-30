@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray">
+    <include layout="@layout/layout_localcontact_settings"
+        android:id="@+id/settings_layout"/>
+    <ListView
+        android:id="@+id/local_contact_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:listSelector="@android:color/transparent"
+        android:divider="@null"/>
+</LinearLayout>

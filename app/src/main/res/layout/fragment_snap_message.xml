@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.netease.nim.uikit.session.helper.MsgBkImageView
+            android:id="@+id/snap_messageList_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/light_gray"/>
+        <com.cqyw.smart.main.model.listview.SnapMessageListView
+            android:id="@+id/public_snapmessage_list"
+            style="@style/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@null"
+            android:fadingEdge="none"
+            android:focusable="false"
+            android:listSelector="@android:color/transparent"
+            android:scrollbars="vertical">
+        </com.cqyw.smart.main.model.listview.SnapMessageListView>
+
+        <com.cqyw.smart.widget.circleview.CircleButton
+            android:id="@+id/public_snappicture_button"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/btn_snap_picture_large"
+            android:scaleType="fitCenter"
+            app:cb_color="#50ffffff"
+            app:cb_pressedRingWidth="5dp"/>
+    </FrameLayout>
+</LinearLayout>

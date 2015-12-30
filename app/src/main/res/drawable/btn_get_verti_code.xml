@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:drawable="@drawable/rounded_stroke_rect_selected_bg2" android:state_pressed="true"/>
-    <item android:drawable="@drawable/rounded_stroke_rect_bg2" android:state_selected="false"/>
-    <item android:drawable="@drawable/rounded_stroke_rect_selected_bg2" android:state_selected="true"/>
+    <item android:drawable="@drawable/rounded_theme_stroke_white_bg" android:state_enabled="true"/>
+    <item android:drawable="@drawable/rounded_gray_stroke_white_selected_bg" android:state_enabled="false"/>
 </selector>

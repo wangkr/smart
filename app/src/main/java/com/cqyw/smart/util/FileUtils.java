@@ -18,14 +18,14 @@ import android.os.StatFs;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.iflytek.eduassisttask.util.log.LogUtils;
+import com.cqyw.smart.util.log.LogUtils;
 
 public class FileUtils {
     /**
      * 写文本文件 在Android系统中，文件保存在 /data/data/PACKAGE_NAME/files 目录下
-     * 
-     * @param context
-     * @param msg
+     * @param content
+     * @param fileName
+     * @param content
      */
     public static void write(Context context, String fileName, String content) {
         if (content == null)
@@ -284,7 +284,7 @@ public class FileUtils {
     /**
      * 获取目录文件个数
      * 
-     * @param emojiFragment
+     * @param dir
      * @return
      */
     public long getFileList(File dir) {
@@ -444,7 +444,7 @@ public class FileUtils {
                         deletedFile.delete();
                     }
                     newPath.delete();
-                    Log.i("DirectoryManager deleteDirectory", fileName);
+                    Log.i("DM deleteDirectory", fileName);
                     status = true;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -475,7 +475,7 @@ public class FileUtils {
             checker.checkDelete(newPath.toString());
             if (newPath.isFile()) {
                 try {
-                    Log.i("DirectoryManager deleteFile", fileName);
+                    Log.i("DM deleteFile", fileName);
                     newPath.delete();
                     status = true;
                 } catch (SecurityException se) {
@@ -532,7 +532,7 @@ public class FileUtils {
         File f = new File(filePath);
         checker.checkDelete(filePath);
         if (f.isFile()) {
-            Log.i("DirectoryManager deleteFile", filePath);
+            Log.i("DM deleteFile", filePath);
             f.delete();
             return true;
         }
@@ -541,7 +541,7 @@ public class FileUtils {
 
     /**
      * 清空一个文件夹
-     * @param files
+     * @param filePath
      */
     public static void clearFileWithPath(String filePath) {
         List<File> files = FileUtils.listPathFiles(filePath);
@@ -570,7 +570,7 @@ public class FileUtils {
     /**
      * 列出root目录下所有子目录
      * 
-     * @param path
+     * @param root
      * @return 绝对路径
      */
     public static List<String> listPath(String root) {
@@ -620,7 +620,7 @@ public class FileUtils {
     /**
      * 创建目录
      * 
-     * @param path
+     * @param newPath
      */
     public static PathStatus createPath(String newPath) {
         File path = new File(newPath);
