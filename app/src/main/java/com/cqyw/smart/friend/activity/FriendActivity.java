@@ -69,8 +69,6 @@ public class FriendActivity extends JActionBarActivity {
         boolean syncCompleted = LoginSyncDataStatusObserver.getInstance().observeSyncDataCompletedEvent(new Observer<Void>() {
             @Override
             public void onEvent(Void v) {
-                // 加载主页面
-                showMainFragment();
                 DialogMaker.dismissProgressDialog();
             }
         });
@@ -78,14 +76,13 @@ public class FriendActivity extends JActionBarActivity {
         Log.i(TAG, "sync completed = " + syncCompleted);
         if (!syncCompleted) {
             DialogMaker.showProgressDialog(FriendActivity.this, getString(R.string.prepare_data)).setCanceledOnTouchOutside(false);
-        } else {
-            // 加载主页面
-            showMainFragment();
         }
     }
 
     @Override
     protected void initView() {
+        // 加载主页面
+        showMainFragment();
     }
 
     @Override

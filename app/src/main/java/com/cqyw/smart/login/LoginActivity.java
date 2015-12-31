@@ -22,6 +22,7 @@ import com.cqyw.smart.config.AppCache;
 import com.cqyw.smart.config.AppContext;
 import com.cqyw.smart.config.UserPreferences;
 import com.cqyw.smart.contact.helper.ExtInfoHelper;
+import com.cqyw.smart.friend.activity.FriendActivity;
 import com.cqyw.smart.login.protocol.LoginHttpCallback;
 import com.cqyw.smart.login.protocol.LoginHttpClient;
 import com.cqyw.smart.main.activity.MainActivity;
@@ -185,46 +186,48 @@ public class LoginActivity extends TActionBarActivity implements View.OnKeyListe
      */
 
     /*监测登录进程，过慢则自动重新登录*/
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            if (msg.what == RELOGIN) {
-                loginJoyServer();
-            }
-        }
-    };
+//    private Handler handler = new Handler(){
+//        @Override
+//        public void handleMessage(Message msg) {
+//            if (msg.what == RELOGIN) {
+//                loginJoyServer();
+//            }
+//        }
+//    };
     private boolean isLogining = false;
     private static long startTime = 0;
     public static final int RELOGIN = 33333;
     // 监测进程
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    startTime = System.currentTimeMillis();
-                    while (isLogining) {
-                        if (System.currentTimeMillis() - startTime > 2*1000) {
-                            if (loginRequest != null) {
-                                loginRequest.abort();
-                            }
-                            handler.sendEmptyMessage(RELOGIN);
-                            break;
-                        }
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e){
-                            e.printStackTrace();
-                            break;
-                        }
-                    }
-                }
-            }).start();
-        }
-    };
+//    private Runnable runnable = new Runnable() {
+//        @Override
+//        public void run() {
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    startTime = System.currentTimeMillis();
+//                    while (isLogining) {
+//                        if (System.currentTimeMillis() - startTime > 2*1000) {
+//                            if (loginRequest != null) {
+//                                loginRequest.abort();
+//                            }
+//                            handler.sendEmptyMessage(RELOGIN);
+//                            break;
+//                        }
+//                        try {
+//                            Thread.sleep(200);
+//                        } catch (InterruptedException e){
+//                            e.printStackTrace();
+//                            break;
+//                        }
+//                    }
+//                }
+//            }).start();
+//        }
+//    };
 
     private void loginSuccess() {
+        /*判断是不是切换账号*/
+        AppCache.initSwitchAccountStatus(account);
         /*保存账号和密码*/
         AppSharedPreference.saveUserAccount(account);
         AppSharedPreference.saveUserMD5Passwd(JoyPassword(loginPasswordEdit.getEditableText().toString()));
@@ -273,7 +276,7 @@ public class LoginActivity extends TActionBarActivity implements View.OnKeyListe
     private void loginJoyServer(){
         LogUtil.d(TAG, "joy server logining...");
         isLogining = true;
-        handler.post(runnable);
+//        handler.post(runnable);
         account = loginAccountEdit.getEditableText().toString();
         LoginHttpClient.getInstance().login(account, JoyPassword(loginPasswordEdit.getEditableText().toString()), new LoginHttpCallback<JSONObject>() {
             @Override
@@ -302,7 +305,6 @@ public class LoginActivity extends TActionBarActivity implements View.OnKeyListe
         // 在这里直接使用同步到云信服务器的帐号和token登录。
         // 这里为了简便起见，demo就直接使用了密码的md5作为token。
         // 如果开发者直接使用这个demo，只更改appkey，然后就登入自己的账户体系的话，需要传入同步到云信服务器的token，而不是用户密码。
-        account = loginAccountEdit.getEditableText().toString().toLowerCase();
         NimToken = NimTokenFromPassword(account, loginPasswordEdit.getEditableText().toString());
         // 云信登录
         loginRequest = NIMClient.getService(AuthService.class).login(new LoginInfo(JoyId, NimToken));

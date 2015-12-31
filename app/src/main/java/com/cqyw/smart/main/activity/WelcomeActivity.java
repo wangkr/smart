@@ -95,12 +95,11 @@ public class WelcomeActivity extends TActivity {
                     }
                 }
             };
-            if (!AppSharedPreference.isFirstIn()) {
-                if (customSplash) {
-                    new Handler().postDelayed(runnable, 1000);
-                } else {
-                    runnable.run();
-                }
+
+            if (customSplash) {
+                new Handler().postDelayed(runnable, 1000);
+            } else {
+                runnable.run();
             }
         }
     }
@@ -195,15 +194,8 @@ public class WelcomeActivity extends TActivity {
      * 首次进入，打开欢迎界面
      */
     private void showSplashView() {
-        if (AppSharedPreference.isFirstIn()){
-            initWelcomeNavigation();
-            AppSharedPreference.saveFirstIn();
-            firstEnter = false;
-        } else {
-            initWelcomeBg();
-            customSplash = true;
-        }
-
+        initWelcomeBg();
+        customSplash = true;
     }
 
     private void showMainActivity() {

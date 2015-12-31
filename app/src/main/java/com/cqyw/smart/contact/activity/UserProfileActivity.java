@@ -28,6 +28,7 @@ import com.cqyw.smart.contact.extensioninfo.model.GalleryPhoto;
 import com.cqyw.smart.contact.extensioninfo.ui.GalPhotoViewHolder;
 import com.cqyw.smart.contact.extensioninfo.ui.GalleryPhotoAdapter;
 import com.cqyw.smart.contact.helper.ExtInfoHelper;
+import com.cqyw.smart.friend.activity.ReportActivity;
 import com.cqyw.smart.session.SessionHelper;
 import com.cqyw.smart.util.JoyTimeUtils;
 import com.cqyw.smart.util.StringUtils;
@@ -560,7 +561,7 @@ public class UserProfileActivity extends TActionBarActivity implements TAdapterD
         switch (item.getItemId()) {
             case R.id.report_publicsnap_submenu:
                 // 上传举报字段
-//                ReportActivity.start(UserProfileActivity.this, account, "", true);
+                ReportActivity.start(UserProfileActivity.this, account, "", true);
                 break;
             default:
                 break;

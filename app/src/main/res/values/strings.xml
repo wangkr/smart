@@ -15,7 +15,7 @@
     <string name="gender_unknown">未知</string>
     <string name="profile_age">年龄</string>
     <string name="profile_jovalue">Jo值</string>
-    <string name="profile_snapvalue">自曝值</string>
+    <string name="profile_snapvalue">发布</string>
     <string name="profile_university">学校信息</string>
     <string name="profile_gallery">相册</string>
     <string name="delete_friend">删除好友</string>

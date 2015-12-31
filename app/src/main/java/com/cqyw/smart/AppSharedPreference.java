@@ -21,7 +21,6 @@ public class AppSharedPreference {
     private static final String KEY_JOY_ID = "joy_id";
     private static final String KEY_LOGIN_FLAG = "login_flag";
     private static final String KEY_FIRST_IN = "first_in";
-    private static final String KEY_SHOW_HINT = "showhint";
     private static final String KEY_EDUINFO_EDITED = "edu_info_edited";
     private static final String KEY_TOKEN_TIME = "token_time";
     private static final String KEY_LASTCHECKUPDATE_TIME = "last_checkupdate_time";
@@ -33,12 +32,6 @@ public class AppSharedPreference {
     private static final String KEY_LOCALCONTACT_SWITCH = "localcontact_switch";
 
     public AppSharedPreference(){
-    }
-    public static void setCameraPos(int cameraPos){
-        AppContext.set(AppConstants.defCamPosKey, cameraPos);
-    }
-    public static int getCameraPos(){
-        return AppContext.get(AppConstants.defCamPosKey, Camera.CameraInfo.CAMERA_FACING_FRONT);
     }
 
     public static void saveNimToken(String token) {
@@ -53,16 +46,16 @@ public class AppSharedPreference {
         AppContext.set(KEY_USER_ACCOUNT, account);
     }
 
+    public static String getUserAccount(){
+        return AppContext.get(KEY_USER_ACCOUNT, null);
+    }
+
     public static void setLocalcontactSwitch(boolean match) {
         AppContext.set(KEY_LOCALCONTACT_SWITCH, match);
     }
 
     public static boolean getLocalcontactSwitch() {
         return AppContext.get(KEY_LOCALCONTACT_SWITCH, true);
-    }
-
-    public static String getUserAccount(){
-        return AppContext.get(KEY_USER_ACCOUNT, null);
     }
 
     public static void saveUserMD5Passwd(String passwd) {
@@ -119,16 +112,8 @@ public class AppSharedPreference {
         AppContext.set(KEY_FIRST_IN, false);
     }
 
-    public static boolean isFirstIn(){
+    public static boolean isFirstIn() {
         return AppContext.get(KEY_FIRST_IN, true);
-    }
-
-    public static void saveShowHint(){
-        AppContext.set(KEY_SHOW_HINT, true);
-    }
-
-    public static boolean isShowHint(){
-        return AppContext.get(KEY_SHOW_HINT, false);
     }
 
     public static void setEduinfoEdited(boolean eduinfoEdited){

@@ -41,9 +41,6 @@ import com.cqyw.smart.main.util.MainUtils;
 import com.cqyw.smart.util.SystemTools;
 import com.cqyw.smart.widget.circleview.CircleImageView;
 import com.cqyw.smart.widget.popwindow.HintDialog;
-import com.netease.nim.uikit.NimUIKit;
-import com.netease.nim.uikit.cache.FriendDataCache;
-import com.netease.nim.uikit.cache.NimUserInfoCache;
 import com.netease.nim.uikit.common.activity.TActionBarActivity;
 import com.netease.nim.uikit.common.fragment.TFragment;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialog;
@@ -71,7 +68,10 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
         MyLocationManager.NimLocationListener, ReminderManager.UnreadNumChangedCallback{
     public static final String TAG = "MainActivity";
 
+    public static final int REQ_SELECT_EDU = 123;
     private static final String EXTRA_APP_QUIT = "APP_QUIT";
+    public static final String EXTRA_GO_FRIEND = "GO_FRIEND";
+    private static boolean isOnFriendActivity = false;
 
     // view
     private RelativeLayout mainActionbarView;
@@ -129,17 +129,21 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
             getHandler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    isOnFriendActivity = true;
                     FriendActivity.start(MainActivity.this, intent);
                 }
             }, 200);
-
         } else if (intent.hasExtra(EXTRA_APP_QUIT)) {
             onLogout();
             return;
+        } else if (intent.hasExtra(EXTRA_GO_FRIEND)) {
+            isOnFriendActivity = true;
+            FriendActivity.start(MainActivity.this);
         } else if (intent.hasExtra(Extras.EXTRA_JUMP_P2P)) {
             getHandler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    isOnFriendActivity = true;
                     FriendActivity.start(MainActivity.this, intent);
                 }
             }, 200);
@@ -213,20 +217,6 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     }
     
     private void doOtherThings() {
-        // 显示导航信息
-        getHandler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!AppSharedPreference.isShowHint()) {
-                    AppSharedPreference.saveShowHint();
-                    Dialog hintDialog = new HintDialog(MainActivity.this, R.style.dialog_default_style);
-                    hintDialog.setCanceledOnTouchOutside(false);
-                    hintDialog.setCancelable(true);
-                    hintDialog.show();
-                }
-            }
-        }, 500);
-
         if (NetworkUtil.isNetAvailable(this)) {
             // 检测更新
             getHandler().postDelayed(new Runnable() {
@@ -244,7 +234,7 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!AppCache.isStatusValid() && event.getAction() == MotionEvent.ACTION_MOVE) {
-            SelectEduInfoActivity.start(MainActivity.this);
+            SelectEduInfoActivity.start(MainActivity.this,REQ_SELECT_EDU);
             return true;
         }
         return super.onTouchEvent(event);
@@ -292,6 +282,14 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        isOnFriendActivity = false;
+        requestSystemMessageUnreadCount();
+        refreshTipsdotView();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         initLocation();
@@ -325,13 +323,14 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if (!AppCache.isStatusValid()) {
-            SelectEduInfoActivity.start(MainActivity.this);
+            SelectEduInfoActivity.start(MainActivity.this,REQ_SELECT_EDU);
             return;
         }
         switch (v.getId()) {
             case R.id.btn_main_friend:
                 friend_unread_num = 0;
                 refreshTipsdotView();
+                isOnFriendActivity = true;
                 FriendActivity.start(this);
                 break;
             case R.id.btn_main_tips:
@@ -375,8 +374,10 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
 
     @Override
     public void onUnreadNumChanged(ReminderItem item) {
-        friend_unread_num += item.getUnread();
-        refreshTipsdotView();
+        if (!isOnFriendActivity) {
+            friend_unread_num += item.getUnread();
+            refreshTipsdotView();
+        }
     }
 
 
@@ -442,26 +443,44 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     private Observer<Integer> sysMsgUnreadCountChangedObserver = new Observer<Integer>() {
         @Override
         public void onEvent(Integer unreadCount) {
-            friend_unread_num += unreadCount;
-            refreshTipsdotView();
+            if (!isOnFriendActivity) {
+                friend_unread_num += unreadCount;
+                refreshTipsdotView();
+            }
         }
     };
 
     private Observer<List<RecentSnapNews>> recentNewsObserver = new Observer<List<RecentSnapNews>>() {
         @Override
         public void onEvent(List<RecentSnapNews> recentSnapNewses) {
-            tips_unread_num += recentSnapNewses.size();
-            refreshTipsdotView();
+            if (!isOnFriendActivity) {
+                tips_unread_num += recentSnapNewses.size();
+                refreshTipsdotView();
+            }
         }
     };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (messageFragment != null ) {
-            messageFragment.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQ_SELECT_EDU:
+                // 显示导航信息
+                if (AppSharedPreference.isFirstIn()) {
+                    AppSharedPreference.saveFirstIn();
+                    Dialog hintDialog = new HintDialog(MainActivity.this, R.style.dialog_default_style);
+                    hintDialog.setCanceledOnTouchOutside(true);
+                    hintDialog.setCancelable(true);
+                    hintDialog.show();
+                }
+                break;
+            default:
+                if (messageFragment != null ) {
+                    messageFragment.onActivityResult(requestCode, resultCode, data);
+                }
+                break;
         }
+
     }
     
     // 检查更新

@@ -71,9 +71,11 @@ import com.netease.nim.uikit.common.util.sys.TimeUtil;
 import com.netease.nim.uikit.joycustom.upyun.JoyImageUtil;
 import com.netease.nim.uikit.session.constant.Extras;
 import com.netease.nimlib.sdk.AbortableFuture;
+import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.ResponseCode;
+import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.uinfo.constant.GenderEnum;
 import com.netease.nimlib.sdk.uinfo.constant.UserInfoFieldEnum;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
@@ -736,6 +738,8 @@ public class UserProfileSettingActivity extends JActionBarActivity implements Vi
             @Override
             public void onSuccess(Void aVoid) {
                 MainActivity.logout(UserProfileSettingActivity.this, true);
+                UserProfileSettingActivity.this.finish();
+                NIMClient.getService(AuthService.class).logout();
             }
 
             @Override

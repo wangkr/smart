@@ -1,5 +1,6 @@
 package com.cqyw.smart.main.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -75,9 +76,9 @@ public class SelectEduInfoActivity extends JActionBarActivity {
     private List<ProvinceInfo> provinceInfos;
     private List<SchoolInfo> schoolInfos;
 
-    public static void start(Context context){
+    public static void start(Context context, int requestCode){
         Intent intent = new Intent(context, SelectEduInfoActivity.class);
-        context.startActivity(intent);
+        ((Activity)context).startActivityForResult(intent, requestCode);
     }
 
     @Override
@@ -150,6 +151,7 @@ public class SelectEduInfoActivity extends JActionBarActivity {
                                             Utils.showLongToast(SelectEduInfoActivity.this, "信息保存成功");
                                             AppSharedPreference.setEduinfoEdited(true);
                                             AppCache.setStatus(2);
+                                            setResult(RESULT_OK);
                                             SelectEduInfoActivity.this.finish();
                                         } else {
                                             LogUtil.d("SelectEduInfoActivity", "学籍信息保存失败:" + code);

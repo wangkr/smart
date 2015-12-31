@@ -16,6 +16,7 @@ import com.cqyw.smart.common.http.ICommProtocol;
 import com.cqyw.smart.common.http.JoyCommClient;
 import com.cqyw.smart.config.AppCache;
 import com.cqyw.smart.contact.constant.UserConstant;
+import com.cqyw.smart.main.activity.MainActivity;
 import com.cqyw.smart.main.activity.SelectEduInfoActivity;
 import com.cqyw.smart.main.activity.WatchSnapPublicSmartActivity;
 import com.cqyw.smart.main.model.PublicSnapMessage;
@@ -176,7 +177,7 @@ public class SnapMessageFragment extends TFragment{
             @Override
             public void onClick(View v) {
                 if (!AppCache.isStatusValid()) {
-                    SelectEduInfoActivity.start(getActivity());
+                    SelectEduInfoActivity.start(getActivity(), MainActivity.REQ_SELECT_EDU);
                     return;
                 }
                 publicAction.onClick();

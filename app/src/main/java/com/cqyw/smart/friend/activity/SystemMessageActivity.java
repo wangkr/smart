@@ -138,21 +138,18 @@ public class SystemMessageActivity extends JActionBarActivity implements TAdapte
     @Override
     protected void onResume() {
         super.onResume();
-        MainActivity.friend_unread_num = 0;
         NIMClient.getService(SystemMessageService.class).resetSystemMessageUnreadCount();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
         NIMClient.getService(SystemMessageService.class).resetSystemMessageUnreadCount();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         registerSystemObserver(false);
     }
 

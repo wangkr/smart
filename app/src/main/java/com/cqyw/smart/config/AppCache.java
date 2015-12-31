@@ -1,6 +1,7 @@
 package com.cqyw.smart.config;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.cqyw.smart.AppSharedPreference;
 import com.netease.nim.uikit.NimUIKit;
@@ -17,6 +18,8 @@ public class AppCache {
     private static String joyToken;
     // 验证状态1未验证， 2验证
     private static int status;
+
+    private static boolean isSwitchAccount = false;
 
     public static void clear() {
         id = null;
@@ -56,5 +59,14 @@ public class AppCache {
 
     public static void setContext(Context context) {
         AppCache.context = context.getApplicationContext();
+    }
+
+    public static boolean isSwitchAccount() {
+        return isSwitchAccount;
+    }
+
+    public static void initSwitchAccountStatus(String currentAccout) {
+        String lastAccount = AppSharedPreference.getUserAccount();
+        isSwitchAccount = !TextUtils.equals(lastAccount, currentAccout);
     }
 }
