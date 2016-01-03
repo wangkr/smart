@@ -180,7 +180,7 @@ public class WelcomeActivity extends TActivity {
     private void parseNotifyIntent(Intent intent) {
         ArrayList<IMMessage> messages = (ArrayList<IMMessage>) intent.getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
         if (messages == null || messages.size() > 1) {
-            showMainActivity(intent);
+            showMainActivity(null);
         } else {
             showMainActivity(new Intent().putExtra(NimIntent.EXTRA_NOTIFY_CONTENT, messages.get(0)));
         }

@@ -36,6 +36,7 @@ public class LocalContactViewHolder extends TViewHolder {
     // data
     protected LocalContact localContact;
 
+    private View.OnClickListener onAvatarClick;
     @Override
     protected void inflate() {
         avatar = findViewById(R.id.local_item_head);
@@ -56,7 +57,7 @@ public class LocalContactViewHolder extends TViewHolder {
         avatar.loadBuddyAvatar(localContact.getId());
         contactName.setText("手机联系人:"+localContact.getContactname());
         String nickname = NimUserInfoCache.getInstance().getUserName(localContact.getId());
-        if (TextUtils.isEmpty(nickname) ||TextUtils.equals(nickname, "joy用户")) {
+        if (TextUtils.isEmpty(nickname) || TextUtils.equals(nickname, "joy用户")) {
             NimUserInfoCache.getInstance().getUserInfoFromRemote(localContact.getId(), new RequestCallback<NimUserInfo>() {
                 @Override
                 public void onSuccess(NimUserInfo nimUserInfo) {
@@ -81,6 +82,22 @@ public class LocalContactViewHolder extends TViewHolder {
             nickName.setText(nickname);
         }
         setAddBtn();
+        setListener();
+    }
+    
+    private void setListener() {
+        if (onAvatarClick == null) {
+            onAvatarClick = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getAdapter().getOnClickEvent() != null) {
+                        getAdapter().getOnClickEvent().onAvatarClick(localContact);
+                    }
+                }
+            };
+        }
+        
+        avatar.setOnClickListener(onAvatarClick);
     }
 
     private void setAddBtn() {

@@ -179,8 +179,7 @@ public class ExtInfoHelper {
             /*云信缓存*/
             NimUserInfo userInfo = NimUserInfoCache.getInstance().getUserInfo(user_id);
             if (userInfo != null) {
-                ExtensionParse.init(userInfo.getExtension());
-                university = ExtensionParse.getUniversity();
+                university = ExtensionParse.getInstance().getUniversity(userInfo.getExtension());
                 return university;
             }
             return null;

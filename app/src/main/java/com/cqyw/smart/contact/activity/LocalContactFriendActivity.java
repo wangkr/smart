@@ -109,7 +109,6 @@ public class LocalContactFriendActivity extends JActionBarActivity implements TA
                                             contact.setContactname(infos.get(contact.getPhone()));
                                             items.addFirst(contact);
                                         }
-
                                         // 倒序插入存储以便再次读取时顺序不变
                                         Collections.reverse(localContactList);
                                         // 保存到本地数据库
@@ -187,18 +186,18 @@ public class LocalContactFriendActivity extends JActionBarActivity implements TA
     private void initListView() {
         items = new LinkedList<>();
         adapter = new LocalContactAdapter(this, items, this);
-        listView = (ListView)findViewById(R.id.local_contact_listview);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        adapter.setOnClickEvent(new LocalContactAdapter.OnClickEvent() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (TextUtils.equals(items.get(position).getId(), AppCache.getJoyId())) {
+            public void onAvatarClick(LocalContact localContact) {
+                if (TextUtils.equals(localContact.getId(), AppCache.getJoyId())) {
                     UserProfileSettingActivity.start(LocalContactFriendActivity.this, AppCache.getJoyId());
                 } else {
-                    UserProfileActivity.start(LocalContactFriendActivity.this, items.get(position).getId());
+                    UserProfileActivity.start(LocalContactFriendActivity.this, localContact.getId());
                 }
             }
         });
+        listView = (ListView)findViewById(R.id.local_contact_listview);
+        listView.setAdapter(adapter);
 
         // 加载本地保存的数据
         if (AppSharedPreference.getLocalcontactSwitch()) {

@@ -27,11 +27,15 @@ import java.util.regex.Pattern;
 public class Utils {
 
     public static void showLongToast(Context context, String pMsg) {
-        Toast.makeText(context, pMsg, Toast.LENGTH_LONG).show();
+        if ( null != context) {
+            Toast.makeText(context, pMsg, Toast.LENGTH_LONG).show();
+        }
     }
 
     public static void showShortToast(Context context, String pMsg) {
-        Toast.makeText(context, pMsg, Toast.LENGTH_SHORT).show();
+        if ( null != context) {
+            Toast.makeText(context, pMsg, Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

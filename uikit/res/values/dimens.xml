@@ -49,6 +49,7 @@
     <dimen name="avatar_size_default">50dip</dimen>
     <dimen name="avatar_size_in_session">40dip</dimen>
     <dimen name="avatar_size_in_contact">40dip</dimen>
+    <dimen name="avatar_size_in_alljousers">30dip</dimen>
 
     <!-- bubble -->
     <dimen name="message_thumb_size">50dip</dimen>

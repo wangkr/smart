@@ -21,8 +21,8 @@
             />
         <TextView
             android:id="@+id/tab_new_msg_label"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/nim_g_unread_badge"
             android:gravity="center"
@@ -54,8 +54,8 @@
             />
         <TextView
             android:id="@+id/tab_new_friend_label"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/nim_g_unread_badge"
             android:gravity="center"

@@ -194,7 +194,7 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
         setLikeList();
         setOnClickListener();
         setLongClickListener();
-        // 显示查看数量
+        // 显示查看量
         viewer_tv.setText(message.getViewer());
         // 显示官方账号标记
         if (message.getType() == PublicMsgViewHolderFactory.SYS_NEWS) {

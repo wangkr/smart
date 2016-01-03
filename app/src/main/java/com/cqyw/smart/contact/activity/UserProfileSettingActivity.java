@@ -555,11 +555,10 @@ public class UserProfileSettingActivity extends JActionBarActivity implements Vi
             }
         }
         if(userInfo.getExtension()!=null) {
-            ExtensionParse.init(userInfo.getExtension());
             /*学校*/
-            univeristyText.setText(ExtensionParse.getUniversity());
+            univeristyText.setText(ExtensionParse.getInstance().getUniversity(userInfo.getExtension()));
             /*学历*/
-            educationText.setText(ExtensionParse.getEducation());
+            educationText.setText(ExtensionParse.getInstance().getEducation(userInfo.getExtension()));
         }
     }
 

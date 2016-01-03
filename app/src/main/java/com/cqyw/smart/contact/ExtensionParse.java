@@ -1,5 +1,7 @@
 package com.cqyw.smart.contact;
 
+import android.text.TextUtils;
+
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -12,21 +14,33 @@ public class ExtensionParse {
      */
     private final static String UNIVERSITY_KEY = "university";
     private final static String EDUCATION_KEY = "grade";
-    private static JSONObject jsonObject = null;
-    public static void init(String extension){
-        jsonObject = JSONObject.parseObject(extension);
+
+    private ExtensionParse(){}
+
+    public static ExtensionParse getInstance() {
+        return InstanceHolder.instance;
     }
-    public static String getUniversity(){
-        if(jsonObject == null){
+
+
+    public String getUniversity(String extension){
+        if (TextUtils.isEmpty(extension)) {
             return "";
         }
+
+        JSONObject jsonObject = JSONObject.parseObject(extension);
         return jsonObject.getString(UNIVERSITY_KEY);
     }
-    public static String getEducation(){
-        if(jsonObject == null){
+    public String getEducation(String extension){
+        if (TextUtils.isEmpty(extension)) {
             return "";
         }
+
+        JSONObject jsonObject = JSONObject.parseObject(extension);
         return jsonObject.getString(EDUCATION_KEY);
+    }
+
+    static class InstanceHolder{
+        private static ExtensionParse instance = new ExtensionParse();
     }
 
 }

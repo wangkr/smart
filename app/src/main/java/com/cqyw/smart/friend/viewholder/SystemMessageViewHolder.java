@@ -186,12 +186,14 @@ public class SystemMessageViewHolder extends TViewHolder {
         @Override
         public void onSuccess(ExtensionInfo extensionInfo) {
             ExtensionInfoCache.saveExtensionInfo(message.getFromAccount(), extensionInfo);
-            ExtInfoHelper.initFriendNote(message.getFromAccount(), nimUserInfo.getName(), StringUtil.Empty, ExtensionParse.getUniversity(), extensionInfo.getJo());
+            ExtInfoHelper.initFriendNote(message.getFromAccount(), nimUserInfo.getName(), StringUtil.Empty,
+                    ExtensionParse.getInstance().getUniversity(nimUserInfo.getExtension()), extensionInfo.getJo());
         }
 
         @Override
         public void onFailed(String code, String errorMsg) {
-            ExtInfoHelper.initFriendNote(message.getFromAccount(), nimUserInfo.getName(), StringUtil.Empty, ExtensionParse.getUniversity(), "0");
+            ExtInfoHelper.initFriendNote(message.getFromAccount(), nimUserInfo.getName(), StringUtil.Empty,
+                    ExtensionParse.getInstance().getUniversity(nimUserInfo.getExtension()), "0");
         }
     };
 
@@ -202,7 +204,6 @@ public class SystemMessageViewHolder extends TViewHolder {
                 return;
             }
             nimUserInfo = userInfo;
-            ExtensionParse.init(nimUserInfo.getExtension());
             JoyCommClient.getInstance().getExtensionInfo(AppCache.getJoyId(), AppCache.getJoyToken(), message.getFromAccount(), extInfoCallback);
         }
 
@@ -233,7 +234,6 @@ public class SystemMessageViewHolder extends TViewHolder {
         // 初始化备注表
         nimUserInfo = NimUserInfoCache.getInstance().getUserInfo(message.getFromAccount());
         if (nimUserInfo != null) {
-            ExtensionParse.init(nimUserInfo.getExtension());
             JoyCommClient.getInstance().getExtensionInfo(AppCache.getJoyId(), AppCache.getJoyToken(), message.getFromAccount(), extInfoCallback);
         } else {
             NimUserInfoCache.getInstance().getUserInfoFromRemote(message.getFromAccount(), initNotecallback);

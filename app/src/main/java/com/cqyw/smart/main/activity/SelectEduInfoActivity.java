@@ -78,6 +78,7 @@ public class SelectEduInfoActivity extends JActionBarActivity {
 
     public static void start(Context context, int requestCode){
         Intent intent = new Intent(context, SelectEduInfoActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         ((Activity)context).startActivityForResult(intent, requestCode);
     }
 

@@ -172,7 +172,6 @@ public class ExtInfoProviderHandler implements FriendExtInfoProvider {
             nickContent.put("friend_nick", friend_nick == null ? StringUtils.Empty : friend_nick);
             db.update("note", nickContent, "friend_id = ?", new String[]{friend_id});
             // 更新缓存
-            // 更新缓存
             UserNameInfo userNameInfo = acount2Friend.get(friend_id);
             userNameInfo.note = friend_nick;
             acount2Friend.put(friend_id, userNameInfo);

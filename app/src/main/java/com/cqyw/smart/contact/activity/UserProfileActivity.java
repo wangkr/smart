@@ -310,11 +310,10 @@ public class UserProfileActivity extends TActionBarActivity implements TAdapterD
         }
         /*更新扩展字段*/
         if(!TextUtils.isEmpty(userInfo.getExtension())) {
-            ExtensionParse.init(userInfo.getExtension());
             /*学校*/
-            universityText.setText(ExtensionParse.getUniversity());
+            universityText.setText(ExtensionParse.getInstance().getUniversity(userInfo.getExtension()));
             /*学历*/
-            educationText.setText(ExtensionParse.getEducation());
+            educationText.setText(ExtensionParse.getInstance().getEducation(userInfo.getExtension()));
         }
 
     }

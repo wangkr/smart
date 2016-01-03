@@ -284,7 +284,6 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     @Override
     protected void onStart() {
         super.onStart();
-        isOnFriendActivity = false;
         requestSystemMessageUnreadCount();
         refreshTipsdotView();
     }
@@ -292,6 +291,7 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     @Override
     protected void onResume() {
         super.onResume();
+        isOnFriendActivity = false;
         initLocation();
         refreshTipsdotView();
     }
@@ -453,10 +453,8 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     private Observer<List<RecentSnapNews>> recentNewsObserver = new Observer<List<RecentSnapNews>>() {
         @Override
         public void onEvent(List<RecentSnapNews> recentSnapNewses) {
-            if (!isOnFriendActivity) {
-                tips_unread_num += recentSnapNewses.size();
-                refreshTipsdotView();
-            }
+            tips_unread_num += recentSnapNewses.size();
+            refreshTipsdotView();
         }
     };
 
@@ -466,13 +464,10 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
         switch (requestCode) {
             case REQ_SELECT_EDU:
                 // 显示导航信息
-                if (AppSharedPreference.isFirstIn()) {
-                    AppSharedPreference.saveFirstIn();
-                    Dialog hintDialog = new HintDialog(MainActivity.this, R.style.dialog_default_style);
-                    hintDialog.setCanceledOnTouchOutside(true);
-                    hintDialog.setCancelable(true);
-                    hintDialog.show();
-                }
+                Dialog hintDialog = new HintDialog(MainActivity.this, R.style.dialog_default_style);
+                hintDialog.setCanceledOnTouchOutside(true);
+                hintDialog.setCancelable(true);
+                hintDialog.show();
                 break;
             default:
                 if (messageFragment != null ) {

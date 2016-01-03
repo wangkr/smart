@@ -201,7 +201,7 @@ public class NimUserInfoCache {
         if (userInfo != null && !TextUtils.isEmpty(userInfo.getName())) {
             return userInfo.getName();
         } else {
-            return "joy用户";
+            return "";
         }
     }
 

@@ -1,22 +1,19 @@
 package com.cqyw.smart.main.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -44,17 +41,18 @@ import com.cqyw.smart.main.model.SnapMsgConstant;
 import com.cqyw.smart.main.service.CommentMessageDBService;
 import com.cqyw.smart.main.service.LikeMessageDBService;
 import com.cqyw.smart.main.service.PublicSnapMessageDBService;
-import com.cqyw.smart.main.util.SnapnewsUtils;
 import com.cqyw.smart.main.viewholder.CommentMsgViewHolder;
 import com.cqyw.smart.main.viewholder.LikeHeadImageViewHolder;
 import com.cqyw.smart.main.viewholder.PublicMsgViewHolderFactory;
 import com.cqyw.smart.util.Utils;
 import com.cqyw.smart.widget.MyGridView;
+import com.cqyw.smart.widget.popwindow.SimpleUserInfoDialog;
 import com.cqyw.smart.widget.xlistview.XListView;
 import com.netease.nim.uikit.cache.NimUserInfoCache;
 import com.netease.nim.uikit.common.adapter.TAdapterDelegate;
 import com.netease.nim.uikit.common.adapter.TViewHolder;
 import com.netease.nim.uikit.common.fragment.TFragment;
+import com.netease.nim.uikit.common.ui.dialog.DialogMaker;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialog;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialogHelper;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
@@ -64,8 +62,11 @@ import com.netease.nim.uikit.common.util.sys.NetworkUtil;
 import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.netease.nim.uikit.common.util.sys.TimeUtil;
 import com.netease.nim.uikit.joycustom.upyun.JoyImageUtil;
-import com.netease.nim.uikit.session.constant.Extras;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
+import com.netease.nimlib.sdk.uinfo.UserService;
+import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -77,6 +78,7 @@ import java.util.List;
  */
 public class CommentsFragment extends TFragment implements TAdapterDelegate, View.OnClickListener, XListView.IXListViewListener {
     public static final String TAG = CommentsFragment.class.getSimpleName();
+    private static final int MAX_LIKE = 20;
     private View header;
     // holderview
     /******************************************************************/
@@ -87,6 +89,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
     private ImageView snapCover;
     private TextView snapText;
     private TextView viewer_tv;
+    private TextView viewer_all_tv;
     private ImageView snapMsgTag_iv;
     private TextView snapMsgTag_tv;
     private TextView deleteButton_tv;
@@ -119,6 +122,9 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
 
     // 点击评论响应处理
     protected View.OnClickListener commentClickListener;
+
+    // 点击查看所有Jo处理
+    protected View.OnClickListener viewAllJoClickListener;
     /******************************************************************/
     // view
     private View rootView;
@@ -129,6 +135,8 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
     // data
     private LinkedList<CommentMessage> items;
     private LinkedList<CommentMessage> myselfItems;
+    private LinkedList<String> showLikeItems;
+
     private CommentMessageAdapter adapter;
     private PublicSnapMessage message;
     private LikeHeadImageLoader likeHeadImageLoader;
@@ -171,8 +179,8 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
         commentMessageDBService = new CommentMessageDBService(AppContext.getContext());
         parseIntent();
         initView();
-        loadInitData();
-        new Handler().postDelayed(runnable, 200);
+        loadCommentData();
+        loadLikeData();
     }
 
     @Override
@@ -217,7 +225,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
 
     @Override
     public void onLoadMore() {
-        if (isNetworkOk()) {
+        if (isAdded() && isNetworkOk()) {
             Loadmore();
         }
     }
@@ -250,7 +258,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
     private void Loadmore() {
         if (isFirstLoad) {
             isFirstLoad = false;
-            loadInitData();
+            loadCommentData();
         } else {
             if (items.size() != 0) {
                 String bottomCid = "";
@@ -281,7 +289,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
                             }
                         });
             } else {
-                loadInitData();
+                loadCommentData();
             }
         }
     }
@@ -297,41 +305,37 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
         getActivity().setResult(Activity.RESULT_OK, intent);
     }
 
-    private final Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            // 获取评论的赞
-            JoyCommClient.getInstance().getLikesByNids(AppCache.getJoyId(), AppSharedPreference.getCacheJoyToken(), message.getId(),
-                    new ICommProtocol.CommCallback<List<LikeMessage>>() {
-                        @Override
-                        public void onSuccess(List<LikeMessage> likeMessages) {
-                            if (likeMessages.size() == 1) {
-                                if (TextUtils.equals(likeMessages.get(0).getStatus(), "-1")) {
-                                    Utils.showLongToast(getActivity(), "新鲜事已被删除");
-                                    ifDelete = true;
-                                    getActivity().onBackPressed();
-                                    return;
-                                }
-                                message.setLikeMessage(likeMessages.get(0));
-                                refresh();
+    private void loadLikeData() {
+        // 获取评论的赞
+        JoyCommClient.getInstance().getLikesByNids(AppCache.getJoyId(), AppSharedPreference.getCacheJoyToken(), message.getId(),
+                new ICommProtocol.CommCallback<List<LikeMessage>>() {
+                    @Override
+                    public void onSuccess(List<LikeMessage> likeMessages) {
+                        if (likeMessages.size() == 1) {
+                            if (TextUtils.equals(likeMessages.get(0).getStatus(), "-1")) {
+                                Utils.showLongToast(getActivity(), "新鲜事已被删除");
+                                ifDelete = true;
+                                getActivity().onBackPressed();
+                                return;
                             }
-
-                        }
-
-                        @Override
-                        public void onFailed(String code, String errorMsg) {
-                            LikeMessage likeMessage = new LikeMessage();
-                            likeMessage.setNid(message.getId());
-                            likeMessage.setStatus("0");
-                            likeMessage.setUids(new LinkedList<String>());
-                            message.setLikeMessage(likeMessage);
-                            Utils.showLongToast(getActivity(), errorMsg);
+                            message.setLikeMessage(likeMessages.get(0));
                             refresh();
                         }
-                    });
 
-        }
-    };
+                    }
+
+                    @Override
+                    public void onFailed(String code, String errorMsg) {
+                        Utils.showLongToast(getActivity(), errorMsg);
+                        LikeMessage likeMessage = new LikeMessage();
+                        likeMessage.setNid(message.getId());
+                        likeMessage.setStatus("0");
+                        likeMessage.setUids(new ArrayList<String>());
+                        message.setLikeMessage(likeMessage);
+                        refresh();
+                    }
+                });
+    }
 
     public void addComment() {
         showKeyboard(true);
@@ -345,7 +349,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.comment_send_btn:
-                if (isNetworkOk()) {
+                if (isAdded() && isNetworkOk()) {
                     onSend();
                 }
                 break;
@@ -451,7 +455,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
     }
 
 
-    private void loadInitData() {
+    private void loadCommentData() {
         if (isNetworkOk()) {
             // 服务器拉取
             JoyCommClient.getInstance().getComments(AppCache.getJoyId(), AppSharedPreference.getCacheJoyToken(),
@@ -500,7 +504,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
             getHandler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Utils.showLongToast(getContext(), getContext().getString(R.string.network_is_not_available));
+                    Utils.showLongToast(getContext(), AppContext.getResource().getString(R.string.network_is_not_available));
                     listView.stopLoadMore();
                 }
             }, 200);
@@ -515,6 +519,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (adapter != null)
                 adapter.notifyDataSetChanged();
             }
         });
@@ -562,6 +567,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
         zanList = findView(R.id.snap_msg_zan_head_gridview);
         time_tv = findView(R.id.snap_msg_time);
         viewer_tv = findView(R.id.viewer_text);
+        viewer_all_tv = findView(R.id.view_all_like);
         distance_tv = findView(R.id.snap_msg_distance);
         readStatus_tv = findView(R.id.snap_msg_read_status);
         zanButton_iv = findView(R.id.snap_msg_comment_menu_zan_txt);
@@ -584,14 +590,26 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
         } else {
             msgTagContainer.setVisibility(View.GONE);
         }
+
+        viewer_all_tv.setVisibility(View.GONE);
     }
 
     protected <T extends View> T findView(int resId) {
         return (T) (header.findViewById(resId));
     }
 
-
     protected final void refresh() {
+        getHandler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isAdded()) {
+                    refreshView();
+                }
+            }
+        }, 200);
+    }
+
+    protected final void refreshView() {
         setHeadImageView();
         distance_tv.setVisibility(View.GONE);
         time_tv.setText(TimeUtil.getJoyTimeShowString(message.getIntime(), false));
@@ -600,7 +618,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
                 (TextUtils.equals(message.getUid(), AppCache.getJoyId()) || message.getRead() == 0));
 
         if (message.getType() == PublicMsgViewHolderFactory.SYS_NEWS) {
-            snapMsgTag_tv.setText(getString(R.string.official_name));
+            snapMsgTag_tv.setText(AppContext.getResource().getString(R.string.official_name));
             snapMsgTag_iv.setImageResource(R.drawable.official_tag);
         }
 
@@ -628,7 +646,16 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
 
     public void refreshLikeList(){
         if (likeHeadImageLoader == null) {
-            likeHeadImageLoader = new LikeHeadImageLoader(message.getLikeMessage().getUids());
+            showLikeItems = new LinkedList<>();
+            if (message.getLike() > MAX_LIKE) {
+                showLikeItems.addAll(message.getLikeMessage().getUids().subList(0, MAX_LIKE));
+                viewer_all_tv.setVisibility(View.VISIBLE);
+                viewer_all_tv.setText("查看所有"+message.getLike()+"个Jo");
+            } else {
+                showLikeItems.addAll(message.getLikeMessage().getUids());
+                viewer_all_tv.setVisibility(View.GONE);
+            }
+            likeHeadImageLoader = new LikeHeadImageLoader(showLikeItems);
             likeHeadImageLoader.refreshLike();
         } else {
             likeHeadImageLoader.refreshLike();
@@ -641,6 +668,15 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
             @Override
             public void onSuccess(Void aVoid) {
                 message.addLike(AppCache.getJoyId());
+                if (message.getLike() > MAX_LIKE) {
+                    showLikeItems.addFirst(AppCache.getJoyId());
+                    showLikeItems.removeLast();
+                    viewer_all_tv.setVisibility(View.VISIBLE);
+                    viewer_all_tv.setText("查看所有"+message.getLike()+"个Jo");
+                } else {
+                    showLikeItems.addFirst(AppCache.getJoyId());
+                    viewer_all_tv.setVisibility(View.GONE);
+                }
                 refreshLikeList();
                 Utils.showShortToast(getContext(), AppContext.getResource().getString(R.string.like_hint_text));
             }
@@ -767,6 +803,22 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
             };
         }
         zanButton_iv.setOnClickListener(likeClickListener);
+
+        // 查看所有Jo
+        if (viewAllJoClickListener == null) {
+            viewAllJoClickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showJoUsersDialog(message.getLikeMessage().getUids());
+                }
+            };
+        }
+        viewer_all_tv.setOnClickListener(viewAllJoClickListener);
+    }
+
+    private void showJoUsersDialog(List<String> accounts) {
+        Dialog dialog = new SimpleUserInfoDialog(getContext(), accounts, R.style.dialog_default_style);
+        dialog.show();
     }
 
     /**
