@@ -13,7 +13,7 @@ public class MySnapChatAction extends PickSnapCoverAction {
 //    private SendSmartImageListener sendSmartImageListener;
 
     public MySnapChatAction () {
-        super(R.drawable.btn_snapmessage_selector, R.string.snap_hint_text, true, false );
+        super(R.drawable.btn_snapmessage_selector, R.string.snap_chat, true, false );
     }
 
 //    public void setSendSmartImageListener(SendSmartImageListener sendSmartImageListener) {

@@ -13,9 +13,9 @@ import com.cqyw.smart.R;
 import com.cqyw.smart.friend.reminder.ReminderManager;
 import com.cqyw.smart.login.LogoutHelper;
 import com.cqyw.smart.session.SessionHelper;
-import com.cqyw.smart.session.extension.MySnapChatAttachment;
+import com.netease.nim.uikit.session.extension.MySnapChatAttachment;
 import com.cqyw.smart.login.LoginActivity;
-import com.cqyw.smart.session.extension.StickerAttachment;
+import com.netease.nim.uikit.session.extension.StickerAttachment;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.recent.RecentContactsCallback;
 import com.netease.nim.uikit.recent.RecentContactsFragment;
@@ -29,12 +29,10 @@ import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
-import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 /**
  * Created by zhoujianghua on 2015/8/17.

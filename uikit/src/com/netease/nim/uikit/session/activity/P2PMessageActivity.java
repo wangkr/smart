@@ -19,10 +19,18 @@ import com.netease.nim.uikit.uinfo.UserInfoObservable;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
+import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
+import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
+import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
+import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
+import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.model.CustomMessageConfig;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -35,7 +43,7 @@ public class P2PMessageActivity extends BaseMessageActivity {
     public static void start(Context context, String contactId, SessionCustomization customization) {
         Intent intent = new Intent();
         intent.putExtra(Extras.EXTRA_ACCOUNT, contactId);
-        intent.putExtra(Extras.EXTRA_CUSTOMIZATION, customization);
+//        intent.putExtra(Extras.EXTRA_CUSTOMIZATION, customization);
         intent.setClass(context, P2PMessageActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
@@ -61,6 +69,7 @@ public class P2PMessageActivity extends BaseMessageActivity {
         chatName = UserInfoHelper.getUserName(sessionId);
         chatUniversity = UserInfoHelper.getUserUniversity(sessionId);
         setChatBarTitle();
+        setFriendProfileClickEvent(this, friendProfileClickMsg);
     }
 
     private void registerObservers(boolean register) {
@@ -138,4 +147,146 @@ public class P2PMessageActivity extends BaseMessageActivity {
     protected int getContentViewId() {
         return R.layout.nim_message_activity;
     }
+
+    private IMMessage friendProfileClickMsg = new IMMessage() {
+        @Override
+        public String getUuid() {
+            return null;
+        }
+
+        @Override
+        public boolean isTheSame(IMMessage imMessage) {
+            return false;
+        }
+
+        @Override
+        public String getSessionId() {
+            return sessionId;
+        }
+
+        @Override
+        public SessionTypeEnum getSessionType() {
+            return null;
+        }
+
+        @Override
+        public MsgTypeEnum getMsgType() {
+            return null;
+        }
+
+        @Override
+        public MsgStatusEnum getStatus() {
+            return null;
+        }
+
+        @Override
+        public void setStatus(MsgStatusEnum msgStatusEnum) {
+
+        }
+
+        @Override
+        public void setDirect(MsgDirectionEnum msgDirectionEnum) {
+
+        }
+
+        @Override
+        public MsgDirectionEnum getDirect() {
+            return null;
+        }
+
+        @Override
+        public void setContent(String s) {
+
+        }
+
+        @Override
+        public String getContent() {
+            return null;
+        }
+
+        @Override
+        public long getTime() {
+            return 0;
+        }
+
+        @Override
+        public void setFromAccount(String s) {
+
+        }
+
+        @Override
+        public String getFromAccount() {
+            return sessionId;
+        }
+
+        @Override
+        public void setAttachment(MsgAttachment msgAttachment) {
+
+        }
+
+        @Override
+        public MsgAttachment getAttachment() {
+            return null;
+        }
+
+        @Override
+        public AttachStatusEnum getAttachStatus() {
+            return null;
+        }
+
+        @Override
+        public void setAttachStatus(AttachStatusEnum attachStatusEnum) {
+
+        }
+
+        @Override
+        public CustomMessageConfig getConfig() {
+            return null;
+        }
+
+        @Override
+        public void setConfig(CustomMessageConfig customMessageConfig) {
+
+        }
+
+        @Override
+        public Map<String, Object> getRemoteExtension() {
+            return null;
+        }
+
+        @Override
+        public void setRemoteExtension(Map<String, Object> map) {
+
+        }
+
+        @Override
+        public Map<String, Object> getLocalExtension() {
+            return null;
+        }
+
+        @Override
+        public void setLocalExtension(Map<String, Object> map) {
+
+        }
+
+        @Override
+        public String getPushContent() {
+            return null;
+        }
+
+        @Override
+        public void setPushContent(String s) {
+
+        }
+
+        @Override
+        public Map<String, Object> getPushPayload() {
+            return null;
+        }
+
+        @Override
+        public void setPushPayload(Map<String, Object> map) {
+
+        }
+    };
 }

@@ -1,4 +1,4 @@
-package com.cqyw.smart.session.extension;
+package com.netease.nim.uikit.session.extension;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

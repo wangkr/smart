@@ -14,6 +14,7 @@ import com.cqyw.smart.R;
 import com.cqyw.smart.config.AppConstants;
 import com.cqyw.smart.main.activity.MainActivity;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 
@@ -58,6 +59,14 @@ public class DownloadServices extends Service {
                     //停止服务
                     //  myNotification.removeNotification();
                     theServices.stopSelf();
+                    // 自动安装
+                    try {
+                        Runtime runtime = Runtime.getRuntime();
+                        Process process = runtime.exec("adb install -r " + theServices.filePathString);
+                        process.getInputStream();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case DOWNLOAD_FAIL:
                     //下载失败

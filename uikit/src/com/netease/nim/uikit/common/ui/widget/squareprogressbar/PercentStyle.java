@@ -1,4 +1,4 @@
-package com.cqyw.smart.widget.squareprogressbar;
+package com.netease.nim.uikit.common.ui.widget.squareprogressbar;
 
 /**
  * Created by Kairong on 2015/12/13.

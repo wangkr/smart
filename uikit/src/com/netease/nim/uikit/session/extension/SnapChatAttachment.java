@@ -1,27 +1,27 @@
-package com.cqyw.smart.session.extension;
+package com.netease.nim.uikit.session.extension;
 
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.netease.nim.uikit.session.extension.CustomAttachParser;
+import com.netease.nim.uikit.session.extension.CustomAttachmentType;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
 
-
 /**
- * Created by Kairong on 2015/11/7.
- * mail:wangkrhust@gmail.com
+ * Created by zhoujianghua on 2015/7/8.
  */
-public class MySnapChatAttachment extends FileAttachment {
+public class SnapChatAttachment extends FileAttachment {
+
     private static final String KEY_SIZE = "size";
     private static final String KEY_MD5 = "md5";
     private static final String KEY_URL = "url";
-    private static final String KEY_EXT = "ext";// 封面图片url
 
-    public MySnapChatAttachment(){
+    public SnapChatAttachment() {
         super();
     }
 
-    public MySnapChatAttachment(JSONObject jsonObject){
-        load(jsonObject);
+    public SnapChatAttachment(JSONObject data) {
+        load(data);
     }
 
     @Override
@@ -33,7 +33,6 @@ public class MySnapChatAttachment extends FileAttachment {
             }
             data.put(KEY_URL, url);
             data.put(KEY_SIZE, size);
-            data.put(KEY_EXT, extension);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,10 +40,9 @@ public class MySnapChatAttachment extends FileAttachment {
         return CustomAttachParser.packData(CustomAttachmentType.SnapChat, data);
     }
 
-    private void load(JSONObject data){
+    private void load(JSONObject data) {
         md5 = data.getString(KEY_MD5);
         url = data.getString(KEY_URL);
-        extension = data.getString(KEY_EXT);
     }
 
     @Override

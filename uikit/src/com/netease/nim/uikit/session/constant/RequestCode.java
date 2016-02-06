@@ -10,4 +10,5 @@ public class RequestCode {
 	public final static int GET_LOCAL_IMAGE = 7;	// 相册
 	public final static int PICK_HIDDEN_IMAGE = 8; 	// 隐藏smart图
 	public final static int PICK_SNAP_COVER = 9;	// smart封面图
+	public final static int WATCH_SNAP_CHAT = 10;	// 查看隐藏图
 }

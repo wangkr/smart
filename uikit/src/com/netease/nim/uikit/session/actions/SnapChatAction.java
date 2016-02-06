@@ -1,10 +1,9 @@
-package com.cqyw.smart.session.action;
+package com.netease.nim.uikit.session.actions;
 
 
-import com.cqyw.smart.R;
-import com.cqyw.smart.session.extension.SnapChatAttachment;
+import com.netease.nim.uikit.R;
+import com.netease.nim.uikit.session.extension.SnapChatAttachment;
 import com.netease.nim.uikit.joycustom.upyun.JoyImageUtil;
-import com.netease.nim.uikit.session.actions.PickImageAction;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.model.CustomMessageConfig;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
@@ -16,9 +15,13 @@ import java.io.File;
  * Created by zhoujianghua on 2015/7/31.
  */
 public class SnapChatAction extends PickImageAction {
-
+    private SendSmartImageListener sendSmartImageListener;
     public SnapChatAction() {
-        super(com.netease.nim.uikit.R.drawable.btn_snapmessage_selector, R.string.input_panel_snapchat, false);
+        super(R.drawable.btn_snapmessage_selector, R.string.snap_chat, false);
+    }
+
+    public void setSendSmartImageListener(SendSmartImageListener sendSmartImageListener) {
+        this.sendSmartImageListener = sendSmartImageListener;
     }
 
     @Override
@@ -30,13 +33,17 @@ public class SnapChatAction extends PickImageAction {
         snapChatAttachment.setUrl(upyunUrlName);
 
         CustomMessageConfig config = new CustomMessageConfig();
-        config.enableHistory = true;
-        config.enableRoaming = true;
-        config.enableSelfSync = true;
+        config.enableHistory = false;
+        config.enableRoaming = false;
+        config.enableSelfSync = false;
         IMMessage stickerMessage = MessageBuilder.createCustomMessage(getAccount(), getSessionType(), "阅后即焚消息", snapChatAttachment, config);
-        //上传到UpYun
-        JoyImageUtil.uploadIMMessageSmart(file, stickerMessage, upyunUrlName);
-        sendMessage(stickerMessage);
+        if (sendSmartImageListener != null) {
+            sendSmartImageListener.onSmartSelected(stickerMessage, file);
+        }
     }
 
+
+    public interface SendSmartImageListener {
+        void onSmartSelected(IMMessage message, File smartFile);
+    }
 }

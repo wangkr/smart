@@ -85,6 +85,14 @@ public class XListView extends ListView implements OnScrollListener {
         initWithContext(context);
     }
 
+    public boolean isPullRefreshing() {
+        return mPullRefreshing;
+    }
+
+    public boolean isPullLoading() {
+        return mPullLoading;
+    }
+
     public OnScrollListener getScrollListener() {
         return mScrollListener;
     }

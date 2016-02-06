@@ -16,7 +16,9 @@ import com.netease.nim.uikit.session.actions.BaseAction;
 import com.netease.nim.uikit.session.actions.ImageAction;
 import com.netease.nim.uikit.session.actions.LocationAction;
 import com.netease.nim.uikit.session.actions.VideoAction;
+import com.netease.nim.uikit.session.activity.WatchSnapChatSmartActivity;
 import com.netease.nim.uikit.session.constant.Extras;
+import com.netease.nim.uikit.session.constant.RequestCode;
 import com.netease.nim.uikit.session.module.Container;
 import com.netease.nim.uikit.session.module.ModuleProxy;
 import com.netease.nim.uikit.session.module.input.InputPanel;
@@ -40,7 +42,7 @@ public class MessageFragment extends TFragment implements ModuleProxy {
 
     private View rootView;
 
-    private SessionCustomization customization;
+//    private SessionCustomization customization;
 
     protected static final String TAG = "MessageActivity";
 
@@ -111,7 +113,7 @@ public class MessageFragment extends TFragment implements ModuleProxy {
         sessionId = getArguments().getString(Extras.EXTRA_ACCOUNT);
         sessionType = (SessionTypeEnum) getArguments().getSerializable(Extras.EXTRA_TYPE);
 
-        customization = (SessionCustomization) getArguments().getSerializable(Extras.EXTRA_CUSTOMIZATION);
+//        customization = (SessionCustomization) getArguments().getSerializable(Extras.EXTRA_CUSTOMIZATION);
         Container container = new Container(getActivity(), sessionId, sessionType, this);
 
         if (messageListPanel == null) {
@@ -121,17 +123,17 @@ public class MessageFragment extends TFragment implements ModuleProxy {
         }
 
         if (inputPanel == null) {
-            inputPanel = new InputPanel(container, rootView, getActionList());
-            inputPanel.setCustomization(customization);
+            inputPanel = new InputPanel(container, rootView/*, getActionList()*/);
+//            inputPanel.setCustomization(customization);
         } else {
-            inputPanel.reload(container, customization);
+            inputPanel.reload(container);
         }
 
         registerObservers(true);
 
-        if (customization != null) {
-            messageListPanel.setChattingBackground(customization.backgroundUri, customization.backgroundColor);
-        }
+//        if (customization != null) {
+//            messageListPanel.setChattingBackground(customization.backgroundUri, customization.backgroundColor);
+//        }
     }
 
     /**
@@ -202,11 +204,26 @@ public class MessageFragment extends TFragment implements ModuleProxy {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         LogUtil.d(TAG, "MessageFragment onAct");
-        inputPanel.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case RequestCode.WATCH_SNAP_CHAT:
+                if (data != null) {
+                    if (WatchSnapChatSmartActivity.hasSeen) {
+                        IMMessage message = (IMMessage) data.getSerializableExtra(WatchSnapChatSmartActivity.INTENT_EXTRA_MESSAGE);
+                        // 物理删除
+                        messageListPanel.deleteItem(message);
+                    }
+                    break;
+                }
+                break;
+            default:
+                inputPanel.onActivityResult(requestCode, resultCode, data);
+                break;
+
+        }
     }
 
     // 操作面板集合
-    protected List<BaseAction> getActionList() {
-        return customization.actions;
-    }
+//    protected List<BaseAction> getActionList() {
+//        return customization.actions;
+//    }
 }

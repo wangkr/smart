@@ -1,6 +1,7 @@
-package com.cqyw.smart.session.extension;
+package com.netease.nim.uikit.session.extension;
 
 import com.alibaba.fastjson.JSONObject;
+import com.netease.nim.uikit.session.extension.CustomAttachment;
 
 /**
  * Created by zhoujianghua on 2015/4/10.

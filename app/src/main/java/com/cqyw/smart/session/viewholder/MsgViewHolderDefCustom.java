@@ -1,6 +1,6 @@
 package com.cqyw.smart.session.viewholder;
 
-import com.cqyw.smart.session.extension.DefaultCustomAttachment;
+import com.netease.nim.uikit.session.extension.DefaultCustomAttachment;
 import com.netease.nim.uikit.session.viewholder.MsgViewHolderText;
 
 /**

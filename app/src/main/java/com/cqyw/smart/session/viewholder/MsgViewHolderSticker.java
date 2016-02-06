@@ -5,7 +5,7 @@ import android.widget.ImageView;
 
 import com.cqyw.smart.R;
 import com.netease.nim.uikit.session.emoji.StickerManager;
-import com.cqyw.smart.session.extension.StickerAttachment;
+import com.netease.nim.uikit.session.extension.StickerAttachment;
 import com.netease.nim.uikit.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.session.viewholder.MsgViewHolderThumbBase;
 

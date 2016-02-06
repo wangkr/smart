@@ -3,7 +3,9 @@ package com.netease.nim.uikit.session.module.input;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.InputType;
@@ -27,15 +29,23 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSONObject;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.R;
+import com.netease.nim.uikit.common.ui.dialog.DialogMaker;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialogHelper;
+import com.netease.nim.uikit.common.ui.ptr.Utils;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.string.StringUtil;
 import com.netease.nim.uikit.joycustom.snap.MySnapChatAction;
+import com.netease.nim.uikit.joycustom.upyun.JoyImageUtil;
 import com.netease.nim.uikit.session.SessionCustomization;
 import com.netease.nim.uikit.session.actions.BaseAction;
+import com.netease.nim.uikit.session.actions.SnapChatAction;
+import com.netease.nim.uikit.session.activity.WatchSnapChatSmartActivity;
+import com.netease.nim.uikit.session.constant.RequestCode;
 import com.netease.nim.uikit.session.emoji.EmoticonPickerView;
 import com.netease.nim.uikit.session.emoji.IEmoticonSelectedListener;
 import com.netease.nim.uikit.session.emoji.MoonUtil;
+import com.netease.nim.uikit.session.extension.SnapChatAttachment;
+import com.netease.nim.uikit.session.extension.StickerAttachment;
 import com.netease.nim.uikit.session.module.Container;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.media.record.AudioRecorder;
@@ -44,11 +54,13 @@ import com.netease.nimlib.sdk.media.record.RecordType;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
+import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -71,15 +83,15 @@ public class InputPanel implements IEmoticonSelectedListener {
     protected View sendMessageButtonInInputBar;// 发送消息按钮
     protected View emojiButtonInInputBar;// 发送消息按钮
     protected View messageInputBar;
-//    protected ImageView snapChatBtn;    // kyrong 发送阅后即焚按钮
+    protected ImageView snapChatBtn;    // kyrong 发送阅后即焚按钮
 
-    private SessionCustomization customization;
+//    private SessionCustomization customization;
 
     // 表情
     protected EmoticonPickerView emoticonPickerView;  // 贴图表情控件
 
     // adapter
-    private List<BaseAction> actions;
+//    private List<BaseAction> actions;
 
     // data
     private long typingTime = 0;
@@ -87,14 +99,14 @@ public class InputPanel implements IEmoticonSelectedListener {
     // data2
 
     // kr
-//    protected MySnapChatAction mySnapChatAction;
+    protected SnapChatAction mySnapChatAction;
 
-    public InputPanel(Container container, View view, List<BaseAction> actions) {
+    public InputPanel(Container container, View view/*, List<BaseAction> actions*/) {
         this.container = container;
         this.view = view;
-        this.actions = actions;
+//        this.actions = actions;
         this.uiHandler = new Handler();
-//        this.mySnapChatAction = new MySnapChatAction();
+        this.mySnapChatAction = new SnapChatAction();
         init();
     }
 
@@ -119,22 +131,78 @@ public class InputPanel implements IEmoticonSelectedListener {
         initInputBarListener();
         initTextEdit();
         restoreText(false);
-        for (int i = 0;i < actions.size(); i++ ) {
-            actions.get(i).setContainer(container);
-        }
-//        mySnapChatAction.setContainer(container);
+//        for (int i = 0;i < actions.size(); i++ ) {
+//            actions.get(i).setContainer(container);
+//        }
+        mySnapChatAction.setContainer(container);
+        mySnapChatAction.setSendSmartImageListener(sendSmartImageListener);
     }
 
-    public void setCustomization(SessionCustomization customization) {
-        this.customization = customization;
-        if (customization != null) {
-            emoticonPickerView.setWithSticker(customization.withSticker);
-        }
-    }
+//    public void setCustomization(SessionCustomization customization) {
+//        this.customization = customization;
+//        if (customization != null) {
+//            emoticonPickerView.setWithSticker(customization.withSticker);
+//        }
+//    }
 
-    public void reload(Container container, SessionCustomization customization) {
+    public void reload(Container container/*, SessionCustomization customization*/) {
         this.container = container;
-        setCustomization(customization);
+//        setCustomization(customization);
+    }
+
+    /**
+     * 发送smart事件监听
+     */
+    private SnapChatAction.SendSmartImageListener sendSmartImageListener = new SnapChatAction.SendSmartImageListener() {
+        @Override
+        public void onSmartSelected(final IMMessage message, final File smartFile) {
+            DialogMaker.showProgressDialog(container.activity, "发送中...", false);
+            message.setAttachStatus(AttachStatusEnum.transferring);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean result = JoyImageUtil.uploadPublicSnapSmart(smartFile, ((SnapChatAttachment)message.getAttachment()).getUrl());
+                    if (result) {
+                        Message msg = Message.obtain();
+                        Bundle bundle = new Bundle();
+                        message.setAttachStatus(AttachStatusEnum.transferred);
+                        bundle.putSerializable("IMM", message);
+                        msg.setData(bundle);
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    } else {
+                        handler.sendEmptyMessage(0);
+                    }
+                }
+            }).start();
+        }
+    };
+    private MyHandler handler = new MyHandler(this);
+
+    private static class MyHandler extends Handler{
+        private WeakReference<InputPanel> inputPanelWeakReference;
+        public MyHandler(InputPanel inputPanel) {
+            this.inputPanelWeakReference = new WeakReference<InputPanel>(inputPanel);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            InputPanel inputPanel = inputPanelWeakReference.get();
+            DialogMaker.dismissProgressDialog();
+            switch (msg.what) {
+                case 0:
+                    if (inputPanel != null)
+                        Toast.makeText(inputPanel.container.activity, "发送失败", Toast.LENGTH_LONG).show();
+                    break;
+                case 1:
+                    if (inputPanel != null) {
+                        inputPanel.container.proxy.sendMessage((IMMessage) msg.getData().getSerializable("IMM"));
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private void initViews() {
@@ -144,6 +212,7 @@ public class InputPanel implements IEmoticonSelectedListener {
         emojiButtonInInputBar = view.findViewById(R.id.joy_emoji_button);
         sendMessageButtonInInputBar = view.findViewById(R.id.joy_buttonSendMessage);
         messageEditText = (EditText) view.findViewById(R.id.joy_editTextMessage);
+        snapChatBtn = (ImageView) view.findViewById(R.id.joy_snapMessage);
 
         // 语音
 //        audioRecordBtn = (Button) view.findViewById(R.id.audioRecord);
@@ -154,6 +223,7 @@ public class InputPanel implements IEmoticonSelectedListener {
 
         // 表情
         emoticonPickerView = (EmoticonPickerView) view.findViewById(R.id.emoticon_picker_view);
+        emoticonPickerView.setWithSticker(true);
 
         // 显示录音按钮
 //        switchToTextButtonInInputBar.setVisibility(View.GONE);
@@ -165,7 +235,7 @@ public class InputPanel implements IEmoticonSelectedListener {
 //        switchToAudioButtonInInputBar.setOnClickListener(clickListener);
         emojiButtonInInputBar.setOnClickListener(clickListener);
         sendMessageButtonInInputBar.setOnClickListener(clickListener);
-//        snapChatBtn.setOnClickListener(clickListener);
+        snapChatBtn.setOnClickListener(clickListener);
 //        moreFuntionButtonInInputBar.setOnClickListener(clickListener);
 
     }
@@ -269,12 +339,12 @@ public class InputPanel implements IEmoticonSelectedListener {
             } else if (v == emojiButtonInInputBar) {
                 toggleEmojiLayout();
             }
-//            else if (v == snapChatBtn) {
-//                mySnapChatAction.onClick();
+            else if (v == snapChatBtn) {
+                mySnapChatAction.onClick();
 //                for (BaseAction action:actions) {
 //                    action.onClick();
 //                }
-//            }
+            }
         }
     };
 
@@ -492,11 +562,16 @@ public class InputPanel implements IEmoticonSelectedListener {
     public void onStickerSelected(String category, String item) {
         Log.i("InputPanel", "onStickerSelected, category =" + category + ", sticker =" + item);
 
-        if (customization  != null) {
-            MsgAttachment attachment = customization.createStickerAttachment(category, item);
-            IMMessage stickerMessage = MessageBuilder.createCustomMessage(container.account, container.sessionType, "贴图消息", attachment);
-            container.proxy.sendMessage(stickerMessage);
-        }
+//        if (customization  != null) {
+//            MsgAttachment attachment = customization.createStickerAttachment(category, item);
+        MsgAttachment attachment = createStickerAttachment(category, item);
+        IMMessage stickerMessage = MessageBuilder.createCustomMessage(container.account, container.sessionType, "贴图消息", attachment);
+        container.proxy.sendMessage(stickerMessage);
+//        }
+    }
+
+    public MsgAttachment createStickerAttachment(String category, String item) {
+        return new StickerAttachment(category, item);
     }
 
     /**
@@ -709,20 +784,7 @@ public class InputPanel implements IEmoticonSelectedListener {
             return;
         }
 
-        int index = (requestCode << 16) >> 24;
-        if (index != 0) {
-            index--;
-            if (index < 0) {
-                LogUtil.d(TAG, "request code out of actions' range");
-                return;
-            }
-            if (actions != null) {
-                LogUtil.d(TAG, "input panel");
-                for (BaseAction action:actions) {
-                    action.onActivityResult(requestCode & 0xff, resultCode, data);
-                }
-            }
-        }
+        mySnapChatAction.onActivityResult(requestCode & 0xff, resultCode, data);
 
 //        int index = (requestCode << 16) >> 24;
 //        if (index != 0) {

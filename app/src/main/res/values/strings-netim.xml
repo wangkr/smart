@@ -194,7 +194,7 @@
     <string name="kickout_content">你的帐号被%1$s踢出下线，请确定帐号信息安全</string>
 
     <!-- 阅后即焚 -->
-    <string name="snapchat_longclick_to_view">按住查看</string>
+    <string name="snapchat_longclick_to_view">长按查看</string>
     <string name="snapchat_title">阅后即焚</string>
 
     <!-- 个人名片 -->

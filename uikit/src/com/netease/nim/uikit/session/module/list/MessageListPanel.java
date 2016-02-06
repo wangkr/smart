@@ -389,6 +389,11 @@ public class MessageListPanel implements TAdapterDelegate {
         }
     }
 
+    public void deleteItem(IMMessage messageItem) {
+        NIMClient.getService(MsgService.class).deleteChattingHistory(messageItem);
+        adapter.deleteItem(messageItem);
+    }
+
     private class MessageLoader implements AutoRefreshListView.OnRefreshListener {
 
         private static final int LOAD_MESSAGE_COUNT = 20;
@@ -684,11 +689,6 @@ public class MessageListPanel implements TAdapterDelegate {
                     deleteItem(selectedItem);
                 }
             });
-        }
-
-        public void deleteItem(IMMessage messageItem) {
-            NIMClient.getService(MsgService.class).deleteChattingHistory(messageItem);
-            adapter.deleteItem(messageItem);
         }
 
 

@@ -1,4 +1,4 @@
-package com.cqyw.smart.widget.squareprogressbar;
+package com.netease.nim.uikit.common.ui.widget.squareprogressbar;
 
 import android.content.Context;
 import android.graphics.Canvas;

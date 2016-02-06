@@ -218,16 +218,16 @@ public abstract class MsgViewHolderBase extends TViewHolder {
         });
 
         // 头像点击事件响应
-//        if (NimUIKit.getSessionListener() != null) {
-//            View.OnClickListener portraitListener = new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    NimUIKit.getSessionListener().onAvatarClicked(context, message);
-//                }
-//            };
-//            avatarLeft.setOnClickListener(portraitListener);
-//            avatarRight.setOnClickListener(portraitListener);
-//        }
+        if (NimUIKit.getSessionListener() != null) {
+            View.OnClickListener portraitListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    NimUIKit.getSessionListener().onAvatarClicked(context, message);
+                }
+            };
+            avatarLeft.setOnClickListener(portraitListener);
+            avatarRight.setOnClickListener(portraitListener);
+        }
     }
 
     /**
@@ -289,10 +289,18 @@ public abstract class MsgViewHolderBase extends TViewHolder {
         } else {
             if (isReceivedMessage()) {
                 setGravity(bodyContainer, Gravity.LEFT);
-                contentContainer.setBackgroundResource(leftBackground());
+                if (message.getAttachment() != null) {
+                    contentContainer.setBackgroundResource(R.drawable.msg_right_transparent_bg);
+                } else {
+                    contentContainer.setBackgroundResource(leftBackground());
+                }
             } else {
                 setGravity(bodyContainer, Gravity.RIGHT);
-                contentContainer.setBackgroundResource(rightBackground());
+                if (message.getAttachment() != null) {
+                    contentContainer.setBackgroundResource(R.drawable.msg_right_transparent_bg);
+                } else {
+                    contentContainer.setBackgroundResource(rightBackground());
+                }
             }
         }
     }

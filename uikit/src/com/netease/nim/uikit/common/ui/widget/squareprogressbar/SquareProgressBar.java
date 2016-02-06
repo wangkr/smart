@@ -1,4 +1,4 @@
-package com.cqyw.smart.widget.squareprogressbar;
+package com.netease.nim.uikit.common.ui.widget.squareprogressbar;
 
 /**
  * Created by Kairong on 2015/12/13.
@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
 
-import com.cqyw.smart.R;
+import com.netease.nim.uikit.R;
 
 
 /**

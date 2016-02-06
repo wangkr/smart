@@ -1,9 +1,9 @@
-package com.cqyw.smart.session.activity;
+package com.netease.nim.uikit.session.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -16,20 +16,19 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cqyw.smart.JActionBarActivity;
-import com.cqyw.smart.R;
-import com.cqyw.smart.session.extension.MySnapChatAttachment;
-import com.cqyw.smart.widget.squareprogressbar.SquareProgressBar;
+import com.netease.nim.uikit.R;
+import com.netease.nim.uikit.common.activity.TActionBarActivity;
 import com.netease.nim.uikit.common.ui.dialog.CustomAlertDialog;
+import com.netease.nim.uikit.common.ui.widget.squareprogressbar.SquareProgressBar;
 import com.netease.nim.uikit.common.util.media.BitmapDecoder;
 import com.netease.nim.uikit.common.util.media.ImageUtil;
 import com.netease.nim.uikit.joycustom.snap.SnapConstant;
+import com.netease.nim.uikit.session.extension.SnapChatAttachment;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 
@@ -37,63 +36,77 @@ import java.io.IOException;
 /**
  * 查看阅后即焚消息原图
  */
-public class WatchSnapChatSmartActivity extends JActionBarActivity {
-    private static final String INTENT_EXTRA_IMAGE = "INTENT_EXTRA_MESSAGE";
+public class WatchSnapChatSmartActivity extends TActionBarActivity {
+    public static final String INTENT_EXTRA_MESSAGE = "INTENT_EXTRA_MESSAGE";
 
     private IMMessage message;
     private MyCounter counter;
-    private File smartfile;
+    private static File smartfile;
 
     private View loadingLayout;
     private TextView counter_tv;
     private SquareProgressBar image;
+    private static Bitmap srcBitmap;
     private ActionBar actionBar;
     protected CustomAlertDialog alertDialog;
 
-    private static Bitmap srcBitmap;
-
-    private static WatchSnapChatSmartActivity instance;
-
     private static final long COUNT_DOWN_TIME = 5000;
 
-    private static final long COUNT_DOWN_INT = 200;
+    private static final long COUNT_DOWN_INT = 100;
+
+    private static boolean destroy = false;
 
     public static boolean hasSeen = false;
 
-    public static void start(Context context, IMMessage message) {
+    public static void start(Context context, IMMessage message, int requestCode) {
         Intent intent = new Intent();
-        intent.putExtra(INTENT_EXTRA_IMAGE, message);
+        intent.putExtra(INTENT_EXTRA_MESSAGE, message);
         intent.setClass(context, WatchSnapChatSmartActivity.class);
-        context.startActivity(intent);
+        ((Activity)context).startActivityForResult(intent, requestCode);
     }
 
-    public static void destroy() {
-        if (instance != null) {
-            if (instance.smartfile != null){
-                instance.smartfile.delete();
-            }
-            instance.finish();
-            instance = null;
+    public void destroy() {
+        destroy = true;
+        deleteSmart();
+        recycle();
+
+        Intent intent = new Intent();
+        intent.putExtra(INTENT_EXTRA_MESSAGE, message);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    private static void deleteSmart() {
+        if (smartfile != null){
+            smartfile.delete();
+            smartfile = null;
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Window win = getWindow();
+        win.addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+
         onParseIntent();
-        setContentView(R.layout.activity_watch_snap_picture);
+        setContentView(R.layout.activity_watch_snapchat_picture);
         findViews();
 
         counter = new MyCounter(COUNT_DOWN_TIME, COUNT_DOWN_INT);
         requestOriImage();
 
-        instance = this;
         hasSeen = false;
+        destroy = false;
     }
 
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
+            if (destroy) {
+                return;
+            }
             switch (msg.what) {
                 case 0:
                     onDownloadSuccess(message);
@@ -104,37 +117,22 @@ public class WatchSnapChatSmartActivity extends JActionBarActivity {
             }
         }
     };
-    
-    @Override
-    protected void initStyle() {
-        super.initStyle();
-        Window win = getWindow();
-        win.addFlags(WindowManager.LayoutParams.FLAG_SECURE);
-    }
-    
-    @Override
-    protected void initData() {
-    }
-    
-    @Override
-    protected void initView() {
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        instance = null;
         smartfile = null;
     }
 
     private void onParseIntent() {
-        this.message = (IMMessage) getIntent().getSerializableExtra(INTENT_EXTRA_IMAGE);
+        this.message = (IMMessage) getIntent().getSerializableExtra(INTENT_EXTRA_MESSAGE);
     }
 
     private void findViews() {
         alertDialog = new CustomAlertDialog(this);
         loadingLayout = findView(R.id.loading_layout);
         counter_tv = findView(R.id.counter_text);
+        counter_tv.setVisibility(View.GONE);
         initSquareProgressBar();
         actionBar = getSupportActionBar();
         if (actionBar == null){
@@ -147,19 +145,12 @@ public class WatchSnapChatSmartActivity extends JActionBarActivity {
 
     private void initSquareProgressBar(){
         image = (SquareProgressBar) findViewById(R.id.watch_image_view);
-        image.setColorRGB(getResources().getColor(R.color.theme_color));
-        image.setWidth(2);
+        image.setColorRGB(getResources().getColor(R.color.joy_theme_color));
+        image.setWidth(1);
         image.setProgress(100);// 50*100ms=5s
     }
 
     private void requestOriImage() {
-        if (isOriginImageHasDownloaded(message)) {
-            downSmartFile(((MySnapChatAttachment)message.getAttachment()).getUrl());
-            return;
-        }
-
-        // async download original image
-//        SnapConstant.downloadIMMessageAttachment(message);
         onDownloadStart(message);
     }
 
@@ -171,27 +162,11 @@ public class WatchSnapChatSmartActivity extends JActionBarActivity {
         return false;
     }
 
-    public void recycle() {
-        if (srcBitmap != null && !srcBitmap.isRecycled())
-            srcBitmap.recycle();
-        srcBitmap = null;
-    }
-
     /**
      * ******************************** 设置图片 *********************************
      */
 
     private void setThumbnail() {
-        String path = ((MySnapChatAttachment) message.getAttachment()).getThumbPath();
-        if (!TextUtils.isEmpty(path)) {
-            Bitmap bitmap = BitmapDecoder.decodeSampledForDisplay(path);
-            bitmap = ImageUtil.rotateBitmapInNeeded(path, bitmap);
-            if (bitmap != null) {
-                image.setImageBitmap(bitmap);
-                return;
-            }
-        }
-
         image.setImageBitmap(ImageUtil.getBitmapFromDrawableRes(getImageResOnLoading()));
     }
 
@@ -207,17 +182,17 @@ public class WatchSnapChatSmartActivity extends JActionBarActivity {
         } else {
             image.setImageBitmap(srcBitmap);
             hasSeen = true;
-            msg.setStatus(MsgStatusEnum.read);
+            counter_tv.setVisibility(View.VISIBLE);
             counter.start();
         }
     }
 
     private int getImageResOnLoading() {
-        return R.drawable.nim_image_default;
+        return R.drawable.joy_cover_loading_medium;
     }
 
     private int getImageResOnFailed() {
-        return R.drawable.nim_image_download_failed;
+        return R.drawable.joy_image_download_failed;
     }
 
     /**
@@ -227,25 +202,20 @@ public class WatchSnapChatSmartActivity extends JActionBarActivity {
 
     private void onDownloadStart(final IMMessage msg) {
         setThumbnail();
-        if(TextUtils.isEmpty(((MySnapChatAttachment) msg.getAttachment()).getPath())){
-            loadingLayout.setVisibility(View.VISIBLE);
-        } else {
-            loadingLayout.setVisibility(View.GONE);
-        }
-
-        downSmartFile(((MySnapChatAttachment) msg.getAttachment()).getUrl());
+        downSmartFile(((SnapChatAttachment)msg.getAttachment()).getUrl());
     }
 
     private void onDownloadSuccess(final IMMessage msg) {
         loadingLayout.setVisibility(View.GONE);
-
-        handler.post(new Runnable() {
-
-                @Override
-                public void run() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!destroy) {
                     setImageView(msg);
                 }
-            });
+            }
+        },100);
+
     }
 
     /**
@@ -262,19 +232,23 @@ public class WatchSnapChatSmartActivity extends JActionBarActivity {
                     public void run() {
                         int i = 2;
                         smartfile = SnapConstant.downloadSmartImage(urlName);
-                        while ( smartfile == null && i > 0) {
+                        while ( !destroy && smartfile == null && i > 0) {
                             smartfile = SnapConstant.downloadSmartImage(urlName);
                             i--;
                         }
                         if (smartfile != null) {
                             try {
-                                // 临时文件创建成功
-                                if (smartfile.createNewFile()) {
+                                if (destroy) {
+                                    deleteSmart();
+                                    return;
+                                } else {
+                                    // 临时文件创建成功
+                                    smartfile.createNewFile();
                                     handler.sendEmptyMessage(0);
                                 }
                             }catch (IOException e){
                                 e.getMessage();
-                                smartfile.delete();
+                                deleteSmart();
                                 handler.sendEmptyMessage(1);
                             }
                         } else {
@@ -292,6 +266,12 @@ public class WatchSnapChatSmartActivity extends JActionBarActivity {
         Toast.makeText(this, R.string.download_picture_fail, Toast.LENGTH_LONG).show();
     }
 
+    public void recycle() {
+        if (srcBitmap != null && !srcBitmap.isRecycled())
+            srcBitmap.recycle();
+        srcBitmap = null;
+    }
+
     /* 定义一个倒计时的内部类 */
     class MyCounter extends CountDownTimer {
         private long countDownInterval = 1000;
@@ -305,15 +285,18 @@ public class WatchSnapChatSmartActivity extends JActionBarActivity {
         @Override
         public void onFinish() {
             image.setProgress(0);
-            recycle();
-            if (!isDestroyed())
             destroy();
         }
 
         @Override
         public void onTick(long millisUntilFinished) {
             image.setProgress(millisUntilFinished*factor/countDownInterval);
-            counter_tv.setText("" + (int)Math.ceil(millisUntilFinished*1.0/1000));
+            counter_tv.setText("" + (int) Math.ceil(millisUntilFinished * 1.0 / 1000));
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        destroy();
     }
 }

@@ -14,8 +14,8 @@ android {
         applicationId "com.cqyw.smart"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 6
-        versionName "1.0.4"
+        versionCode 7
+        versionName "1.0.5"
         multiDexEnabled true
     }
     lintOptions{
@@ -81,6 +81,10 @@ android {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
     }
 }
 

@@ -19,11 +19,10 @@ import com.cqyw.smart.JActionBarActivity;
 import com.cqyw.smart.R;
 import com.cqyw.smart.main.model.PublicSnapMessage;
 import com.cqyw.smart.main.util.SnapnewsUtils;
-import com.cqyw.smart.widget.squareprogressbar.SquareProgressBar;
+import com.netease.nim.uikit.common.ui.widget.squareprogressbar.SquareProgressBar;
 import com.netease.nim.uikit.common.ui.dialog.CustomAlertDialog;
 import com.netease.nim.uikit.common.util.media.ImageUtil;
 import com.netease.nim.uikit.joycustom.snap.SnapConstant;
-import com.netease.nim.uikit.session.constant.Extras;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 

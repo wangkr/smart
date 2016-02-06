@@ -3,7 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
-    <com.cqyw.smart.widget.squareprogressbar.SquareProgressView
+    <com.netease.nim.uikit.common.ui.widget.squareprogressbar.SquareProgressView
         android:id="@+id/squareProgressBar1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -12,7 +12,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/imageView1" />
 
-    <com.cqyw.smart.widget.squareprogressbar.MyImageView
+    <com.netease.nim.uikit.common.ui.widget.squareprogressbar.MyImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

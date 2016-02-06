@@ -155,7 +155,6 @@ public abstract class PickImageAction extends BaseAction {
             @Override
             public void sendImage(File file, boolean isOrig) {
                 onPicked(file);
-
             }
         });
     }

@@ -294,13 +294,15 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
         public MessageLoader() {
             messageListView.setOnScrollListener(new PauseOnScrollListener(ImageLoader.getInstance(), true, true));
             if (isNetworkOk()) {
-//                SnapMessageListPanel.this.uiHandler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        loadFromRemote(RefreshEnum.NEWEAST);
-//                    }
-//                }, 300);
                 messageListView.setAutoRefreshing();
+                uiHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (messageListView.isPullRefreshing() || messageListView.isPullLoading()) {
+                            onLoad();
+                        }
+                    }
+                }, 5000);
             } else {
                 SnapMessageListPanel.this.uiHandler.postDelayed(new Runnable() {
                     @Override

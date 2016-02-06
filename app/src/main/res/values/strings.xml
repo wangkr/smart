@@ -52,8 +52,6 @@
     <string name="reset_passwd_failed">密码修改失败</string>
 
 
-    <string name="description">That&amp;apos;s the image to draw the progressbar around.</string>
-
     <!-- 下拉刷新控件-->
     <string name="xlistview_header_hint_normal">下拉刷新</string>
     <string name="xlistview_header_hint_ready">松开刷新数据</string>

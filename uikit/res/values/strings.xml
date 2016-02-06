@@ -195,6 +195,9 @@
     <string name="download_picture_fail">图片下载失败</string>
     <string name="look_up_original_photo_format">查看原图（%s）</string>
     <string name="snap_hint_text">添加说明文字(可省略)</string>
+    <string name="snap_chat">阅后即焚</string>
+
+    <string name="description">That&amp;apos;s the image to draw the progressbar around.</string>
 
     <!--java 类里面的常量-->
     <string name="bucket_name">joyhuanian</string>

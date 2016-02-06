@@ -26,6 +26,7 @@ import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.ResponseCode;
 import com.netease.nimlib.sdk.friend.FriendService;
 import com.netease.nimlib.sdk.friend.constant.FriendFieldEnum;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class ContactHelper {
         NimUIKit.setContactEventListener(new ContactEventListener() {
             @Override
             public void onItemClick(Context context, String account) {
-                UserProfileActivity.start(context, account);
+                NimUIKit.startChatting(context, account, SessionTypeEnum.P2P, null);
             }
 
             @Override
