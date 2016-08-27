@@ -1,10 +1,10 @@
 package com.cqyw.smart.main.viewholder;
 
 import android.content.Context;
+import android.support.annotation.LayoutRes;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -18,17 +18,15 @@ import com.cqyw.smart.contact.activity.UserProfileActivity;
 import com.cqyw.smart.contact.activity.UserProfileSettingActivity;
 import com.cqyw.smart.contact.constant.UserConstant;
 import com.cqyw.smart.main.activity.WatchSnapPublicSmartActivity;
-import com.cqyw.smart.main.adapter.PublicSnapMsgAdapter;
 import com.cqyw.smart.main.adapter.LikeHeadImageAdapter;
 import com.cqyw.smart.main.model.PublicAvatarOnclickListener;
 import com.cqyw.smart.main.model.PublicSnapMessage;
-import com.cqyw.smart.main.util.SnapnewsUtils;
 import com.cqyw.smart.util.Utils;
-import com.cqyw.smart.widget.MyGridView;
-import com.netease.nim.uikit.common.adapter.TAdapterDelegate;
-import com.netease.nim.uikit.common.adapter.TViewHolder;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
 import com.netease.nim.uikit.common.util.sys.TimeUtil;
+import com.netease.nim.uikit.uinfo.UserInfoHelper;
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 
 /**
@@ -37,7 +35,7 @@ import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
  * Created by Kairong on 2015/11/13.
  * mail:wangkrhust@gmail.com
  */
-public abstract class PublicMsgViewHolderBase extends TViewHolder{
+public abstract class PublicMsgViewHolderBase extends UltimateRecyclerviewViewHolder<PublicSnapMessage> {
     protected PublicSnapMessage message;
 
     // view
@@ -46,20 +44,20 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
     protected GridView zanList;
     protected TextView likeNumHint_tv;
     protected TextView time_tv;
+    protected TextView nick_tv;
     protected TextView distance_tv;
     protected TextView readStatus_tv;
     protected TextView deleteButton_tv;
     protected TextView viewer_tv;
 
+    protected ImageView snapCover;
+    protected TextView snapText;
     protected ImageView zanButton_iv;
     protected ImageView commentButton_iv;
 
     protected HeadImageView avatar;
-    protected FrameLayout contentContainer;
 
-    protected LinearLayout msgTagContainer;
-
-    protected LinearLayout deleteLayout;
+    protected ImageView msgTagContainer;
     // data
     protected LikeHeadImageAdapter zanAdapter;
 
@@ -75,12 +73,17 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
 
     // 点击评论响应处理
     protected View.OnClickListener commentClickListener;
+    
+    // 事件处理监听
+    protected ViewHolderEventListener eventListener;
 
     /// -- 以下接口可由子类覆盖或实现
     // 返回消息的tag内容展示区域layout res id
+    @LayoutRes
     abstract protected int getTagContentResId();
 
     // 返回具体消息类型内容展示区域的layout res id
+    @LayoutRes
     abstract protected int getContentResId();
 
     // 在该接口中根据layout对各控件成员变量赋值
@@ -98,6 +101,21 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
     // 刷新赞的头像处理
     abstract protected void refreshLike(boolean auto);
 
+    public interface ViewHolderEventListener {
+        // 长按事件响应处理
+        boolean onViewHolderLongClick(View clickView, View viewHolderView, PublicSnapMessage item);
+
+        // 发送失败或者多媒体文件下载失败指示按钮点击响应处理
+        void onFailedBtnClick(PublicSnapMessage resendMessage);
+
+        void onDeleteBtnClick(PublicSnapMessage deleteMsg);
+    }
+
+    public PublicMsgViewHolderBase(View itemView, ViewHolderEventListener eventListener) {
+        super(itemView);
+        this.eventListener = eventListener;
+        inflate();
+    }
 
     // 内容区域点击事件响应处理。
     protected void onItemClick() {
@@ -106,98 +124,69 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
 
     // 内容区域长按事件响应处理。该接口的优先级比adapter中有长按事件的处理监听高，当该接口返回为true时，adapter的长按事件监听不会被调用到。
     protected boolean onItemLongClick() {
-        // 查看阅后即焚
-        if (message.getStatus() == 1) {// 没有过期
-            // 自己可以永久查看
-            if (TextUtils.equals(message.getUid(), AppCache.getJoyId())) {
-                WatchSnapPublicSmartActivity.start(context, message, UserConstant.REQUEST_CODE_WATCHSNAP);
-                return true;
-            } else if (message.getMsgStatus() == MsgStatusEnum.success && message.getRead() == 0) {
-                WatchSnapPublicSmartActivity.start(context, message, UserConstant.REQUEST_CODE_WATCHSNAP);
-                return true;
-            } else if (message.getRead() == 1) {
-                Utils.showLongToast(context, "只能查看一次,您已经查看过了");
-                return false;
+        if (message.getType() == PublishMessage.MessageType.SNAP.value()) {
+            // 查看阅后即焚
+            if (message.getStatus() == 1) {// 没有过期
+                // 自己可以永久查看
+                if (TextUtils.equals(message.getUid(), AppCache.getJoyId())) {
+                    WatchSnapPublicSmartActivity.start(getContext(), message, UserConstant.REQUEST_CODE_WATCHSNAP);
+                    return true;
+                } else if (message.getMsgStatus() == MsgStatusEnum.success && message.getRead() == 0) {
+                    WatchSnapPublicSmartActivity.start(getContext(), message, UserConstant.REQUEST_CODE_WATCHSNAP);
+                    return true;
+                } else if (message.getRead() == 1) {
+                    Utils.showLongToast(getContext(), "只能查看一次,您已经查看过了");
+                    return false;
+                }
+            } else {
+                Utils.showLongToast(getContext(), "图片超过24小时,已销毁");
             }
-        } else {
-            Utils.showLongToast(context, "图片超过24小时,已销毁");
         }
-        return false;
+        return true;
     }
 
-    /// -- 以下接口可由子类调用
-    // 获取MsgAdapter对象
-    protected final PublicSnapMsgAdapter getAdapter() {
-        return (PublicSnapMsgAdapter) adapter;
+
+    public void setEventListener(ViewHolderEventListener eventListener) {
+        this.eventListener = eventListener;
     }
 
-    // 设置FrameLayout子控件的gravity参数
-    protected final void setGravity(View view, int gravity) {
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)view.getLayoutParams();
-        params.gravity = gravity;
-    }
-
-    // 设置控件的长宽
-    protected void setLayoutParams(int width, int height, View... views) {
-        for (View view : views) {
-            ViewGroup.LayoutParams maskParams = view.getLayoutParams();
-            maskParams.width = width;
-            maskParams.height = height;
-            view.setLayoutParams(maskParams);
-        }
-    }
-
-    // 根据layout id查找对应的控件
-    protected <T extends View> T findViewById(int id) {
-        return (T)view.findViewById(id);
-    }
-
-    /// -- 以下是基类实现代码
-    @Override
-    protected final int getResId() {
-        return R.layout.layout_snap_msg_item;
-    }
-
-    @Override
     protected final void inflate() {
-        zanList = findViewById(R.id.snap_msg_zan_head_gridview);
-        likeNumHint_tv = findViewById(R.id.snap_msg_like_numHint);
-        time_tv = findViewById(R.id.snap_msg_time);
-        distance_tv = findViewById(R.id.snap_msg_distance);
-        viewer_tv = findViewById(R.id.viewer_text);
-        readStatus_tv = findViewById(R.id.snap_msg_read_status);
-        deleteButton_tv = findViewById(R.id.snap_delete_btn);
-        deleteLayout = findViewById(R.id.snap_msg_delete_rl);
-        zanButton_iv = findViewById(R.id.snap_msg_comment_menu_zan_txt);
-        commentButton_iv = findViewById(R.id.snap_msg_comment_menu_comment_txt);
-        avatar = findViewById(R.id.snap_msg_head);
-        alertButton = findViewById(R.id.snap_send_msg_alert);
-        progressBar = findViewById(R.id.snap_send_item_progress);
+        zanList = findViewByIdEfficient(R.id.snap_msg_zan_head_gridview);
+        likeNumHint_tv = findViewByIdEfficient(R.id.snap_msg_like_numHint);
+        nick_tv = findViewByIdEfficient(R.id.snap_msg_nick);
+        time_tv = findViewByIdEfficient(R.id.snap_msg_time);
+        distance_tv = findViewByIdEfficient(R.id.snap_msg_distance);
+        viewer_tv = findViewByIdEfficient(R.id.viewer_text);
+        readStatus_tv = findViewByIdEfficient(R.id.snap_msg_read_status);
+        deleteButton_tv = findViewByIdEfficient(R.id.snap_delete_btn);
+        zanButton_iv = findViewByIdEfficient(R.id.snap_msg_comment_menu_zan_txt);
+        commentButton_iv = findViewByIdEfficient(R.id.snap_msg_comment_menu_comment_txt);
+        avatar = findViewByIdEfficient(R.id.snap_msg_head);
+        alertButton = findViewByIdEfficient(R.id.snap_send_msg_alert);
+        progressBar = findViewByIdEfficient(R.id.snap_send_item_progress);
+        snapCover = findViewByIdEfficient(R.id.snap_msg_content_image);
+        snapText = findViewByIdEfficient(R.id.snap_msg_content_text);
 
-        contentContainer = findViewById(R.id.snap_msg_content);
-        msgTagContainer = findViewById(R.id.snap_msg_tag_container);
-
-        View.inflate(view.getContext(), getContentResId(), contentContainer);
-        View.inflate(view.getContext(), getTagContentResId() == 0 ? R.layout.layout_snap_systag_content : getTagContentResId(), msgTagContainer);
+        msgTagContainer = findViewByIdEfficient(R.id.snap_msg_tag_container);
         inflateContentView();
     }
 
-    @Override
     protected final void refresh(Object item) {
         message = (PublicSnapMessage) item;
         setHeadImageView();
+        setNickName();
         setDistance();
         setTimeTextView();
         setReadStatus();
         setStatus();
         setDeleteButton();
         setLikeList();
-        setOnClickListener();
+        setClickListener();
         setLongClickListener();
         // 显示查看量
         viewer_tv.setText(message.getViewer());
         // 显示官方账号标记
-        if (message.getType() == PublicMsgViewHolderFactory.SYS_NEWS) {
+        if (message.getType() == PublishMessage.MessageType.SYSTEM.value()) {
             msgTagContainer.setVisibility(View.VISIBLE);
         } else {
             msgTagContainer.setVisibility(View.GONE);
@@ -206,7 +195,7 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
         bindContentView();
     }
 
-    public void refreshCurrentItem() {
+    public void refreshCurrentItem(PublicSnapMessage message) {
         if (message != null) {
             refresh(message);
         }
@@ -218,13 +207,14 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
     protected void setLikeList() {
         if (message.getLike() > 0){
             refreshLike(true);
-            if (message.getLike() > 10 ) {
+            if (message.getLike() > 6 ) {
                 likeNumHint_tv.setVisibility(View.VISIBLE);
-                likeNumHint_tv.setText("等" + message.getLike() + "人Jo了");
+                likeNumHint_tv.setText(message.getLike()+"");
             } else {
                 likeNumHint_tv.setVisibility(View.GONE);
             }
         } else {
+            likeNumHint_tv.setVisibility(View.GONE);
             zanList.setVisibility(View.GONE);
         }
     }
@@ -234,17 +224,17 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
      */
     private void setDeleteButton(){
         if (message.getUid().equals(AppCache.getJoyId())) {
-            deleteLayout.setVisibility(View.VISIBLE);
+            deleteButton_tv.setVisibility(View.VISIBLE);
             deleteButton_tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   if (getAdapter().getEventListener()!=null) {
-                       getAdapter().getEventListener().onDeleteBtnClick(message);
+                   if (eventListener!=null) {
+                       eventListener.onDeleteBtnClick(message);
                    }
                 }
             });
         } else {
-            deleteLayout.setVisibility(View.GONE);
+            deleteButton_tv.setVisibility(View.GONE);
         }
     }
 
@@ -266,16 +256,19 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
      * 设置已读/未读标记
      */
     private void setReadStatus(){
-        readStatus_tv.setVisibility(View.VISIBLE);
-        readStatus_tv.setEnabled(message.getStatus() == 1 &&
-                (TextUtils.equals(message.getUid(), AppCache.getJoyId()) || message.getRead() == 0));
+        if (message.getType() == PublicMsgViewHolderFactory.PUB_NEWS) {
+            readStatus_tv.setVisibility(View.GONE);
+        } else {
+            readStatus_tv.setVisibility(View.VISIBLE);
+            readStatus_tv.setEnabled(message.getStatus() == 1 &&
+                    (TextUtils.equals(message.getUid(), AppCache.getJoyId()) || message.getRead() == 0));
+        }
     }
 
     /**
      * 设置消息发送状态
      */
     private void setStatus() {
-
         MsgStatusEnum status = message.getMsgStatus();
         switch (status) {
             case fail:
@@ -303,20 +296,24 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
         avatar.loadBuddyAvatar(message.getUid());
     }
 
-    private void setOnClickListener() {
+    private void setNickName(){
+        nick_tv.setText(UserInfoHelper.getUserName(message.getUid()));
+    }
+
+    private void setClickListener() {
         // 重发/重收按钮响应事件
-        if (getAdapter().getEventListener() != null) {
+        if (eventListener != null) {
             alertButton.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    getAdapter().getEventListener().onFailedBtnClick(message);
+                    eventListener.onFailedBtnClick(message);
                 }
             });
         }
 
         // 内容区域点击事件响应， 相当于点击了整项
-        contentContainer.setOnClickListener(new View.OnClickListener() {
+        snapCover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onItemClick();
@@ -344,7 +341,7 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
         View.OnClickListener portraitListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                avatarOnclickListener.onAvatarClicked(context, message);
+                avatarOnclickListener.onAvatarClicked(getContext(), message);
             }
         };
         avatar.setOnClickListener(portraitListener);
@@ -381,8 +378,8 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
             public boolean onLongClick(View v) {
                 // 优先派发给自己处理，
                 if (!onItemLongClick()) {
-                    if (getAdapter().getEventListener() != null) {
-                        getAdapter().getEventListener().onViewHolderLongClick(contentContainer, view, message);
+                    if (eventListener != null) {
+                        eventListener.onViewHolderLongClick(snapCover, getView(), message);
                         return true;
                     }
                 }
@@ -390,7 +387,7 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
             }
         };
         // 消息长按事件响应处理
-        contentContainer.setOnLongClickListener(longClickListener);
+        snapCover.setOnLongClickListener(longClickListener);
 
         // 头像长按事件响应处理
         // 头像点击事件响应
@@ -414,11 +411,10 @@ public abstract class PublicMsgViewHolderBase extends TViewHolder{
         View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                avatarOnclickListener.onAvatarLongClicked(context, message);
+                avatarOnclickListener.onAvatarLongClicked(getContext(), message);
                 return true;
             }
         };
         avatar.setOnLongClickListener(longClickListener);
     }
-
 }

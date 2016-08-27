@@ -3,7 +3,7 @@ package com.cqyw.smart.common.infra;
 import android.os.Handler;
 import android.os.Looper;
 
-public class DefaultTaskScheduler implements com.cqyw.smart.common.infra.TaskScheduler {
+public class DefaultTaskScheduler implements TaskScheduler {
 	/**
 	 * registry
 	 */

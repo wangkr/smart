@@ -1,5 +1,7 @@
 package com.netease.nim.uikit.joycustom.snap;
 
+import android.support.annotation.DrawableRes;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.netease.nim.uikit.R;
@@ -80,6 +82,30 @@ public class SnapConstant {
                 return snap_coverIds_wenyi;
             default:
                 return snap_coverIds_cute;
+        }
+    }
+
+    /**
+     * 获取封面resId
+     */
+    @DrawableRes
+    public static int getSnapCoverResId(int coverIndex, int pagerIndex) {
+        if (coverIndex > 5) {
+            return snap_coverIds_others[0];
+        }
+        switch (pagerIndex) {
+            case 0:
+                return snap_coverIds_others[coverIndex];
+            case 1:
+                return snap_coverIds_single[coverIndex];
+            case 2:
+                return snap_coverIds_erciyuan[coverIndex];
+            case 3:
+                return snap_coverIds_cute[coverIndex];
+            case 4:
+                return snap_coverIds_wenyi[coverIndex];
+            default:
+                return snap_coverIds_others[0];
         }
     }
 

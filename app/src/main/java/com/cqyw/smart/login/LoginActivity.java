@@ -1,11 +1,16 @@
 package com.cqyw.smart.login;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -50,6 +55,9 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 public class LoginActivity extends TActionBarActivity implements View.OnKeyListener{
     private static final String TAG = "LoginActivity";
     public static final String KICK_OUT = "KICK_OUT";
+    public static final int REQUEST_ACCESS_READPHONE = 100;
+    private static final int REQUEST_ACCESS_RSTORAGE = 101;
+    private static final int REQUEST_ACCESS_WSTORAGE = 101;
 
     private TextView registerBtn;
     private TextView findpasswdBtn;
@@ -76,6 +84,28 @@ public class LoginActivity extends TActionBarActivity implements View.OnKeyListe
         initRegisterBtn();
         initFindPasswordBtn();
         setupLoginPanel();
+
+        if (AppContext.isAndroid6() && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_ACCESS_READPHONE);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,  Manifest.permission.READ_PHONE_STATE)) {
+                Toast.makeText(this, "请允许读取手机状态", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
+        if (AppContext.isAndroid6() && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_ACCESS_WSTORAGE);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,   Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                Toast.makeText(this, "请允许写磁盘", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (AppContext.isAndroid6() && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_ACCESS_RSTORAGE);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,   Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                Toast.makeText(this, "请允许读磁盘", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     public static void start(Context context) {
@@ -179,6 +209,14 @@ public class LoginActivity extends TActionBarActivity implements View.OnKeyListe
 
         String account = AppSharedPreference.getUserAccount();
         loginAccountEdit.setText(account);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_ACCESS_READPHONE && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            finish();
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /**

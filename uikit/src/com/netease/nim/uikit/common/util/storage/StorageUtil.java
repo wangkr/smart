@@ -117,6 +117,16 @@ public class StorageUtil {
         }
     }
 
+	public static String getCommSystemImagePath() {
+		if (Build.VERSION.SDK_INT > 7) {
+			String picturePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath();
+			return picturePath;
+		} else {
+			String picturePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
+			return picturePath;
+		}
+	}
+
 	public static boolean isInvalidVideoFile(String filePath) {
 		return filePath.toLowerCase().endsWith(".3gp")
 				|| filePath.toLowerCase().endsWith(".mp4");

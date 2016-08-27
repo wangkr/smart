@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="zan_headimage_size">36dp</dimen>
+    <dimen name="zan_headgridivew_space">7dp</dimen>
+    <dimen name="user_profile_gallery_hpadding">20dp</dimen>
+    <dimen name="user_profile_gallery_spacing">16dp</dimen>
+    <dimen name="user_profile_gallery_columnWidth">135dp</dimen>
+    <dimen name="custom_actionbar_btn_back_padding">27dp</dimen>
+    <dimen name="snap_msg_cover_min_height">338dp</dimen>
+</resources>

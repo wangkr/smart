@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.cqyw.smart.common.http.JoyHttpClient;
 import com.netease.nim.uikit.common.activity.TActionBarActivity;
 import com.netease.nim.uikit.common.util.sys.ActionBarUtil;
 import com.umeng.analytics.MobclickAgent;
@@ -78,5 +79,11 @@ public abstract class JActionBarActivity extends TActionBarActivity{
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        JoyHttpClient.getInstance().cancellAll();
     }
 }

@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import com.cqyw.smart.JActionBarActivity;
 import com.cqyw.smart.R;
@@ -60,6 +62,11 @@ public class FriendActivity extends JActionBarActivity {
     @Override
     protected void initStyle() {
         setContentView(R.layout.activity_friend_tab);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setCustomView(R.layout.fragment_friend_tab);
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        }
     }
 
     @Override

@@ -18,13 +18,13 @@ public class TaskManagerRegistry {
     public static void waitAll(final Context context, final Runnable done, final int max, final int interval) {
 		cancelAll(true);
 
-		com.cqyw.smart.common.infra.Handlers.sharedHandler(context).postDelayed(new Runnable() {
+		Handlers.sharedHandler(context).postDelayed(new Runnable() {
 			int count;
 
 			@Override
 			public void run() {
 				if (!idle() && count++ < max) {
-					com.cqyw.smart.common.infra.Handlers.sharedHandler(context).postDelayed(this, interval);
+					Handlers.sharedHandler(context).postDelayed(this, interval);
 				} else {
 					done.run();
 				}

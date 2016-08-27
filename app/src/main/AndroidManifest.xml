@@ -71,7 +71,7 @@
         <activity android:name=".main.activity.MainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:hardwareAccelerated="true"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="adjustPan">
@@ -87,17 +87,10 @@
         </activity>
 
         <!-- 关于 -->
-        <activity android:name=".friend.activity.AboutActivity"
-            android:configChanges="orientation"
-            android:label="@string/about"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden">
-        </activity>
 
         <activity android:name=".friend.activity.FriendActivity"
             android:configChanges="keyboardHidden|orientation"
             android:hardwareAccelerated="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
         </activity>
@@ -233,7 +226,6 @@
             android:name="com.netease.nim.uikit.session.activity.P2PMessageActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity
             android:name="com.netease.nim.uikit.session.activity.TeamMessageActivity"
@@ -342,7 +334,35 @@
         <activity android:name="com.netease.nim.uikit.joycustom.snap.SelectSnapCoverImageActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
+            android:label="选择封面"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <!-- JoyCamera-->
+        <activity android:name="com.netease.nim.uikit.common.media.picker.joycamera.activity.CoverBgEditActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name="com.netease.nim.uikit.common.media.picker.joycamera.activity.CropImageActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name="com.netease.nim.uikit.common.media.picker.joycamera.activity.JoyCameraActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+        </activity>
+
+        <activity android:name="com.netease.nim.uikit.common.media.picker.joycamera.activity.PicturePreviewActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustUnspecified|stateHidden">
         </activity>
 

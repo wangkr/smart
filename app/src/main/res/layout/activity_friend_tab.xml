@@ -2,15 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/welcome_container"
     >
-    <include layout="@layout/layout_action_bar_friend"
-        android:id="@+id/friend_activity_actionbar"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/welcome_container"
-        android:orientation="vertical">
-
-    </LinearLayout>
 
 </LinearLayout>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
 
-    <color name="joy_theme_color">#3ac0b5</color>
+    <color name="joy_theme_color">#ff3ac0b5</color>
     <color name="joy_theme_disable">#7cbfba</color>
     <color name="joy_theme_color_dark2">#37b9ae</color>
     <color name="joy_theme_color_dark">#aa3ac0b5</color>
@@ -79,6 +79,10 @@
     <drawable name="text_disable_color">#c2c2c2</drawable>
 
     <drawable name="semi_lightwhite">#aafafafa</drawable>
+
+    <!--joy camera-->
+    <color name="joy_camera_theme_color">#1c272d</color>
+    <color name="joy_camera_focused_color">#55000000</color>
 
     <integer-array name="mycolors">
         <item>@color/mycolor1</item>

@@ -1,7 +1,7 @@
 package com.cqyw.smart.main.picture;
 
 import com.cqyw.smart.R;
-import com.cqyw.smart.main.model.PublishSnapMessage;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
 import com.cqyw.smart.main.util.MainUtils;
 import com.netease.nim.uikit.joycustom.snap.PickSnapCoverAction;
 import com.netease.nim.uikit.joycustom.upyun.JoyImageUtil;
@@ -26,7 +26,7 @@ public class SnapPublicAction extends PickSnapCoverAction {
 
     @Override
     protected void onSnapPicked(File hiddenFile, String snapCoverName, String contentText) {
-        PublishSnapMessage message = new PublishSnapMessage();
+        PublishMessage message = new PublishMessage();
         String upyunName = JoyImageUtil.genJoyyunFilenameFromLocalPath(hiddenFile.getPath());
         String upyunUrlName = JoyImageUtil.genSmartImageRltPath(upyunName);
         message.setSmart(upyunUrlName);
@@ -47,6 +47,6 @@ public class SnapPublicAction extends PickSnapCoverAction {
         }
     }
     public interface SendSmartImageListener {
-        void onSmartSelected(PublishSnapMessage message, File smartFile);
+        void onSmartSelected(PublishMessage message, File smartFile);
     }
 }

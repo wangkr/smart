@@ -20,6 +20,7 @@ public class LikeMessage implements Serializable{
     private List<String> uids;
 
     public LikeMessage(){
+        uids = new ArrayList<>();
     }
 
     public void setNid(String nid) {
@@ -59,14 +60,15 @@ public class LikeMessage implements Serializable{
     }
 
     public boolean addLike(String uid) {
-        List<String> newUids = new ArrayList<>(uids.size() + 1);
-        // 将自己最新的点赞放到最开始
-        newUids.add(uid);
-        for (String _uid : uids) {
-            newUids.add(_uid);
-        }
-        uids.clear();
-        uids.addAll(newUids);
+//        List<String> newUids = new ArrayList<>(uids.size() + 1);
+//        // 将自己最新的点赞放到最开始
+//        newUids.add(uid);
+//        if (uids.size() > 0) {
+//            newUids.addAll(uids);
+//        }
+//        uids.clear();
+//        uids.addAll(newUids);
+        uids.add(0, uid);
         return true;
     }
 

@@ -1,14 +1,10 @@
 package com.cqyw.smart.login.protocol;
 
-import android.util.Log;
-
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.cqyw.smart.common.http.JoyHttpClient;
-import com.cqyw.smart.common.http.NimHttpClient;
 import com.cqyw.smart.config.JoyServers;
 import com.netease.nim.uikit.common.util.log.LogUtil;
-import com.netease.nim.uikit.common.util.string.MD5;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +28,7 @@ public class LoginHttpClient implements ILoginHttpProtocol {
     }
 
     private LoginHttpClient(){
-        NimHttpClient.getInstance().init();
+        JoyHttpClient.getInstance().init();
     }
 
     @Override
@@ -41,14 +37,11 @@ public class LoginHttpClient implements ILoginHttpProtocol {
 
         Map<String, String> headers = new HashMap<>(1);
         headers.put(HEADER_CONTENT_TYPE, "application/x-www-form-urlencoded; charset=utf-8");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(REQUEST_KEY_PHONE, account);
+        jsonObject.put(REQUEST_KEY_PASSWORD, password);
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(REQUEST_KEY_PHONE).append("=").append(account).append("&")
-                .append(REQUEST_KEY_PASSWORD).append("=").append(password);
-        String bodyString = builder.toString();
-
-        LogUtil.d(TAG, "login..."+bodyString);
-        NimHttpClient.getInstance().execute(url, headers, bodyString, new NimHttpClient.NimHttpCallback() {
+        JoyHttpClient.getInstance().execute(url, headers, jsonObject, new JoyHttpClient.JoyHttpCallback() {
             @Override
             public void onResponse(String response, int code, String errorMsg) {
                 if (code != 0) {
@@ -72,6 +65,6 @@ public class LoginHttpClient implements ILoginHttpProtocol {
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        }, false, true);
     }
 }

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="zan_headimage_size">28dp</dimen>
-    <dimen name="zan_headgridivew_space">6dp</dimen>
-    <dimen name="user_profile_gallery_hpadding">20dp</dimen>
-    <dimen name="user_profile_gallery_spacing">10dp</dimen>
-    <dimen name="user_profile_gallery_columnWidth">100dp</dimen>
-</resources>

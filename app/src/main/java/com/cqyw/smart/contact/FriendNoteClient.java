@@ -89,7 +89,7 @@ public class FriendNoteClient implements NoteHttpProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        }, true, true);
     }
 
     @Override
@@ -138,6 +138,6 @@ public class FriendNoteClient implements NoteHttpProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        }, true, true);
     }
 }

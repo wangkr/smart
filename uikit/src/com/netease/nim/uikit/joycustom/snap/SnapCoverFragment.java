@@ -34,18 +34,17 @@ public class SnapCoverFragment extends TFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        initView();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.snap_cover_fragment_item, container, false);
+        initView(rootView);
         return rootView;
     }
 
-    private void initView(){
+    private void initView(View view){
         gridView = findView(R.id.cover_item_list);
         gridView.setAdapter(adapter);
 

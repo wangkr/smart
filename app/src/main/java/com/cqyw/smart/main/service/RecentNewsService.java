@@ -54,7 +54,6 @@ public class RecentNewsService extends Service implements Runnable{
         Log.d(TAG, "========================onDestroy");
         super.onDestroy();
         isRun = false;
-        mTimer.schedule(mTimerTask, 1000);
     }
 
     public void register(Observer<List<RecentSnapNews>> observer, boolean register) {
@@ -109,16 +108,6 @@ public class RecentNewsService extends Service implements Runnable{
             }
         }
     }
-
-    Timer mTimer = new Timer();
-    TimerTask mTimerTask = new TimerTask() {
-        @Override
-        public void run() {
-            Log.d(TAG, "========================mTimerTask");
-            Intent serviceLauncher = new Intent(getApplicationContext(), RecentNewsService.class);
-            startService(serviceLauncher);
-        }
-    };
 
     @Override
     public IBinder onBind(Intent intent) {

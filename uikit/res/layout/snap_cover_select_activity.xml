@@ -2,27 +2,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_gray">
-    <include layout="@layout/snap_select_action_bar"
-        android:id="@+id/snap_select_activity_actionbar"/>
-    <EditText
-        android:id="@+id/snap_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:singleLine="false"
-        android:padding="5dp"
-        android:gravity="left|top"
-        android:hint="@string/snap_hint_text"
-        android:textColorHint="@color/gray_white"
-        android:background="@color/white"
-        android:visibility="gone"/>
-
-    <LinearLayout
-        android:id="@+id/snap_cover_container"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp">
-
-    </LinearLayout>
+    android:id="@+id/snap_cover_container">
 </LinearLayout>

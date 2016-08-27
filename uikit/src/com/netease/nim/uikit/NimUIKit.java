@@ -2,11 +2,15 @@ package com.netease.nim.uikit;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.netease.nim.uikit.cache.DataCacheManager;
 import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nim.uikit.common.media.picker.joycamera.CameraSharedPreference;
+import com.netease.nim.uikit.common.media.picker.joycamera.Constant;
+import com.netease.nim.uikit.common.media.picker.joycamera.ICamOnLineResMgr;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.storage.StorageType;
 import com.netease.nim.uikit.common.util.storage.StorageUtil;
@@ -60,6 +64,9 @@ public final class NimUIKit {
     // 图片加载、缓存与管理组件
     private static ImageLoaderKit imageLoaderKit;
 
+    // 相机在线资源管理组件
+    private static ICamOnLineResMgr ICamOnLineResMgr;
+
     // 会话窗口消息列表一些点击事件的响应处理函数
     private static SessionEventListener sessionListener;
 
@@ -73,11 +80,12 @@ public final class NimUIKit {
      * @param userInfoProvider 用户信息提供者
      * @param contactProvider  通讯录信息提供者
      */
-    public static void init(Context context, UserInfoProvider userInfoProvider, ContactProvider contactProvider, FriendExtInfoProvider friendExtInfoProvider) {
+    public static void init(Context context, UserInfoProvider userInfoProvider, ContactProvider contactProvider, FriendExtInfoProvider friendExtInfoProvider, ICamOnLineResMgr ICamOnLineResMgr) {
         NimUIKit.context = context.getApplicationContext();
         NimUIKit.userInfoProvider = userInfoProvider;
         NimUIKit.contactProvider = contactProvider;
         NimUIKit.friendExtInfoProvider = friendExtInfoProvider;
+        NimUIKit.ICamOnLineResMgr = ICamOnLineResMgr;
         NimUIKit.imageLoaderKit = new ImageLoaderKit(context, null);
 
         // init data cache
@@ -88,14 +96,19 @@ public final class NimUIKit {
         }
 
         // init tools
-        JoyImageUtil.init();
-        StorageUtil.init(context, null);
         ScreenUtil.init(context);
+        StorageUtil.init(context, null);
+        JoyImageUtil.init();
+        CameraSharedPreference.init(context);
         StickerManager.getInstance().init();
 
         // init log
         String path = StorageUtil.getDirectoryByDirType(StorageType.TYPE_LOG);
         LogUtil.init(path, Log.DEBUG);
+
+
+        Constant.hasFlashLight = context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+        Constant.canAutoFocus = context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS);
     }
 
     /**
@@ -215,6 +228,10 @@ public final class NimUIKit {
      */
     public static void registerTipMsgViewHolder(Class<? extends MsgViewHolderBase> viewHolder) {
         MsgViewHolderFactory.registerTipMsgViewHolder(viewHolder);
+    }
+
+    public static ICamOnLineResMgr getCamOnLineResMgr() {
+        return ICamOnLineResMgr;
     }
 
     /**

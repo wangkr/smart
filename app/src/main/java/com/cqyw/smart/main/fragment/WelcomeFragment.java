@@ -15,7 +15,7 @@ import com.cqyw.smart.login.LoginActivity;
  * mail:wangkrhust@gmail.com
  */
 public class WelcomeFragment extends Fragment {
-    public static int[] welcome_fragment_bgs = {R.drawable.welcome1, R.drawable.welcome2, R.drawable.welcome3, R.drawable.welcome4};
+//    public static int[] welcome_fragment_bgs = {R.drawable.welcome1, R.drawable.welcome2, R.drawable.welcome3, R.drawable.welcome4};
 
     private static final String KEY_CONTENT = "WelcomeFragment:index";
 
@@ -43,16 +43,16 @@ public class WelcomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_welcome, container, false);
-        view.findViewById(R.id.welcome_fragment_bg).setBackgroundResource(welcome_fragment_bgs[index % 4]);
-        if (index % 4 == 3) {
-            view.findViewById(R.id.start_joy_experience).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.start_joy_experience).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    LoginActivity.start(getContext());
-                }
-            });
-        }
+//        view.findViewById(R.id.welcome_fragment_bg).setBackgroundResource(welcome_fragment_bgs[index % 4]);
+//        if (index % 4 == 3) {
+//            view.findViewById(R.id.start_joy_experience).setVisibility(View.VISIBLE);
+//            view.findViewById(R.id.start_joy_experience).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    LoginActivity.start(getContext());
+//                }
+//            });
+//        }
         return view;
     }
 

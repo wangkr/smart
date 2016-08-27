@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.opengl.GLSurfaceView
+        android:id="@+id/gl_surfaceview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <SurfaceView
+        android:id="@+id/surfaceview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <ProgressBar
+        android:id="@+id/load_model_progress_pb"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:indeterminate="true"
+        android:layout_centerInParent="true"
+        android:indeterminateBehavior="repeat"
+        android:visibility="gone"/>
+
+    <View
+        android:id="@+id/camera_top_bar_bg"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/camera_top_bar_height"
+        android:background="@color/joy_camera_theme_color"
+        android:layout_alignParentTop="true"
+        />
+
+    <ImageView
+        android:id="@+id/switch_camera"
+        android:layout_width="50dp"
+        android:layout_height="@dimen/camera_top_bar_height"
+        android:src="@drawable/ic_camera_front"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <ImageView
+        android:id="@+id/flash_light"
+        android:layout_height="@dimen/camera_top_bar_height"
+        android:layout_width="50dp"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/flash_light_icn_enable"
+        android:layout_toLeftOf="@id/switch_camera"/>
+
+    <ImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/camera_close_iv"
+        android:layout_width="50dp"
+        android:layout_height="@dimen/camera_top_bar_height"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/close_icn"/>
+
+    <LinearLayout
+        android:id="@+id/barrier"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/camera_top_bar_bg"
+        android:layout_above="@id/barrier"/>
+
+    <ImageView
+        android:id="@+id/focus_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/focus_icn"
+        android:visibility="invisible"/>
+
+    <!-- 拍照工具栏-->
+    <RelativeLayout
+        android:id="@+id/camera_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/camera_bottom_bar_height"
+        android:layout_alignParentBottom="true"
+        android:background="@color/joy_camera_theme_color"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+        <ImageView
+            android:id="@+id/expand_button"
+            android:layout_width="@dimen/camera_bottom_bar_expandBtn_size"
+            android:layout_height="@dimen/camera_bottom_bar_expandBtn_size"
+            android:src="@drawable/collapse"
+            android:layout_centerVertical="true"/>
+
+
+        <!-- 拍照按钮背景-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="@dimen/camera_bottom_bar_shutter_bg_size"
+            android:layout_height="@dimen/camera_bottom_bar_shutter_bg_size"
+            android:layout_centerInParent="true"
+            app:civ_border_width="3dp"
+            app:civ_border_color="@color/white"
+            android:src="@color/transparent"
+            />
+        <!-- 拍照按钮前景-->
+        <at.markushi.ui.CircleButton
+            android:id="@+id/shutter"
+            android:layout_width="@dimen/camera_bottom_bar_shutter_fg_size"
+            android:layout_height="@dimen/camera_bottom_bar_shutter_fg_size"
+            android:layout_centerInParent="true"
+            app:cb_color="@color/joy_theme_color"
+            app:cb_pressedRingWidth="4dp"/>
+
+        <ImageView
+            android:id="@+id/gallery_button"
+            android:layout_width="@dimen/camera_bottom_bar_expandBtn_size"
+            android:layout_height="@dimen/camera_bottom_bar_expandBtn_size"
+            android:src="@drawable/gallery_icn"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/cover_icn_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/camera_bottom_bar"
+        android:padding="5dp"
+        android:background="#88000000"
+        >
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/thumb_icon_list"
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:background="@color/transparent"
+            android:visibility="gone"
+            />
+
+        <View
+            android:id="@+id/divider_111"
+            android:layout_below="@id/thumb_icon_list"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#88000000"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider_111"
+            android:divider="@drawable/crop__divider"
+            android:dividerPadding="1dp"
+            android:showDividers="middle|end"
+            android:id="@+id/toolbar"
+            >
+            <TextView
+                android:id="@+id/tab_normal_tv"
+                android:layout_width="40dp"
+                android:layout_height="35dp"
+                android:text="原图"
+                android:gravity="center"
+                android:textColor="#aaaaaa"
+                android:textSize="@dimen/text_size_15"
+                android:background="@color/joy_camera_focused_color"/>
+            <ImageView
+                android:id="@+id/tab_ar_iv"
+                android:layout_width="40dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ar_icn"/>
+            <ImageView
+                android:id="@+id/tab_cover_iv"
+                android:layout_width="40dp"
+                android:layout_height="35dp"
+                android:src="@drawable/cover_icn"/>
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#88000000"
+            android:layout_below="@id/toolbar"/>
+    </RelativeLayout>
+</RelativeLayout>

@@ -50,11 +50,14 @@ public class BaseApplication extends MultiDexApplication {
 
     private static boolean sIsAtLeastGB;
 
+    private static boolean is_android_6_0;
+
     private static int mNetWorkState;
     static {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
             sIsAtLeastGB = true;
         }
+        is_android_6_0 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
     @Override
     public void onCreate() {
@@ -62,6 +65,10 @@ public class BaseApplication extends MultiDexApplication {
         _resource = getResources();
         _context = getApplicationContext();
         mNetWorkState =  NetUtil.getNetworkState(this);
+    }
+
+    public static boolean isAndroid6(){
+        return is_android_6_0;
     }
 
     public static void setNetWorkState(int mNetWorkState) {

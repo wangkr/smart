@@ -1,22 +1,23 @@
 package com.cqyw.smart.main.util;
 
 import android.text.TextUtils;
-import android.widget.ImageView;
 
 import com.baidu.location.BDLocation;
 import com.cqyw.smart.AppSharedPreference;
+import com.cqyw.smart.config.AppCache;
 import com.cqyw.smart.config.AppContext;
 import com.cqyw.smart.main.activity.MainActivity;
+import com.cqyw.smart.main.model.LikeMessage;
 import com.cqyw.smart.main.model.PublicSnapMessage;
-import com.cqyw.smart.main.model.PublishSnapMessage;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
 import com.cqyw.smart.main.model.RefreshEnum;
 import com.cqyw.smart.main.service.MySnapMessageDBService;
+import com.cqyw.smart.main.viewholder.PublicMsgViewHolderFactory;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -45,19 +46,19 @@ public class MainUtils {
 //                @Override
 //                public void onSuccess(File result) {
 //                    message.setAttachStatus(AttachStatusEnum.transferred);
-//                    message.setCoverPath(result.getPath());
+//                    message.setLocalPath(result.getPath());
 //                }
 //
 //                @Override
 //                public void onError(Throwable ex, boolean isOnCallback) {
 //                    message.setAttachStatus(AttachStatusEnum.fail);
-//                    message.setCoverPath(null);
+//                    message.setLocalPath(null);
 //                }
 //
 //                @Override
 //                public void onCancelled(CancelledException cex) {
 //                    message.setAttachStatus(AttachStatusEnum.fail);
-//                    message.setCoverPath(null);
+//                    message.setLocalPath(null);
 //                }
 //
 //                @Override
@@ -99,11 +100,24 @@ public class MainUtils {
         }
     }
 
-    public static PublicSnapMessage createSnapMessage(PublishSnapMessage publishSnapMessage, MsgStatusEnum msgStatusEnum, AttachStatusEnum attachStatusEnum) {
-        publishSnapMessage.setStatus(0);
-        String nid = mySnapMessageDBService.saveNewPublishSnapMessage(publishSnapMessage);
-        PublicSnapMessage snapMessage = new PublicSnapMessage(publishSnapMessage);
+    public static PublicSnapMessage createSnapMessage(PublishMessage message, MsgStatusEnum msgStatusEnum,
+                                                      AttachStatusEnum attachStatusEnum) {
+        String[] pos = MainUtils.getLastKnownLocation();
+        if (pos != null) {
+            message.setLat(pos[0]);
+            message.setLng(pos[1]);
+        } else {
+            message.setLng("117.282699");
+            message.setLat("31.866942");
+        }
+        message.setStatus(0);
+        String nid = mySnapMessageDBService.saveNewPublishSnapMessage(message);
+        PublicSnapMessage snapMessage = new PublicSnapMessage(message);
         snapMessage.setId(nid);
+        snapMessage.setUid(AppCache.getJoyId());
+        LikeMessage likeMessage = new LikeMessage();
+        likeMessage.setNid(nid);
+        snapMessage.setLikeMessage(likeMessage);
         snapMessage.setMsgStatus(msgStatusEnum);
         snapMessage.setAttachStatus(attachStatusEnum);
         snapMessage.setMessageType(1);

@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,7 @@ public class WatchSnapPublicSmartActivity extends JActionBarActivity {
 
     private View loadingLayout;
     private TextView counter_tv;
-    private SquareProgressBar image;
+    private ImageView image;
     private static Bitmap srcBitmap;
     private ActionBar actionBar;
     protected CustomAlertDialog alertDialog;
@@ -160,10 +161,10 @@ public class WatchSnapPublicSmartActivity extends JActionBarActivity {
     }
 
     private void initSquareProgressBar(){
-        image = (SquareProgressBar) findViewById(R.id.watch_image_view);
-        image.setColorRGB(getResources().getColor(R.color.theme_color));
-        image.setWidth(1);
-        image.setProgress(100);// 50*100ms=5s
+        image = (ImageView) findViewById(R.id.watch_image_view);
+//        image.setColorRGB(getResources().getColor(R.color.theme_color));
+//        image.setWidth(1);
+//        image.setProgress(100);// 50*100ms=5s
     }
 
     private void requestOriImage() {
@@ -302,13 +303,11 @@ public class WatchSnapPublicSmartActivity extends JActionBarActivity {
 
         @Override
         public void onFinish() {
-            image.setProgress(0);
             destroy();
         }
 
         @Override
         public void onTick(long millisUntilFinished) {
-            image.setProgress(millisUntilFinished*factor/countDownInterval);
             counter_tv.setText("" + (int) Math.ceil(millisUntilFinished * 1.0 / 1000));
         }
     }

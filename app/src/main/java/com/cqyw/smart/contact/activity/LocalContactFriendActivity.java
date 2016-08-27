@@ -1,17 +1,23 @@
 package com.cqyw.smart.contact.activity;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.cqyw.smart.AppSharedPreference;
 import com.cqyw.smart.JActionBarActivity;
@@ -19,6 +25,7 @@ import com.cqyw.smart.R;
 import com.cqyw.smart.common.http.ICommProtocol;
 import com.cqyw.smart.common.http.JoyCommClient;
 import com.cqyw.smart.config.AppCache;
+import com.cqyw.smart.config.AppContext;
 import com.cqyw.smart.contact.localcontact.LocalContact;
 import com.cqyw.smart.contact.localcontact.LocalContactAdapter;
 import com.cqyw.smart.contact.localcontact.LocalContactService;
@@ -44,6 +51,7 @@ import java.util.Map;
  * mail:wangkrhust@gmail.com
  */
 public class LocalContactFriendActivity extends JActionBarActivity implements TAdapterDelegate{
+    private static final int REQUEST_ACCESS_CONTACTS = 100;
     // data
     private Map<String, String> infos;
     private LinkedList<LocalContact> items;
@@ -62,11 +70,19 @@ public class LocalContactFriendActivity extends JActionBarActivity implements TA
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (AppSharedPreference.getLocalcontactSwitch()) {
-            DialogMaker.showProgressDialog(LocalContactFriendActivity.this, "正在匹配好友...");
-            handler.postDelayed(runnable, 100);
+        if (AppContext.isAndroid6() && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_ACCESS_CONTACTS);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,  Manifest.permission.READ_CONTACTS)) {
+                Toast.makeText(this, "请允许读取通讯录", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            if (AppSharedPreference.getLocalcontactSwitch()) {
+                DialogMaker.showProgressDialog(LocalContactFriendActivity.this, "正在匹配好友...");
+                handler.postDelayed(runnable, 100);
+            }
         }
     }
+
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -256,5 +272,14 @@ public class LocalContactFriendActivity extends JActionBarActivity implements TA
         return contactInfos;
     }
 
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_ACCESS_CONTACTS && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (AppSharedPreference.getLocalcontactSwitch()) {
+                DialogMaker.showProgressDialog(LocalContactFriendActivity.this, "正在匹配好友...");
+                handler.postDelayed(runnable, 100);
+            }
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 }

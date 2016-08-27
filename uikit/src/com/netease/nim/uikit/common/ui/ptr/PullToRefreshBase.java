@@ -701,7 +701,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	/**
 	 * Called by {@link #onSaveInstanceState()} so that derivative classes can
-	 * save their instance state.
+	 * saveAll their instance state.
 	 * 
 	 * @param saveState - Bundle to be updated with saved state.
 	 */
@@ -841,7 +841,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	protected final Parcelable onSaveInstanceState() {
 		Bundle bundle = new Bundle();
 
-		// Let derivative classes get a chance to save state first, that way we
+		// Let derivative classes get a chance to saveAll state first, that way we
 		// can make sure they don't overrite any of our values
 		onPtrSaveInstanceState(bundle);
 

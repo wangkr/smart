@@ -88,7 +88,12 @@ public class RecentNewsFragment extends TFragment implements TAdapterDelegate{
             @Override
             public void onSuccess(final List<RecentSnapNews> recentSnapNewses) {
                 if (recentSnapNewses.size() > 0) {
-                    onRecentNewsLoaded(recentSnapNewses);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            onRecentNewsLoaded(recentSnapNewses);
+                        }
+                    });
                 }
             }
 
@@ -103,8 +108,13 @@ public class RecentNewsFragment extends TFragment implements TAdapterDelegate{
         JoyCommClient.getInstance().markRecentNews(AppCache.getJoyId(), AppSharedPreference.getCacheJoyToken(), new ICommProtocol.CommCallback<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Utils.showLongToast(getContext(), "收到提示");
-                addNewSnapNewsList(recentSnapNewses);
+                postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.showLongToast(getContext(), "收到提示");
+                        addNewSnapNewsList(recentSnapNewses);
+                    }
+                });
             }
 
             @Override

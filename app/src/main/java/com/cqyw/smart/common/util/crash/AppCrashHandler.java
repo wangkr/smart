@@ -22,7 +22,7 @@ public class AppCrashHandler {
 		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread thread, final Throwable ex) {
-				// save log
+				// saveAll log
 				saveException(ex, true);
 				
 				// uncaught

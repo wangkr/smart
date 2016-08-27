@@ -177,7 +177,7 @@ public class MessageFragment extends TFragment implements ModuleProxy {
             return false;
         }
 
-        // send message to server and save to db
+        // send message to server and saveAll to db
         NIMClient.getService(MsgService.class).sendMessage(message, false);
 
         messageListPanel.onMsgSend(message);

@@ -2,19 +2,16 @@ package com.cqyw.smart.main.model;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.TimeUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
 import com.netease.nim.uikit.common.util.sys.TimeUtil;
-import com.netease.nim.uikit.joycustom.snap.SnapConstant;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  * Created by Kairong on 2015/11/13.
@@ -40,6 +37,8 @@ public class PublicSnapMessage implements Serializable{
     private String intime;
     /*查看数量*/
     private String viewer; // added in v1.0.4
+    /*封面图本地路径*/
+    private String coverLocalPath;
     /*评论数量*/
     private int comment;
     /*类型*/
@@ -163,15 +162,16 @@ public class PublicSnapMessage implements Serializable{
         this.status = jsonObject.getIntValue(SnapMsgConstant.MSG_KEY_STATUS);
     }
 
-    public PublicSnapMessage (PublishSnapMessage publishSnapMessage) {
-        this.cover = publishSnapMessage.getCover();
-        this.smart = publishSnapMessage.getSmart();
-        this.content = publishSnapMessage.getContent();
-        this.lat = publishSnapMessage.getLat();
-        this.lng = publishSnapMessage.getLng();
+    public PublicSnapMessage (PublishMessage publishMessage) {
+        this.cover = publishMessage.getCover();
+        this.coverLocalPath = publishMessage.getLocalPath();
+        this.smart = publishMessage.getSmart();
+        this.content = publishMessage.getContent();
+        this.lat = publishMessage.getLat();
+        this.lng = publishMessage.getLng();
         this.intime = TimeUtil.getBeijingNowTime("yyyy-MM-dd HH:mm");
+        this.type = publishMessage.getType().value();
 
-        this.type = 0;
         this.comment = 0;
         this.like = 0;
         this.report = 0;
@@ -180,6 +180,7 @@ public class PublicSnapMessage implements Serializable{
     }
 
     public void reset(PublicSnapMessage message) {
+        this.id = message.getId();
         this.uid = message.getUid();
         this.lat = message.getLat();
         this.lng = message.getLng();
@@ -197,6 +198,14 @@ public class PublicSnapMessage implements Serializable{
         this.msgStatus = message.getMsgStatus();
         this.attachStatus = message.getAttachStatus();
         this.likeMessage = message.getLikeMessage();
+    }
+
+    public String getCoverLocalPath() {
+        return coverLocalPath;
+    }
+
+    public void setCoverLocalPath(String coverLocalPath) {
+        this.coverLocalPath = coverLocalPath;
     }
 
     public int getMessageType() {
@@ -372,6 +381,22 @@ public class PublicSnapMessage implements Serializable{
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PublicSnapMessage)) return false;
+
+        PublicSnapMessage that = (PublicSnapMessage) o;
+
+        return getId().equals(that.getId());
+
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
     }
 
     @Override

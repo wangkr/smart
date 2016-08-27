@@ -6,7 +6,7 @@
     <dimen name="actionBar_height">48dp</dimen>
     <dimen name="actionBar_backBtn_width">58dp</dimen>
     <dimen name="actionBar_title_Size">18sp</dimen>
-    <dimen name="actionBar_subTitle_size">16dp</dimen>
+    <dimen name="actionBar_subTitle_size">12dp</dimen>
     <dimen name="actionBar_btn_textSize">18sp</dimen>
     <dimen name="friend_tab_width">120dp</dimen>
     <dimen name="friend_tab_height">34dp</dimen>
@@ -33,9 +33,11 @@
     <dimen name="snap_msg_listHeader_height">200dp</dimen>
     <dimen name="roundedHead_cornerRadius">10dp</dimen>
     <!-- layout_snap_msg_item-->
-    <dimen name="snap_msg_head_size">50dp</dimen>
-    <dimen name="snap_msg_comment_menu_ll_width">70dp</dimen>
-    <dimen name="snap_msg_comment_menu_ll_height">28dp</dimen>
+    <dimen name="snap_msg_top_ll_height">64dp</dimen>
+    <dimen name="snap_msg_head_size">40dp</dimen>
+    <dimen name="snap_msg_comment_menu_ll_width">95dp</dimen>
+    <dimen name="snap_msg_comment_menu_ll_height">30dp</dimen>
+    <dimen name="snap_msg_cover_height">270dp</dimen>
     <!-- snap msg comment-->
     <dimen name="snap_msg_detail_comment_headsize">40dp</dimen>
     <!-- contact_item-->
@@ -43,6 +45,7 @@
     <dimen name="contact_avatar_iv_size">40dp</dimen>
     <!-- profile activity-->
     <dimen name="activity_userProfile_headSize">50dp</dimen>
+    <dimen name="user_profile_gallery_columnWidth">90dp</dimen>
     <dimen name="gender_dialog_width">250dp</dimen>
 
     <dimen name="pager_sliding_tab_strip_height">5px</dimen>

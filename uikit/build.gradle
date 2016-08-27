@@ -3,6 +3,7 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
+    useLibrary 'org.apache.http.legacy'
 
     sourceSets {
         main {
@@ -19,12 +20,14 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar', exclude: ['android-support-*.jar'])
-    compile fileTree(dir: 'libs-sdk', include: ['*.jar'])
-    compile project(path: ':vpi')
-    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile fileTree(include: '*.jar', exclude: ['android-support-*.jar'], dir: 'libs')
+    compile fileTree(include: ['*.jar'], dir: 'libs-sdk')
+    compile project(path: ':ultimaterecyclerview')
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.android.support:design:23.2.1'
     compile 'com.umeng.analytics:analytics:5.6.1'
     compile 'com.loopj.android:android-async-http:1.4.9'
-    compile('com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE')
-    
+    compile 'com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'com.github.markushi:circlebutton:1.1'
 }

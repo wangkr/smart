@@ -198,7 +198,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 			imageDrawable = context.getResources().getDrawable(getDefaultDrawableResId());
 		}
 
-		// Set Drawable, and save width/height
+		// Set Drawable, and saveAll width/height
 		setLoadingDrawable(imageDrawable);
 
 		reset();

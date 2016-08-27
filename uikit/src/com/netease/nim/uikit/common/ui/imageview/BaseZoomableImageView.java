@@ -254,6 +254,14 @@ public abstract class BaseZoomableImageView extends View {
 		}
 	}
 
+	public void updateMatrix(final Rect selection){
+		setBaseMatrix(mBitmap, mBaseMatrix, selection);
+
+		mSuppMatrix.reset();
+		setImageMatrix(getImageViewMatrix());
+		mMaxZoom = maxZoom();
+	}
+
 	/**
 	 * 
 	 * Sets the bitmap for the image and resets the base
@@ -277,7 +285,7 @@ public abstract class BaseZoomableImageView extends View {
 
 		Bitmap oldBitmap = this.mBitmap;
 		if (bitmap != null) {
-			setBaseMatrix(bitmap, mBaseMatrix,selection );
+			setBaseMatrix(bitmap, mBaseMatrix, selection);
 			this.mBitmap = bitmap;
 		} else {
 			mBaseMatrix.reset();

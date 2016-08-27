@@ -3,12 +3,11 @@ package com.cqyw.smart.contact.protocol;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.cqyw.smart.R;
-import com.cqyw.smart.common.http.NimHttpClient;
+import com.cqyw.smart.common.http.JoyHttpClient;
 import com.cqyw.smart.config.AppCache;
 import com.cqyw.smart.config.AppConfig;
 import com.cqyw.smart.config.AppConstants;
@@ -17,7 +16,6 @@ import com.cqyw.smart.config.JoyServers;
 import com.cqyw.smart.util.StringUtils;
 import com.cqyw.smart.util.nimserver.CheckSumBuilder;
 import com.netease.nim.uikit.common.util.log.LogUtil;
-import com.netease.nim.uikit.common.util.string.MD5;
 
 import org.apache.http.HttpStatus;
 
@@ -54,7 +52,7 @@ public class ContactHttpClient implements IContactHttpProtocol {
     }
 
     private ContactHttpClient() {
-        NimHttpClient.getInstance().init();
+        JoyHttpClient.getInstance().init();
     }
 
     public static void init() {
@@ -82,13 +80,12 @@ public class ContactHttpClient implements IContactHttpProtocol {
         Map<String, String> headers = new HashMap<>(1);
         headers.put(HEADER_CONTENT_TYPE, "application/x-www-form-urlencoded; charset=utf-8");
 
-        StringBuilder body = new StringBuilder();
-        body.append(REQUEST_KEY_PHONE).append("=").append(account).append("&")
-        .append(REQUEST_KEY_PASSWORD).append("=").append(password).append("&")
-        .append(REQUEST_KEY_CODE).append("=").append(code);
-        String bodyString = body.toString();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(REQUEST_KEY_PHONE, account);
+        jsonObject.put(REQUEST_KEY_PASSWORD, password);
+        jsonObject.put(REQUEST_KEY_CODE, code);
 
-        NimHttpClient.getInstance().execute(url, headers, bodyString, new NimHttpClient.NimHttpCallback() {
+        JoyHttpClient.getInstance().execute(url, headers, jsonObject, new JoyHttpClient.JoyHttpCallback() {
             @Override
             public void onResponse(String response, int code, String errorMsg) {
                 if (code != 0) {
@@ -113,7 +110,7 @@ public class ContactHttpClient implements IContactHttpProtocol {
                     callback.onFailed(-1, e.getMessage());
                 }
             }
-        });
+        }, false, true);
     }
 
     /**
@@ -130,17 +127,16 @@ public class ContactHttpClient implements IContactHttpProtocol {
         Map<String, String> headers = new HashMap<>(1);
         headers.put(HEADER_CONTENT_TYPE, "application/x-www-form-urlencoded; charset=utf-8");
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(REQUEST_KEY_PHONE).append("=").append(account).append("&")
-                .append(REQUEST_KEY_PASSWORD).append("=").append(new_password).append("&")
-                .append(REQUEST_KEY_CODE).append("=").append(code);
-        String bodyString = builder.toString();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(REQUEST_KEY_PHONE, account);
+        jsonObject.put(REQUEST_KEY_PASSWORD, new_password);
+        jsonObject.put(REQUEST_KEY_CODE, code);
 
-        NimHttpClient.getInstance().execute(url, headers, bodyString, new NimHttpClient.NimHttpCallback() {
+        JoyHttpClient.getInstance().execute(url, headers, jsonObject, new JoyHttpClient.JoyHttpCallback() {
             @Override
             public void onResponse(String response, int code, String errorMsg) {
                 if (code != 0) {
-                    LogUtil.e(TAG, "find password failed : code = " + code + ", errorMsg = " + errorMsg);
+                    LogUtil.e(TAG, "reset password failed : code = " + code + ", errorMsg = " + errorMsg);
                     if (callback != null) {
                         callback.onFailed(code, errorMsg);
                     }
@@ -160,7 +156,7 @@ public class ContactHttpClient implements IContactHttpProtocol {
                     callback.onFailed(-1, e.getMessage());
                 }
             }
-        });
+        }, false, true);
     }
 
     @Override
@@ -176,12 +172,11 @@ public class ContactHttpClient implements IContactHttpProtocol {
         headers.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 
 
-        StringBuilder body = new StringBuilder();
-        body.append("mobile").append("=").append(phone).append("&")
-                .append("code").append("=").append(code);
-        String bodyString = body.toString();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("mobile", phone);
+        jsonObject.put(REQUEST_KEY_CODE, code);
 
-        NimHttpClient.getInstance().execute(url, headers, bodyString, new NimHttpClient.NimHttpCallback() {
+        JoyHttpClient.getInstance().execute(url, headers, jsonObject, new JoyHttpClient.JoyHttpCallback() {
             @Override
             public void onResponse(String response, int code, String errorMsg) {
                 if (code != 0) {
@@ -205,7 +200,7 @@ public class ContactHttpClient implements IContactHttpProtocol {
                     callback.onFailed(-1, e.getMessage());
                 }
             }
-        });
+        }, false, true);
     }
 
     /**
@@ -219,11 +214,11 @@ public class ContactHttpClient implements IContactHttpProtocol {
         Map<String, String> headers = new HashMap<>(1);
         headers.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        StringBuilder body = new StringBuilder();
-        body.append("phone").append("=").append(phone);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(REQUEST_KEY_PHONE, phone);
 
 
-        NimHttpClient.getInstance().execute(url, headers, body.toString(), new NimHttpClient.NimHttpCallback() {
+        JoyHttpClient.getInstance().execute(url, headers, jsonObject, new JoyHttpClient.JoyHttpCallback() {
             @Override
             public void onResponse(String response, int code, String errorMsg) {
                 if (code != 0) {
@@ -247,7 +242,7 @@ public class ContactHttpClient implements IContactHttpProtocol {
                     callback.onFailed(-1, e.getMessage());
                 }
             }
-        });
+        }, false, true);
     }
 
     /**
@@ -261,11 +256,11 @@ public class ContactHttpClient implements IContactHttpProtocol {
         Map<String, String> headers = new HashMap<>(1);
         headers.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        StringBuilder body = new StringBuilder();
-        body.append("phone").append("=").append(phone);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(REQUEST_KEY_PHONE, phone);
 
 
-        NimHttpClient.getInstance().execute(url, headers, body.toString(), new NimHttpClient.NimHttpCallback() {
+        JoyHttpClient.getInstance().execute(url, headers, jsonObject, new JoyHttpClient.JoyHttpCallback() {
             @Override
             public void onResponse(String response, int code, String errorMsg) {
                 if (code != 0) {
@@ -289,7 +284,7 @@ public class ContactHttpClient implements IContactHttpProtocol {
                     callback.onFailed(-1, e.getMessage());
                 }
             }
-        });
+        }, false, true);
     }
 
     private String readAppKey() {

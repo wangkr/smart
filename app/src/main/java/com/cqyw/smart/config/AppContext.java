@@ -25,11 +25,11 @@ import com.cqyw.smart.contact.protocol.ContactHttpClient;
 import com.cqyw.smart.main.activity.WelcomeActivity;
 import com.cqyw.smart.session.SessionHelper;
 import com.netease.nim.uikit.ImageLoaderKit;
-import com.netease.nim.uikit.LoginSyncDataStatusObserver;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.cache.FriendDataCache;
 import com.netease.nim.uikit.cache.NimUserInfoCache;
 import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nim.uikit.common.media.picker.joycamera.ICamOnLineResMgr;
 import com.netease.nim.uikit.contact.ContactProvider;
 import com.netease.nim.uikit.contact.core.query.PinYin;
 import com.netease.nim.uikit.session.viewholder.MsgViewHolderThumbBase;
@@ -39,7 +39,6 @@ import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.SDKOptions;
 import com.netease.nimlib.sdk.StatusBarNotificationConfig;
 import com.netease.nimlib.sdk.auth.LoginInfo;
-import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
@@ -208,7 +207,7 @@ public class AppContext extends BaseApplication {
 
     private void initUiKit() {
         // 初始化，需要传入用户信息提供者
-        NimUIKit.init(this, infoProvider, contactProvider, ExtInfoProviderHandler.getInstance());
+        NimUIKit.init(this, infoProvider, contactProvider, ExtInfoProviderHandler.getInstance(), CamOnLineResMgr.getInstance());
 
         // 设置地理位置提供者。如果需要发送地理位置消息，该参数必须提供。如果不需要，可以忽略。
 //        NimUIKit.setLocationProvider(new NimDemoLocationProvider());

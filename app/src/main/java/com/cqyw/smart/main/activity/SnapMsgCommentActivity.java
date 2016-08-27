@@ -21,7 +21,7 @@ import com.netease.nim.uikit.common.fragment.TFragment;
  * mail:wangkrhust@gmail.com
  */
 public class SnapMsgCommentActivity extends JActionBarActivity {
-    private final static int COMMENT = 11111;
+    public final static int COMMENT = 112;
 
     private PublicSnapMessage message;
 
@@ -53,8 +53,6 @@ public class SnapMsgCommentActivity extends JActionBarActivity {
                 fragment = (CommentsFragment) switchContent(fragment());
             }
         }, 100);
-        showKeyboard(ifComment);
-
 
     }
 
@@ -86,6 +84,7 @@ public class SnapMsgCommentActivity extends JActionBarActivity {
         CommentsFragment fragment = new CommentsFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("SnapMessage", message);
+        bundle.putBoolean("comment", ifComment);
         fragment.setArguments(bundle);
         fragment.setContainerId(R.id.comment_container);
         return fragment;

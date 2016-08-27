@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/picture_preview_save"
+        android:icon="@drawable/save_icn"
+        app:showAsAction="always"
+        android:title=""/>
+
+    <item android:id="@+id/picture_preview_send"
+        android:icon="@drawable/send_icn"
+        app:showAsAction="always"
+        android:title=""/>
+</menu>

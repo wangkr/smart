@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#888888"
+    tools:context=".common.media.picker.joycamera.activity.CropImageActivity">
+    <TextView
+        android:id="@+id/crop_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/crop_bar_height"
+        android:text="裁剪原图片"
+        android:textSize="@dimen/crop_top_bar_title"
+        android:textColor="@android:color/white"
+        android:background="@color/joy_camera_theme_color"
+        android:gravity="center"/>
+
+    <include layout="@layout/include_crop_image_bar"
+        android:id="@+id/crop_bottom_bar"/>
+
+
+    <com.netease.nim.uikit.common.ui.imageview.CropImageView
+        android:id="@+id/crop_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/crop_top_bar"
+        android:layout_above="@id/crop_bottom_bar"
+
+        />
+
+</RelativeLayout>

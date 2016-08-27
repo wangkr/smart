@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/smart.iml" filepath="$PROJECT_DIR$/smart.iml" />
       <module fileurl="file://$PROJECT_DIR$/uikit/uikit.iml" filepath="$PROJECT_DIR$/uikit/uikit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ultimaterecyclerview/ultimaterecyclerview.iml" filepath="$PROJECT_DIR$/ultimaterecyclerview/ultimaterecyclerview.iml" />
       <module fileurl="file://$PROJECT_DIR$/vpi/vpi.iml" filepath="$PROJECT_DIR$/vpi/vpi.iml" />
     </modules>
   </component>

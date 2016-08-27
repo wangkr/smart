@@ -20,7 +20,6 @@ public class NetBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(NET_CHANGE_ACTION)) {
-
             if (mListeners.size() > 0)// 通知接口完成加载
                 for (NetEventHandler handler : mListeners) {
                     handler.onNetChange();

@@ -16,7 +16,7 @@ public class WelcomeFragmentAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
-    private int mCount = WelcomeFragment.welcome_fragment_bgs.length;
+//    private int mCount = WelcomeFragment.welcome_fragment_bgs.length;
     @Override
     public Fragment getItem(int position) {
         return WelcomeFragment.newInstance(position);
@@ -24,7 +24,8 @@ public class WelcomeFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return mCount;
+//        return mCount;
+        return 0;
     }
 
 }

@@ -181,7 +181,7 @@ public class AttachmentStore {
         	if(f!=null && f.exists()){
         		f.delete();
         	}
-        	LogUtil.e("com.cqyw.smart.file", "save is to " + filePath + " failed: " + e.getMessage());
+        	LogUtil.e("com.cqyw.smart.file", "saveAll is to " + filePath + " failed: " + e.getMessage());
             return -1;
         } finally {
             try {

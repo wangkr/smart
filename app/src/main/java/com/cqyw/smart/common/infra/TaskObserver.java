@@ -6,12 +6,12 @@ public interface TaskObserver {
 	 * @param task
 	 * @param results
 	 */
-	public void onTaskResult(com.cqyw.smart.common.infra.Task task, Object[] results);
+	public void onTaskResult(Task task, Object[] results);
 
 	/**
 	 * on task progress
 	 * @param task
 	 * @param params
 	 */
-	public void onTaskProgress(com.cqyw.smart.common.infra.Task task, Object[] params);
+	public void onTaskProgress(Task task, Object[] params);
 }

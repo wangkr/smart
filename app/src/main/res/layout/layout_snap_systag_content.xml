@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="wrap_content"
-    android:layout_height="15dp">
-    <ImageView
-        android:id="@+id/snap_msg_tag_image"
-        android:layout_width="15dp"
-        android:layout_height="match_parent"/>
-    <TextView
-        android:id="@+id/snap_msg_tag_text"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:textColor="@color/theme_color"
-        android:layout_marginLeft="8dp"
-        android:textSize="12sp"/>
-</LinearLayout>
+<ImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/snap_msg_tag_image"
+    android:layout_width="12dp"
+    android:layout_height="12dp"
+    android:src="@drawable/official_tag"
+    />

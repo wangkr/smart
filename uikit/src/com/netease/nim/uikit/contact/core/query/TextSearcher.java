@@ -189,7 +189,7 @@ public final class TextSearcher {
 			}
 		}
 		
-		// save last
+		// saveAll last
 		mEaten = eaten;
 		
         return true;

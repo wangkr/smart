@@ -8,9 +8,10 @@ import com.cqyw.smart.main.model.CommentMessage;
 import com.cqyw.smart.main.model.LikeMessage;
 import com.cqyw.smart.main.model.ProvinceInfo;
 import com.cqyw.smart.main.model.PublicSnapMessage;
-import com.cqyw.smart.main.model.PublishSnapMessage;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
 import com.cqyw.smart.main.model.RecentSnapNews;
 import com.cqyw.smart.main.model.SchoolInfo;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.CamOnLineRes;
 
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public interface ICommProtocol extends JoyHttpProtocol {
 
     // 新鲜事操作接口
     void addLike(String id, String token, String uid, String nid, String cover, CommCallback<Void> callback);
-    void sendSnapnews(String id, String token, PublishSnapMessage message, CommCallback<String> callback);
+    void sendSnapnews(String id, String token, PublicSnapMessage message, CommCallback<String> callback);
     void getSnapnewsByNid(String id, String token, String nid, CommCallback<PublicSnapMessage> callback);
     void getSnapnews(String id, String token, String nid, boolean isTopNid, NimLocation location, CommCallback<List<PublicSnapMessage>> callback);
     void deleteSnapnews(String id, String token, String nid, CommCallback<Void> callback);
@@ -60,4 +61,7 @@ public interface ICommProtocol extends JoyHttpProtocol {
     void getComments(String id, String token, String nid, String bottomCid, CommCallback<List<CommentMessage>> callback);
     void markRecentNews(String id ,String token, CommCallback<Void> callback);
     void markSnapnews(String id, String token, String nid, CommCallback<Void> callback);
+
+    // 相机资源管理
+    void getOnlineRes(String id, String token, CommCallback<Map<String,List<CamOnLineRes>>> callback);
 }

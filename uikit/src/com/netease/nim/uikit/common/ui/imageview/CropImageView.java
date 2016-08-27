@@ -44,7 +44,6 @@ public class CropImageView extends MultiTouchZoomableImageView {
 	}
 	
 	protected void initCropImageView(Context context) {
-		
 		shadowPaint = new Paint();
 		shadowPaint.setColor(Color.argb((int) (255 * 0.6), 0, 0, 0));
 		linePaint = new Paint();
@@ -68,6 +67,13 @@ public class CropImageView extends MultiTouchZoomableImageView {
 	public void setOutput(int outputX, int outputY) {
 		this.outputX = outputX;
 		this.outputY = outputY;
+	}
+
+	public void updateSelection(int outputX, int outputY){
+		setOutput(outputX, outputY);
+		selection = updateSelection();
+		updateMatrix(selection);
+		checkImagePosition(false);
 	}
 	
 	public byte[] getCroppedImage() {

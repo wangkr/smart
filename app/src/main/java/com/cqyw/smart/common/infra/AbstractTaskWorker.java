@@ -39,10 +39,10 @@ public abstract class AbstractTaskWorker {
 			}
 		}
 
-		return com.cqyw.smart.common.infra.TaskExecutor.IMMEDIATE_EXECUTOR;
+		return TaskExecutor.IMMEDIATE_EXECUTOR;
 	}
 	
-	private final Runnable getRunnable(final com.cqyw.smart.common.infra.Task task) {
+	private final Runnable getRunnable(final Task task) {
 		return new Runnable() {
 			@Override
 			public void run() {

@@ -20,9 +20,14 @@ import com.cqyw.smart.util.Utils;
 import com.netease.nim.uikit.common.adapter.TAdapterDelegate;
 import com.netease.nim.uikit.common.adapter.TViewHolder;
 import com.netease.nim.uikit.common.util.log.LogUtil;
+import com.netease.nim.uikit.common.util.media.ImageUtil;
 import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.netease.nim.uikit.joycustom.upyun.JoyImageUtil;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
+import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,18 +37,25 @@ import java.util.List;
  * mail:wangkrhust@gmail.com
  */
 public class PublicSysMsgViewHolder extends PublicMsgViewHolderBase{
-    private ImageView snapCover;
-    private TextView snapText;
-    private ImageView snapMsgTag_iv;
-    private TextView snapMsgTag_tv;
     private LikeHeadImageLoader likeHeadImageLoader;
+
+    public PublicSysMsgViewHolder(View itemView, ViewHolderEventListener eventListener) {
+        super(itemView, eventListener);
+    }
+
     @Override
     protected void bindContentView() {
         snapCover.setVisibility(View.VISIBLE);
         if (!TextUtils.isEmpty(message.getCover())) {
-            JoyImageUtil.bindCoverImageView(snapCover, message.getCover(), ScreenUtil.coverType);
-        } else {
-            snapCover.setImageResource(ScreenUtil.coverType.biggerThan(JoyImageUtil.ImageType.V_720) ? R.drawable.joy_cover_loading : R.drawable.joy_cover_loading_medium);
+            JoyImageUtil.bindCoverImageView(snapCover, message.getCover(), JoyImageUtil.ImageType.V_COVERICON);
+        } else if(!TextUtils.isEmpty(message.getCoverLocalPath())){
+            File file = new File(message.getCoverLocalPath());
+            if (!file.exists()) {
+                snapCover.setImageResource(ScreenUtil.coverType.biggerThan(JoyImageUtil.ImageType.V_720) ? R.drawable.joy_cover_loading : R.drawable.joy_cover_loading_medium);
+            } else {
+                String thumbnail = ImageUtil.makeThumbnail(getContext(), file, 720, 360);
+                ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(thumbnail), snapCover);
+            }
         }
 
         if (!TextUtils.isEmpty(message.getContent())) {
@@ -58,9 +70,7 @@ public class PublicSysMsgViewHolder extends PublicMsgViewHolderBase{
         }
 
         msgTagContainer.setVisibility(View.VISIBLE);
-
-        snapMsgTag_tv.setText(context.getString(R.string.official_name));
-        snapMsgTag_iv.setImageResource(R.drawable.official_tag);
+        msgTagContainer.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -75,15 +85,12 @@ public class PublicSysMsgViewHolder extends PublicMsgViewHolderBase{
 
     @Override
     protected void inflateContentView() {
-        snapCover = (ImageView)view.findViewById(R.id.snap_msg_content_image);
-        snapText = (TextView)view.findViewById(R.id.snap_msg_content_text);
-        snapMsgTag_iv = (ImageView)view.findViewById(R.id.snap_msg_tag_image);
-        snapMsgTag_tv = (TextView)view.findViewById(R.id.snap_msg_tag_text);
+
     }
 
     @Override
     protected void onCommentClick() {
-        SnapMsgCommentActivity.start(context, message, true);
+        SnapMsgCommentActivity.start(getContext(), message, true);
     }
 
     @Override
@@ -95,23 +102,22 @@ public class PublicSysMsgViewHolder extends PublicMsgViewHolderBase{
                         message.addLike(AppCache.getJoyId());
                         refreshLike(false);
                         setLikeList();
-                        Utils.showShortToast(context, AppContext.getResource().getString(R.string.like_hint_text));
+                        Utils.showShortToast(getContext(), AppContext.getResource().getString(R.string.like_hint_text));
                         
                     }
 
                     @Override
                     public void onFailed(String code, String errorMsg) {
                         if (TextUtils.equals(code, JoyHttpProtocol.STATUS_CODE_HAVELIKED)) {
-                            Utils.showShortToast(context, AppContext.getResource().getString(R.string.have_liked_hinttext));
+                            Utils.showShortToast(getContext(), AppContext.getResource().getString(R.string.have_liked_hinttext));
                         }
-                        LogUtil.d(context.getClass().getSimpleName(), " 点赞失败: " + errorMsg + " 错误码:" + code);
                     }
                 });
     }
 
     @Override
     protected void onItemClick() {
-        SnapMsgCommentActivity.start(context, message);
+        SnapMsgCommentActivity.start(getContext(), message);
     }
 
     @Override
@@ -159,14 +165,14 @@ public class PublicSysMsgViewHolder extends PublicMsgViewHolderBase{
 
 
         private void initLikeAdapter() {
-            zanAdapter = new LikeHeadImageAdapter(context, message.getLikeMessage().getUids(), this);
+            zanAdapter = new LikeHeadImageAdapter(getContext(), message.getLikeMessage().getUids(), this);
             zanAdapter.setHolderEventListener(new LikeHeadImageAdapter.ViewHolderEventListener() {
                 @Override
                 public void onAvatarClick(String account) {
                     if (TextUtils.equals(account, AppCache.getJoyId())) {
-                        UserProfileSettingActivity.start(context, account);
+                        UserProfileSettingActivity.start(getContext(), account);
                     } else {
-                        UserProfileActivity.start(context, account);
+                        UserProfileActivity.start(getContext(), account);
                     }
                 }
             });

@@ -8,7 +8,7 @@
     <style name="horizontal_light_thin_divider">
         <item name="android:layout_height">2px</item>
         <item name="android:layout_width">fill_parent</item>
-        <item name="android:background">@color/gray_white</item>
+        <item name="android:background">#cccccc</item>
     </style>
 
     <style name="horizontal_deep_thick_divider">

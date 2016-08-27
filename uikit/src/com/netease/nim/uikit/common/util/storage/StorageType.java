@@ -33,7 +33,7 @@ public enum StorageType {
     enum DirectoryName {     	
     	AUDIO_DIRECTORY_NAME("audio/"),
         DATA_DIRECTORY_NAME("data/"),
-        FILE_DIRECTORY_NAME("com.cqyw.smart.file/"),
+        FILE_DIRECTORY_NAME("file/"),
         LOG_DIRECTORY_NAME("log/"),
         TEMP_DIRECTORY_NAME("temp/"),
         IMAGE_DIRECTORY_NAME("image/"),

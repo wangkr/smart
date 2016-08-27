@@ -107,7 +107,6 @@ public class ContactHelper {
                                         @Override
                                         public void onFailed(String code, String errorMsg) {
                                             noteEdit.dismiss();
-                                            LogUtil.d("ContactHelper", "添加备注失败!");
                                         }
                                     });
                                 }

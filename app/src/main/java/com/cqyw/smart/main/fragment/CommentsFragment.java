@@ -12,6 +12,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -52,22 +53,28 @@ import com.netease.nim.uikit.cache.NimUserInfoCache;
 import com.netease.nim.uikit.common.adapter.TAdapterDelegate;
 import com.netease.nim.uikit.common.adapter.TViewHolder;
 import com.netease.nim.uikit.common.fragment.TFragment;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
 import com.netease.nim.uikit.common.ui.dialog.DialogMaker;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialog;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialogHelper;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
 import com.netease.nim.uikit.common.ui.listview.ListViewUtil;
 import com.netease.nim.uikit.common.util.log.LogUtil;
+import com.netease.nim.uikit.common.util.media.ImageUtil;
 import com.netease.nim.uikit.common.util.sys.NetworkUtil;
 import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.netease.nim.uikit.common.util.sys.TimeUtil;
 import com.netease.nim.uikit.joycustom.upyun.JoyImageUtil;
+import com.netease.nim.uikit.uinfo.UserInfoHelper;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,29 +85,28 @@ import java.util.List;
  */
 public class CommentsFragment extends TFragment implements TAdapterDelegate, View.OnClickListener, XListView.IXListViewListener {
     public static final String TAG = CommentsFragment.class.getSimpleName();
-    private static final int MAX_LIKE = 20;
+    private static final int MAX_LIKE = 30;
     private View header;
     // holderview
     /******************************************************************/
-    protected MyGridView zanList;
-    protected TextView time_tv;
-    protected TextView distance_tv;
-    protected TextView readStatus_tv;
+    private MyGridView zanList;
+    private TextView time_tv;
+    private TextView nick_tv;
+    private TextView distance_tv;
+    private TextView likeNumHint_tv;
+    private TextView readStatus_tv;
     private ImageView snapCover;
     private TextView snapText;
     private TextView viewer_tv;
-    private TextView viewer_all_tv;
-    private ImageView snapMsgTag_iv;
-    private TextView snapMsgTag_tv;
     private TextView deleteButton_tv;
 
-    protected ImageView zanButton_iv;
-    protected ImageView commentButton_iv;
+    private ImageView zanButton_iv;
+    private ImageView commentButton_iv;
 
-    protected HeadImageView avatar;
-    protected LinearLayout contentContainer;
+    private HeadImageView avatar;
 
-    protected LinearLayout msgTagContainer;
+
+    protected ImageView msgTagContainer;
 
     // data
     protected LikeHeadImageAdapter zanAdapter;
@@ -150,7 +156,6 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_comments, container, false);
-        LogUtil.d(TAG, "onCreateView");
         return rootView;
     }
 
@@ -181,6 +186,9 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
         initView();
         loadCommentData();
         loadLikeData();
+        if (getArguments().getBoolean("comment", false)){
+            showCommentKeyboard();
+        }
     }
 
     @Override
@@ -243,16 +251,17 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
                     break;
                 }
             }
-        }
 
-        items.addAll(items.size(), commentMessages);
-        if (myselfItems.size() > 0) {
-            items.addAll(items.size(), myselfItems);
+
+            items.addAll(items.size(), commentMessages);
+            if (myselfItems.size() > 0) {
+                items.addAll(items.size(), myselfItems);
+            }
+            // 保存到本地
+            commentMessageDBService.saveCommentMessageList(commentMessages);
+            refreshMessageList();
+            listView.stopLoadMore();
         }
-        // 保存到本地
-        commentMessageDBService.saveCommentMessageList(commentMessages);
-        refreshMessageList();
-        listView.stopLoadMore();
     }
 
     private void Loadmore() {
@@ -272,20 +281,31 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
                 JoyCommClient.getInstance().getComments(AppCache.getJoyId(), AppSharedPreference.getCacheJoyToken(), message.getId(),
                         bottomCid, new ICommProtocol.CommCallback<List<CommentMessage>>() {
                             @Override
-                            public void onSuccess(List<CommentMessage> commentMessages) {
+                            public void onSuccess(final List<CommentMessage> commentMessages) {
                                 if (commentMessages.size() != 0) {
-                                    onMessageLoad(commentMessages);
+                                    postRunnable(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            onMessageLoad(commentMessages);
+                                        }
+                                    });
                                 }
                             }
 
                             @Override
-                            public void onFailed(String code, String errorMsg) {
-                                if (TextUtils.equals(JoyHttpProtocol.STATUS_CODE_NOMORE, code)) {
-                                    listView.setPullLoadEnable(false);
-                                    LogUtil.d(TAG, "pullloadenable false");
-                                }
-                                Utils.showShortToast(getContext(), errorMsg);
-                                listView.stopLoadMore();
+                            public void onFailed(final String code, final String errorMsg) {
+                                postRunnable(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (TextUtils.equals(JoyHttpProtocol.STATUS_CODE_NOMORE, code)) {
+                                            listView.setPullLoadEnable(false);
+                                            LogUtil.d(TAG, "pullloadenable false");
+                                        }
+                                        Utils.showShortToast(getContext(), errorMsg);
+                                        listView.stopLoadMore();
+
+                                    }
+                                });
                             }
                         });
             } else {
@@ -303,6 +323,12 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
         intent.putExtra(SnapMsgConstant.EXTRA_SNAP_MSG, message);
         intent.putExtra(SnapMsgConstant.EXTRA_DELETE_STATUS, ifDelete);
         getActivity().setResult(Activity.RESULT_OK, intent);
+    }
+
+    public void showCommentKeyboard(){
+        comment_input_et.requestFocus();
+        comment_input_et.setSelection(0);
+        showKeyboard(true);
     }
 
     private void loadLikeData() {
@@ -468,16 +494,26 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
                             isFirstLoad = false;
                             commentMessageDBService.saveCommentMessageList(commentMessages);
                             items.addAll(commentMessages);
-                            refreshMessageList();
+                            getHandler().post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    refreshMessageList();
+                                }
+                            });
                         }
 
                         @Override
-                        public void onFailed(String code, String errorMsg) {
-                            if (TextUtils.equals(JoyHttpProtocol.STATUS_CODE_NOMORE, code)) {
-                                listView.setPullLoadEnable(false);
-                                LogUtil.d(TAG, "pullloadenable false");
-                            }
-                            listView.stopLoadMore();
+                        public void onFailed(final String code, String errorMsg) {
+                            getHandler().post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (TextUtils.equals(JoyHttpProtocol.STATUS_CODE_NOMORE, code)) {
+                                        listView.setPullLoadEnable(false);
+                                        LogUtil.d(TAG, "pullloadenable false");
+                                    }
+                                    listView.stopLoadMore();
+                                }
+                            });
                         }
                     });
         } else {
@@ -543,22 +579,24 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
 
     // 内容区域长按事件响应处理。该接口的优先级比adapter中有长按事件的处理监听高，当该接口返回为true时，adapter的长按事件监听不会被调用到。
     protected boolean onItemLongClick() {
-        // 查看阅后即焚
-        if (message.getStatus() == 1) {// 没有过期
-            // 自己可以永久查看
-            if (TextUtils.equals(message.getUid(), AppCache.getJoyId())) {
-                WatchSnapPublicSmartActivity.start(getActivity(), message, UserConstant.REQUEST_CODE_WATCHSNAP);
-                return true;
-            } else if (message.getMsgStatus() == MsgStatusEnum.success && message.getRead() == 0) {
-                WatchSnapPublicSmartActivity.start(getActivity(), message, UserConstant.REQUEST_CODE_WATCHSNAP);
-                return true;
-            } else if (message.getRead() == 1) {
-                Utils.showLongToast(getContext(), "只能查看一次,您已经查看过了");
+        if (message.getType() == PublishMessage.MessageType.SNAP.value()) {
+            // 查看阅后即焚
+            if (message.getStatus() == 1) {// 没有过期
+                // 自己可以永久查看
+                if (TextUtils.equals(message.getUid(), AppCache.getJoyId())) {
+                    WatchSnapPublicSmartActivity.start(getActivity(), message, UserConstant.REQUEST_CODE_WATCHSNAP);
+                    return true;
+                } else if (message.getMsgStatus() == MsgStatusEnum.success && message.getRead() == 0) {
+                    WatchSnapPublicSmartActivity.start(getActivity(), message, UserConstant.REQUEST_CODE_WATCHSNAP);
+                    return true;
+                } else if (message.getRead() == 1) {
+                    Utils.showLongToast(getContext(), "只能查看一次,您已经查看过了");
+                    return false;
+                }
+            } else if (message.getStatus() == 0) {
+                Utils.showLongToast(getContext(), "图片超过24小时,已销毁");
                 return false;
             }
-        } else if (message.getStatus() == 0) {
-            Utils.showLongToast(getContext(), "图片超过24小时,已销毁");
-            return false;
         }
         return false;
     }
@@ -566,8 +604,9 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
     protected final void inflate() {
         zanList = findView(R.id.snap_msg_zan_head_gridview);
         time_tv = findView(R.id.snap_msg_time);
+        nick_tv = findView(R.id.snap_msg_nick);
+        likeNumHint_tv = findView(R.id.snap_msg_like_numHint);
         viewer_tv = findView(R.id.viewer_text);
-        viewer_all_tv = findView(R.id.view_all_like);
         distance_tv = findView(R.id.snap_msg_distance);
         readStatus_tv = findView(R.id.snap_msg_read_status);
         zanButton_iv = findView(R.id.snap_msg_comment_menu_zan_txt);
@@ -576,22 +615,17 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
 
         deleteButton_tv = findView(R.id.snap_delete_btn);
 
-        contentContainer = findView(R.id.snap_msg_content);
         msgTagContainer = findView(R.id.snap_msg_tag_container);
 
-        View.inflate(rootView.getContext(), R.layout.layout_snapnews_common_centercontent, contentContainer);
-        View.inflate(rootView.getContext(), R.layout.layout_snap_systag_content, msgTagContainer);
         snapCover = findView(R.id.snap_msg_content_image);
         snapText = findView(R.id.snap_msg_content_text);
-        snapMsgTag_iv = findView(R.id.snap_msg_tag_image);
-        snapMsgTag_tv = findView(R.id.snap_msg_tag_text);
-        if (message.getType() == PublicMsgViewHolderFactory.SYS_NEWS) {
+        if (message.getType() == PublishMessage.MessageType.SYSTEM.value()) {
             msgTagContainer.setVisibility(View.VISIBLE);
         } else {
             msgTagContainer.setVisibility(View.GONE);
         }
 
-        viewer_all_tv.setVisibility(View.GONE);
+        likeNumHint_tv.setVisibility(View.GONE);
     }
 
     protected <T extends View> T findView(int resId) {
@@ -610,16 +644,22 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
     }
 
     protected final void refreshView() {
+        nick_tv.setText(UserInfoHelper.getUserName(message.getUid()));
         setHeadImageView();
         distance_tv.setVisibility(View.GONE);
         time_tv.setText(TimeUtil.getJoyTimeShowString(message.getIntime(), false));
-        readStatus_tv.setVisibility(View.VISIBLE);
+        if (message.getType() == PublicMsgViewHolderFactory.PUB_NEWS) {
+            readStatus_tv.setVisibility(View.GONE);
+        } else {
+            readStatus_tv.setVisibility(View.VISIBLE);
+            readStatus_tv.setEnabled(message.getStatus() == 1 &&
+                    (TextUtils.equals(message.getUid(), AppCache.getJoyId()) || message.getRead() == 0));
+        }
         readStatus_tv.setEnabled(message.getStatus() == 1 &&
                 (TextUtils.equals(message.getUid(), AppCache.getJoyId()) || message.getRead() == 0));
 
-        if (message.getType() == PublicMsgViewHolderFactory.SYS_NEWS) {
-            snapMsgTag_tv.setText(AppContext.getResource().getString(R.string.official_name));
-            snapMsgTag_iv.setImageResource(R.drawable.official_tag);
+        if (message.getType() == PublishMessage.MessageType.SYSTEM.value()) {
+            msgTagContainer.setVisibility(View.VISIBLE);
         }
 
         setDeleteButton();
@@ -636,7 +676,17 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
         setLongClickListener();
 
         snapCover.setVisibility(View.VISIBLE);
-        JoyImageUtil.bindCoverImageView(snapCover, message.getCover(), ScreenUtil.coverType);
+        if (!TextUtils.isEmpty(message.getCover())) {
+            JoyImageUtil.bindCoverImageView(snapCover, message.getCover(), JoyImageUtil.ImageType.V_COVERICON);
+        } else if(!TextUtils.isEmpty(message.getCoverLocalPath())){
+            File file = new File(message.getCoverLocalPath());
+            if (!file.exists()) {
+                snapCover.setImageResource(ScreenUtil.coverType.biggerThan(JoyImageUtil.ImageType.V_720) ? R.drawable.joy_cover_loading : R.drawable.joy_cover_loading_medium);
+            } else {
+                String thumbnail = ImageUtil.makeThumbnail(getContext(), file, 720, 360);
+                ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(thumbnail), snapCover);
+            }
+        }
 
         if (!TextUtils.isEmpty(message.getContent())) {
             snapText.setVisibility(View.VISIBLE);
@@ -648,12 +698,12 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
         if (likeHeadImageLoader == null) {
             showLikeItems = new LinkedList<>();
             if (message.getLike() > MAX_LIKE) {
+                likeNumHint_tv.setText(message.getLike()+"");
                 showLikeItems.addAll(message.getLikeMessage().getUids().subList(0, MAX_LIKE));
-                viewer_all_tv.setVisibility(View.VISIBLE);
-                viewer_all_tv.setText("查看所有"+message.getLike()+"个Jo");
             } else {
                 showLikeItems.addAll(message.getLikeMessage().getUids());
-                viewer_all_tv.setVisibility(View.GONE);
+                likeNumHint_tv.setVisibility((message.getLike() > 6 ? View.VISIBLE : View.GONE));
+                likeNumHint_tv.setText(message.getLike()+"");
             }
             likeHeadImageLoader = new LikeHeadImageLoader(showLikeItems);
             likeHeadImageLoader.refreshLike();
@@ -671,11 +721,8 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
                 if (message.getLike() > MAX_LIKE) {
                     showLikeItems.addFirst(AppCache.getJoyId());
                     showLikeItems.removeLast();
-                    viewer_all_tv.setVisibility(View.VISIBLE);
-                    viewer_all_tv.setText("查看所有"+message.getLike()+"个Jo");
                 } else {
                     showLikeItems.addFirst(AppCache.getJoyId());
-                    viewer_all_tv.setVisibility(View.GONE);
                 }
                 refreshLikeList();
                 Utils.showShortToast(getContext(), AppContext.getResource().getString(R.string.like_hint_text));
@@ -813,7 +860,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
                 }
             };
         }
-        viewer_all_tv.setOnClickListener(viewAllJoClickListener);
+//        viewer_all_tv.setOnClickListener(viewAllJoClickListener);
     }
 
     private void showJoUsersDialog(List<String> accounts) {
@@ -833,39 +880,8 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
             }
         };
         // 消息长按事件响应处理
-        contentContainer.setOnLongClickListener(longClickListener);
+        snapCover.setOnLongClickListener(longClickListener);
     }
-//
-//    protected View.OnTouchListener onTouchListener = new View.OnTouchListener() {
-//
-//        @Override
-//        public boolean onTouch(View v, MotionEvent event) {
-//            switch (event.getAction()) {
-//                case MotionEvent.ACTION_MOVE:
-////                    v.getParent().requestDisallowInterceptTouchEvent(true);
-//                    break;
-//                case MotionEvent.ACTION_UP:
-//                case MotionEvent.ACTION_CANCEL:
-//                    v.getParent().requestDisallowInterceptTouchEvent(false);
-//                    boolean hasSeen = WatchSnapPublicSmartActivity.hasSeen;
-//                    WatchSnapPublicSmartActivity.destroy();
-//
-//                    // 将其标记为已读，同时删除附件内容，然后不让再查看
-//                    if (isLongClick && hasSeen) {
-//                        message.setMsgStatus(MsgStatusEnum.read);
-//                        // 置已读标记
-//                        message.setRead(1);
-//                        readStatus_tv.setEnabled(false);
-//                        // 发送至服务器标记
-//                        SnapnewsUtils.markPublicSnapMsg(message);
-//                        isLongClick = false;
-//                    }
-//                    break;
-//            }
-//
-//            return false;
-//        }
-//    };
 
     public void deleteItem(final PublicSnapMessage messageItem) {
         // 调用本地服务器删除

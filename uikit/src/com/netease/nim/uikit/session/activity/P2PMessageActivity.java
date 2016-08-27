@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -43,7 +45,6 @@ public class P2PMessageActivity extends BaseMessageActivity {
     public static void start(Context context, String contactId, SessionCustomization customization) {
         Intent intent = new Intent();
         intent.putExtra(Extras.EXTRA_ACCOUNT, contactId);
-//        intent.putExtra(Extras.EXTRA_CUSTOMIZATION, customization);
         intent.setClass(context, P2PMessageActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
@@ -69,7 +70,6 @@ public class P2PMessageActivity extends BaseMessageActivity {
         chatName = UserInfoHelper.getUserName(sessionId);
         chatUniversity = UserInfoHelper.getUserUniversity(sessionId);
         setChatBarTitle();
-        setFriendProfileClickEvent(this, friendProfileClickMsg);
     }
 
     private void registerObservers(boolean register) {
@@ -289,4 +289,21 @@ public class P2PMessageActivity extends BaseMessageActivity {
 
         }
     };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.nim_message_activity_menu) {
+            if (NimUIKit.getSessionListener() != null) {
+                NimUIKit.getSessionListener().onAvatarClicked(this, friendProfileClickMsg);
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.nim_message_activity_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 }

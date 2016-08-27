@@ -5,6 +5,8 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.text.TextUtils;
 
+import com.netease.nim.uikit.common.media.picker.joycamera.ICamOnLineResMgr;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -65,7 +67,24 @@ class ExternalStorage {
 		}
 		if (result) {
 			createNoMediaFile(sdkStorageRoot);
+			createCamOnlineResDir();
 		}
+	}
+
+	/**
+	 * 创建joyCameraOnlineRes 本地目录
+	 */
+	private void createCamOnlineResDir(){
+		StringBuilder rootDir = new StringBuilder();
+		rootDir.append(getDirectoryByDirType(StorageType.TYPE_FILE)).append(ICamOnLineResMgr.root_dir);
+		makeDirectory(rootDir.toString());
+		rootDir.append(ICamOnLineResMgr.default_sub_dir);
+
+		makeDirectory(rootDir.toString());
+		rootDir.delete(rootDir.length() - ICamOnLineResMgr.default_sub_dir.length(), rootDir.length()).append(ICamOnLineResMgr.ar_sub_dir);
+		makeDirectory(rootDir.toString());
+		rootDir.delete(rootDir.length() - ICamOnLineResMgr.ar_sub_dir.length(), rootDir.length()).append(ICamOnLineResMgr.cover_sub_dir);
+		makeDirectory(rootDir.toString());
 	}
 
 	/**

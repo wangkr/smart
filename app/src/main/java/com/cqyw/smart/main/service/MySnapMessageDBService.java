@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.cqyw.smart.main.database.AccountDBOpenHelper;
 import com.cqyw.smart.main.model.PublicSnapMessage;
-import com.cqyw.smart.main.model.PublishSnapMessage;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
 import com.cqyw.smart.main.model.SnapMsgConstant;
 
 import java.util.List;
@@ -23,12 +23,12 @@ public class MySnapMessageDBService {
         accountDBOpenHelper = new AccountDBOpenHelper(context);
     }
 
-    public String saveNewPublishSnapMessage(PublishSnapMessage message) {
+    public String saveNewPublishSnapMessage(PublishMessage message) {
         String id = "";
         SQLiteDatabase db = accountDBOpenHelper.getWritableDatabase();
-        db.execSQL("insert into my_snap_message( id, lat, lng, content, cover, smart, status)" +
-                "values(NULL, ?, ?, ?, ?, ?, ?)", new Object[]{message.getLat(), message.getLng(), message.getContent(),
-                message.getCover(), message.getSmart(), message.getStatus()});
+        db.execSQL("insert into my_snap_message( id, lat, lng, content, cover, smart, status, _type, local_path)" +
+                "values(NULL, ?, ?, ?, ?, ?, ?, ?, ?)", new Object[]{message.getLat(), message.getLng(), message.getContent(),
+                message.getCover(), message.getSmart(), message.getStatus(), message.getType().value(), message.getLocalPath()});
         Cursor cursor = db.rawQuery("select last_insert_rowid() as newid from my_snap_message", null);
         if (cursor.moveToNext()) {
             id = cursor.getInt(cursor.getColumnIndex("newid"))+"";
@@ -37,22 +37,6 @@ public class MySnapMessageDBService {
         db.close();
 
         return id;
-    }
-
-    public void saveMyPublicSnapMessageList(List<PublicSnapMessage> messages) {
-        SQLiteDatabase db = accountDBOpenHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            for (PublicSnapMessage message : messages) {
-                db.execSQL("replace into my_snap_message(id, lat, lng, content, cover, smart, status)" +
-                        "values(?, ?, ?, ?, ?, ?, ?)", new Object[]{message.getId(), message.getLat(), message.getLng(), message.getContent(),
-                        message.getCover(), message.getSmart(), message.getStatus()});
-            }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-        db.close();
     }
 
     public void deleteMyPublicSnapMessageById(String id) {

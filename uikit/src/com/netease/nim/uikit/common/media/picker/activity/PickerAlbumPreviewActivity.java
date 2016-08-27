@@ -300,7 +300,7 @@ public class PickerAlbumPreviewActivity extends TActionBarActivity implements On
 
 	@Override
 	public void onPause() {
-		// save the data source and recycle all bitmaps
+		// saveAll the data source and recycle all bitmaps
 		imageViewPager.setAdapter(null);
 		tempIndex = currentPosition;
 		currentPosition = -1;

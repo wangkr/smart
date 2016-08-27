@@ -6,32 +6,32 @@
     </style>
 
     <!-- Light ActionBar -->
-    <style name="LightBaseActionBarTheme" parent="@style/Theme.AppCompat.Light">
+    <style name="LightBaseActionBarTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/theme_color</item>
+        <item name="colorPrimaryDark">@color/theme_color_dark</item>
+        <item name="colorAccent">@color/theme_color_dark2</item>
         <!-- ActionBar样式，包括背景颜色，标题颜色 ,logo,高度等 -->
         <item name="actionBarStyle">@style/LightBaseActionBarStyle</item>
-        <item name="actionButtonStyle">@style/ActionButtonStyle</item>
-        <!-- unused overflow的样式 -->
+        <!--&lt;!&ndash; unused overflow的样式 &ndash;&gt;-->
         <item name="popupMenuStyle">@style/PopMenuStyle</item>
-        <!-- unused overflow展开的样式 -->
+        <!--&lt;!&ndash; unused overflow展开的样式 &ndash;&gt;-->
         <item name="dropDownListViewStyle">@style/DropDownStyle</item>
-        <!-- 返回箭头icon的样式 -->
-        <item name="homeAsUpIndicator">@drawable/btn_actionbar_back</item>
         <!-- 搜索框背景样式替换 -->
         <!--<item name="searchViewTextField">@drawable/actionbar_search_view_bg</item>-->
         <!-- 搜索框的icon图标替换 -->
         <!--<item name="searchViewSearchIcon">@drawable/action_bar_search_view_icon</item>-->
         <item name="android:actionBarStyle">@style/LightBaseActionBarStyle</item>
-        <item name="android:actionButtonStyle">@style/ActionButtonStyle</item>
+        <!--<item name="android:actionButtonStyle">@style/ActionButtonStyle</item>-->
         <item name="android:popupMenuStyle">@style/PopMenuStyle</item>
         <item name="android:dropDownListViewStyle">@style/DropDownStyle</item>
-        <item name="android:homeAsUpIndicator">@drawable/btn_actionbar_back</item>
         <!-- 去掉actionbar底部阴影 -->
         <item name="android:windowContentOverlay">@null</item>
         <!-- menu字体 -->
         <!--  高版本api 上，需要这样设置，否则没效果-->
-        <item name="android:textAppearanceLargePopupMenu">@style/CustomActionBarTextStyle</item>
+        <!--<item name="android:textAppearanceLargePopupMenu">@style/CustomActionBarTextStyle</item>-->
         <!-- 第版本api-->
-        <item name="textAppearanceLargePopupMenu">@style/CustomActionBarTextStyle</item>
+        <!--<item name="textAppearanceLargePopupMenu">@style/CustomActionBarTextStyle</item>-->
     </style>
 
     <style name="CustomActionBarTextStyle" parent="@style/TextAppearance.Widget.AppCompat.ExpandedMenu.Item">
@@ -50,6 +50,7 @@
     <style name="PopMenuStyle" parent="@style/Widget.AppCompat.Light.PopupMenu">
         <item name="android:popupBackground">@drawable/actionbar_dropdown_bg</item>
         <item name="android:background">@color/white</item>
+        <item name="android:textColor">@color/theme_color_dark</item>
     </style>
 
     <style name="DropDownStyle" parent="@style/Widget.AppCompat.Light.ListView.DropDown">
@@ -57,6 +58,7 @@
         <item name="android:animationDuration">500</item>
         <item name="android:dividerHeight">@dimen/split_one_pixels</item>
         <item name="android:divider">@color/color_gray_d9d9d9</item>
+        <item name="android:textColor">@color/theme_color_dark</item>
     </style>
 
     <!-- 父样式-->
@@ -77,15 +79,12 @@
     </style>
     <!-- ActionBar style -->
     <style name="LightBaseActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar">
-        <item name="background">@drawable/actionbar_bg</item>
-        <item name="height">@dimen/actionBar_height</item>
         <item name="titleTextStyle">@style/LightActionBarTitleTextStyle</item>
         <item name="subtitleTextStyle">@style/LightSubTitleTextStyle</item>
-        <item name="contentInsetStart">0dp</item>
-        <item name="contentInsetEnd">0dp</item>
+        <item name="background">@drawable/actionbar_bg</item>
         <item name="android:background">@drawable/actionbar_bg</item>
-        <item name="android:height">@dimen/actionBar_height</item>
-        <item name="android:gravity">center_vertical</item>
+        <item name="contentInsetStart">2dp</item>
+        <item name="contentInsetEnd">2dp</item>
         <item name="android:titleTextStyle">@style/LightActionBarTitleTextStyle</item>
         <item name="android:subtitleTextStyle">@style/LightSubTitleTextStyle</item>
     </style>
@@ -93,11 +92,13 @@
     <style name="LightActionBarTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textSize">@dimen/actionBar_title_Size</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">center_horizontal</item>
     </style>
 
     <style name="LightSubTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textSize">@dimen/actionBar_subTitle_size</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">center_horizontal</item>
     </style>
     <!-- 标题栏背景样式-->
     <style name="actionBar_style" parent="@style/ParentWidthPercentHeight">
@@ -317,7 +318,7 @@
 
     <style name="WelcomeEntranceActionBarTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowBackground">@drawable/welcome_bg_layer</item>
+        <item name="android:windowBackground">@drawable/welcome_bg</item>
     </style>
 
 </resources>

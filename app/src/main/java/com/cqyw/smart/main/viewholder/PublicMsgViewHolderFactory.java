@@ -12,8 +12,9 @@ import java.util.HashMap;
  * mail:wangkrhust@gmail.com
  */
 public class PublicMsgViewHolderFactory {
-    public static final int USER_NEWS = 0;
+    public static final int SNAP_NEWS = 0;
     public static final int SYS_NEWS = 2;
+    public static final int PUB_NEWS = 4;
     private static HashMap<String, Class<? extends PublicMsgViewHolderBase>> viewHolders = new HashMap<>();
 
     static {

@@ -44,7 +44,14 @@ public interface Extras {
     String EXTRA_ORIG_IMAGE_LIST = "orig_image_list";
     String EXTRA_NEED_SHOW_SEND_ORIGINAL = "need_show_send_original_image";
     String EXTRA_PUBLIC_SNAP = "extra_public_snap";
+    String EXTRA_PAGER_INDEX = "snap_pager_index";
+    String EXTRA_COVER_INDEX = "snap_cover_index";
     String EXTRA_COVER_NAME = "snap_cover_name";
+    String EXTRA_MENU_RES_ID = "menu_res_id";
     String EXTRA_SNAP_TEXT = "snap_text";
     String EXTRA_HAS_SEEN = "has_seen";
+    String EXTRA_SAVED_PHOTOPATH = "savedPicturePath";
+    String EXTRA_CALL_CLASS = "call_class";
+    String EXTRA_SEND_PUBLIC = "PUBLIC_MESSAGE";
+    String EXTRA_SEND_SNAP = "SNAP_MESSAGE";
 }

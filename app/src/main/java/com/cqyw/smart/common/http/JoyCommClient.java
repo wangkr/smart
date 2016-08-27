@@ -9,22 +9,23 @@ import com.cqyw.smart.R;
 import com.cqyw.smart.config.AppContext;
 import com.cqyw.smart.config.JoyServers;
 import com.cqyw.smart.contact.extensioninfo.model.ExtensionInfo;
-import com.cqyw.smart.contact.extensioninfo.model.ExtensionInfoBean;
 import com.cqyw.smart.contact.localcontact.LocalContact;
 import com.cqyw.smart.location.model.NimLocation;
 import com.cqyw.smart.main.model.CommentMessage;
 import com.cqyw.smart.main.model.LikeMessage;
 import com.cqyw.smart.main.model.ProvinceInfo;
 import com.cqyw.smart.main.model.PublicSnapMessage;
-import com.cqyw.smart.main.model.PublishSnapMessage;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
 import com.cqyw.smart.main.model.RecentSnapNews;
 import com.cqyw.smart.main.model.SchoolInfo;
 import com.cqyw.smart.main.model.SnapMsgConstant;
 import com.cqyw.smart.main.model.SnapNewTypeEnum;
 import com.cqyw.smart.main.util.MainUtils;
 import com.cqyw.smart.util.SystemTools;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.CamOnLineRes;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.sys.TimeUtil;
+import com.netease.nim.uikit.joycustom.upyun.JoyImageUtil;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
@@ -69,12 +70,18 @@ public class JoyCommClient implements ICommProtocol{
     public static String API_GET_SCHOOLINFO;
     public static String API_SET_UNMATCH;
     public static String API_SET_MATCH;
+    public static String API_GET_MODELS;
 
     private static JoyCommClient instance = null;
 
-    public static synchronized JoyCommClient getInstance(){
+    public static JoyCommClient getInstance(){
+
         if(instance == null){
-            return new JoyCommClient();
+            synchronized (JoyCommClient.class) {
+                if(instance == null) {
+                    instance = new JoyCommClient();
+                }
+            }
         }
         return instance;
     }
@@ -108,6 +115,7 @@ public class JoyCommClient implements ICommProtocol{
         API_GET_SCHOOLINFO   = AppContext.getContext().getString(R.string.api_get_schoolinfo);
         API_SET_MATCH        = AppContext.getContext().getString(R.string.api_set_match);
         API_SET_UNMATCH      = AppContext.getContext().getString(R.string.api_set_unmatch);
+        API_GET_MODELS       = AppContext.getContext().getString(R.string.api_get_models);
 
     }
 
@@ -154,7 +162,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -202,7 +210,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -251,7 +259,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -293,7 +301,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -347,7 +355,7 @@ public class JoyCommClient implements ICommProtocol{
                     LogUtil.e(TAG, "local contact match  failed : code = " + code + ", errorMsg = " + errorMsg);
                 }
             }
-        });
+        },true, false);
     }
 
     /**
@@ -393,7 +401,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, false);
     }
 
     /**
@@ -439,7 +447,64 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, false);
+    }
+
+    @Override
+    public void getOnlineRes(String id, String token, final CommCallback<Map<String,List<CamOnLineRes>>> callback) {
+        String url = JoyServers.joyServer() + API_GET_MODELS;
+
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put(HEADER_CONTENT_TYPE, "application/x-www-form-urlencoded; charset=utf-8");
+
+        final JSONObject jsonObject = new JSONObject();
+        jsonObject.put(REQUEST_KEY_ID, id);
+        jsonObject.put(REQUEST_KEY_TOKEN, token);
+
+        JoyHttpClient.getInstance().execute(url, headers, jsonObject, new JoyHttpClient.JoyHttpCallback() {
+            @Override
+            public void onResponse(String response, int code, String errorMsg) {
+                if (code != 0) {
+                    LogUtil.e(TAG, "get online res from joyserver failed : code = " + code + ", errorMsg = " + errorMsg);
+                    if (callback != null) {
+                        callback.onFailed(code + "", errorMsg);
+                    }
+                    return;
+                }
+
+                try {
+                    JSONObject resObj = JSONObject.parseObject(response);
+                    String resCode = resObj.getString(RESULT_KEY_CODE).substring(4, 6);
+                    if (resCode.equals(STATUS_CODE_SUCCESS)) {
+                        // 进行解析并封装成类数组
+                        JSONArray jsonArray = resObj.getJSONArray(REQUEST_KEY_DATA);
+                        Map<String, List<CamOnLineRes>> maps = new HashMap<String, List<CamOnLineRes>>();
+                        maps.put("ar", new ArrayList<CamOnLineRes>());
+                        maps.put("cover", new ArrayList<CamOnLineRes>());
+                        for(int i = 0;i < jsonArray.size();i++){
+                            JSONObject jo = jsonArray.getJSONObject(i);
+                            CamOnLineRes colr = new CamOnLineRes();
+                            colr.setId(jo.getIntValue("id"));
+                            colr.setLocalIndex(jo.getIntValue("no"));
+                            colr.setUrl(JoyImageUtil.getOnlineResAbsUrl(jo.getString("main")));
+                            colr.setIconUrl(JoyImageUtil.getOnlineResAbsUrl(jo.getString("thumbnail")));
+                            colr.setType(jo.getIntValue("stype") == 1 ? CamOnLineRes.Type.AR : CamOnLineRes.Type.COVER);
+                            colr.setStatus(CamOnLineRes.Status.NONE);
+
+                            maps.get(colr.getType() == CamOnLineRes.Type.AR ? "ar" : "cover").add(colr);
+                        }
+
+                        callback.onSuccess(maps);
+                    } else {
+                        String errorMsg1 = resObj.getString(RESULT_KEY_MSG);
+                        callback.onFailed(resCode, errorMsg1);
+                    }
+                } catch (JSONException e) {
+                    callback.onFailed("-1", e.getMessage());
+                }
+            }
+        },true, false);
+
     }
 
     @Override
@@ -485,7 +550,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
 
     }
 
@@ -532,7 +597,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     /**
@@ -581,7 +646,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     /**
@@ -630,7 +695,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -672,7 +737,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -714,7 +779,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -758,7 +823,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -797,11 +862,11 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
-    public void sendSnapnews(String id, String token, PublishSnapMessage message, final CommCallback<String> callback) {
+    public void sendSnapnews(String id, String token, PublicSnapMessage message, final CommCallback<String> callback) {
         String url = JoyServers.joyServer() + API_SEND_NEWS;
         Map<String, String> headers = new HashMap<>(1);
         headers.put(HEADER_CONTENT_TYPE, "application/x-www-form-urlencoded; charset=utf-8");
@@ -814,8 +879,7 @@ public class JoyCommClient implements ICommProtocol{
         jsonObject.put(SnapMsgConstant.MSG_KEY_CONTENT, message.getContent());
         jsonObject.put(SnapMsgConstant.MSG_KEY_COVER, message.getCover());
         jsonObject.put(SnapMsgConstant.MSG_KEY_SMART, message.getSmart());
-
-//        LogUtil.d(TAG, "sendSnapnews="+jsonObject.toString());
+        jsonObject.put(SnapMsgConstant.MSG_KEY_TYPE, message.getType());
 
 
         JoyHttpClient.getInstance().execute(url, headers, jsonObject, new JoyHttpClient.JoyHttpCallback() {
@@ -847,7 +911,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -900,7 +964,6 @@ public class JoyCommClient implements ICommProtocol{
                             snapMessage.setDirection(MsgDirectionEnum.In);
                             snapMessages.add(snapMessage);
                         }
-
                         callback.onSuccess(snapMessages);
                     } else {
                         String errorMsg1 = resObj.getString(RESULT_KEY_MSG);
@@ -910,7 +973,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, false);
     }
 
     @Override
@@ -968,7 +1031,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -1048,7 +1111,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, false);
     }
 
     @Override
@@ -1100,7 +1163,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, false);
     }
 
     @Override
@@ -1153,7 +1216,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -1193,7 +1256,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -1233,7 +1296,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, true);
     }
 
     @Override
@@ -1270,7 +1333,7 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, false);
     }
 
     @Override
@@ -1308,6 +1371,6 @@ public class JoyCommClient implements ICommProtocol{
                     callback.onFailed("-1", e.getMessage());
                 }
             }
-        });
+        },true, false);
     }
 }

@@ -1,11 +1,16 @@
 package com.netease.nim.uikit.joycustom.snap;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,35 +38,19 @@ public class SelectSnapCoverImageActivity extends TActionBarActivity {
 
     public static final String RESULT_RETAKE = "RESULT_RETAKE";
     public static final String RESULT_SEND = "RESULT_SEND";
-    public static final String RESULT_REPICK = "RESULT_REPICK";
-
-    private RelativeLayout actionBar;
 
     private SnapCoversSelectorFragment fragment;
-    /*隐藏图片文件*/
-    private File hiddenImageFile;
-    /*发送按钮*/
-    private TextView sendButton;
-    /*文字内容*/
-    private EditText snapContent;
-    /*隐藏图片源文件路径*/
-    private String origImageFilePath;
 
-    /*图片来源*/
-    private boolean local = false;
-
-    /*snap类型*/
-    private boolean isPublicSnap = false;
+    public static void start(Context context, int requestCode) {
+        Intent intent = new Intent();
+        intent.setClass(context, SelectSnapCoverImageActivity.class);
+        ((Activity)context).startActivityForResult(intent, requestCode);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getIntentData();
         setContentView(R.layout.snap_cover_select_activity);
-        initActionBar();
-
-        snapContent = findView(R.id.snap_edit_text);
-        snapContent.setVisibility(isPublicSnap ? View.VISIBLE : View.GONE);
 
         // 加载主页面
         new Handler(SelectSnapCoverImageActivity.this.getMainLooper()).postDelayed(new Runnable() {
@@ -91,93 +80,22 @@ public class SelectSnapCoverImageActivity extends TActionBarActivity {
         }
     }
 
-    private void onBack() {
-        final EasyAlertDialog easyAlertDialog = new EasyAlertDialog(SelectSnapCoverImageActivity.this);
-        easyAlertDialog.setTitle(local?"退出":"重拍");
-        easyAlertDialog.setMessage(local ? "回到主界面？" : "图片将不被保存！");
-        easyAlertDialog.addNegativeButton("取消", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                easyAlertDialog.dismiss();
-            }
-        });
-        easyAlertDialog.addPositiveButton(local ? "退出" : "重拍", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!local) {
-                    deleteTempFile();
-                    Intent intent = new Intent();
-                    intent.setClass(SelectSnapCoverImageActivity.this, getIntent().getClass());
-                    intent.putExtra(RESULT_RETAKE, true);
-                    setResult(RESULT_OK, intent);
-                }
-                SelectSnapCoverImageActivity.this.finish();
-            }
-        });
-        easyAlertDialog.show();
-    }
-
-    private View.OnClickListener onBackPressedListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onBack();
-        }
-    };
-
-
-    private void initActionBar(){
-        actionBar = findView(R.id.snap_select_activity_actionbar);
-
-        actionBar.findViewById(R.id.centerBack).setOnClickListener(onBackPressedListener);
-
-        sendButton = (TextView)actionBar.findViewById(R.id.snap_send);
-        sendButton.setOnClickListener(sendListener);
-    }
-
-    View.OnClickListener sendListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int coverIdx = SnapCoversSelectorFragment.selectedCoverIndex == -1 ? 0 : SnapCoversSelectorFragment.selectedCoverIndex;
-            int pagerIdx = SnapCoversSelectorFragment.selectedPagerIndex == -1 ? 0 : SnapCoversSelectorFragment.selectedPagerIndex;
-
-            LogUtil.d("SelectSnapCoverImageActivity", "coverIDx="+coverIdx+" pagerIdx="+pagerIdx);
-            ArrayList<String> imageList = new ArrayList<>();
-            ArrayList<String> origImageList = new ArrayList<>();
-
-            imageList.add(hiddenImageFile.getPath());
-            origImageList.add(origImageFilePath);
-
-            LogUtil.d("Select", "orgImageFilePath="+origImageFilePath);
-
-            Intent intent = PreviewImageFromLocalActivity.initPreviewImageIntent(imageList, origImageList, false);
-            intent.setClass(SelectSnapCoverImageActivity.this, getIntent().getClass());
-            intent.putExtra(Extras.EXTRA_COVER_NAME, SnapConstant.getServerDefaultCoverName(pagerIdx, coverIdx));
-            intent.putExtra(Extras.EXTRA_SNAP_TEXT, snapContent.getText().toString());
-            intent.putExtra(RESULT_SEND, true);
-            setResult(RESULT_OK, intent);
-            SelectSnapCoverImageActivity.this.finish();
-
-        }
-    };
-
-    private void deleteTempFile() {
-        if (hiddenImageFile != null) {
-            hiddenImageFile.delete();
-        }
-
-        AttachmentStore.delete(origImageFilePath);
-    }
-
-    private void getIntentData() {
-        origImageFilePath = getIntent().getExtras().getString("OrigImageFilePath");
-        local = getIntent().getExtras().getBoolean(Extras.EXTRA_FROM_LOCAL);
-        hiddenImageFile = new File(origImageFilePath);
-        isPublicSnap = getIntent().getBooleanExtra(Extras.EXTRA_PUBLIC_SNAP, false);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.select_cover_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public void onBackPressed() {
-        onBack();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.select_cover_menu) {
+            Intent intent = new Intent();
+            intent.putExtra(Extras.EXTRA_COVER_INDEX, SnapCoversSelectorFragment.selectedCoverIndex);
+            intent.putExtra(Extras.EXTRA_PAGER_INDEX, SnapCoversSelectorFragment.selectedPagerIndex);
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

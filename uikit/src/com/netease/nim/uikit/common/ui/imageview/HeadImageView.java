@@ -80,14 +80,6 @@ public class HeadImageView extends ImageView {
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
     }
-//
-//    private static final ImageOptions createImageOptions() {
-//        return new ImageOptions.Builder()
-//                .setLoadingDrawableId(NimUIKit.getUserInfoProvider().getDefaultIconResId())
-//                .setFailureDrawableId(NimUIKit.getUserInfoProvider().getDefaultIconResId())
-//                .setConfig(Bitmap.Config.RGB_565)
-//                .build();
-//    }
 
     public void setMask(int maskResId) {
         mask = getResources().getDrawable(maskResId);
@@ -98,13 +90,14 @@ public class HeadImageView extends ImageView {
     }
 
     private void initMask(JoyImageUtil.ImageType type) {
-        if (type == JoyImageUtil.ImageType.V_120) {
-            setMask(R.drawable.joy_portrait_mask_round);
-        } else if (type == JoyImageUtil.ImageType.V_100) {
-            setMask(R.drawable.joy_portrait_mask_round_medium);
-        } else if (type == JoyImageUtil.ImageType.V_60){
-            setMask(R.drawable.joy_portrait_round_small);
-        }
+        setMask(R.drawable.portrait_mask_circle);
+//        if (type == JoyImageUtil.ImageType.V_120) {
+//            setMask(R.drawable.joy_portrait_mask_round);
+//        } else if (type == JoyImageUtil.ImageType.V_100) {
+//            setMask(R.drawable.joy_portrait_mask_round_medium);
+//        } else if (type == JoyImageUtil.ImageType.V_60){
+//            setMask(R.drawable.joy_portrait_round_small);
+//        }
     }
     /**
      * 加载头像

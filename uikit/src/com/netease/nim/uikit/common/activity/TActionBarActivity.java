@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.DrawableRes;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -35,21 +36,29 @@ public abstract class TActionBarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LogUtil.ui("activity: " + getClass().getSimpleName() + " onCreate()");
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(displayHomeAsUpEnabled());
-            actionBar.setLogo(R.drawable.actionbar_divider);
+            actionBar.setLogo(getLogo());
             actionBar.setDisplayUseLogoEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
         }
+    }
+
+    @DrawableRes
+    protected int getLogo(){
+        return R.drawable.actionbar_divider;
     }
 
     @Override
     public void onBackPressed() {
         invokeFragmentManagerNoteStateNotSaved();
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override

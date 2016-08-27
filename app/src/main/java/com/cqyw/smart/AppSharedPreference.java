@@ -30,6 +30,7 @@ public class AppSharedPreference {
     private static final String KEY_LASTKNOWN_POSITION = "last_known_position";
     private static final String KEY_NOTETABLE_UPLOADSTATE = "notetable_uploadstate";
     private static final String KEY_LOCALCONTACT_SWITCH = "localcontact_switch";
+    private static final String KEY_FIRST_START_CAMERA = "first_start_camera";
 
     public AppSharedPreference(){
     }
@@ -52,6 +53,14 @@ public class AppSharedPreference {
 
     public static void setLocalcontactSwitch(boolean match) {
         AppContext.set(KEY_LOCALCONTACT_SWITCH, match);
+    }
+
+    public static boolean isFirstStartCam(){
+        return AppContext.get(KEY_FIRST_START_CAMERA, true);
+    }
+
+    public static void setFirstStartCam(boolean firstStartCam) {
+        AppContext.set(KEY_FIRST_START_CAMERA, firstStartCam);
     }
 
     public static boolean getLocalcontactSwitch() {

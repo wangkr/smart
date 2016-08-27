@@ -93,6 +93,7 @@
     <string name="api_get_schoolinfo">conform/get_university_by_pid</string>
     <string name="api_set_unmatch">userinfo/unmatch</string>
     <string name="api_set_match">userinfo/match</string>
+    <string name="api_get_models">news/get_models</string>
 
     <string name="api_name_register">register/index</string>
     <string name="api_name_resetpassword">register/find_pass</string>

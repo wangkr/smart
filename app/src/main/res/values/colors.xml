@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="theme_color">#3ac0b5</color>
+    <color name="theme_color">#ff3ac0b5</color>
     <color name="theme_color_light">#64ffda</color>
     <color name="theme_color_dark2">#37b9ae</color>
     <color name="theme_color_dark">#aa3ac0b5</color>
@@ -17,7 +17,7 @@
     <color name="text_bright_bk">#f3f0ef</color>
 
     <color name="divider_theme_color">#32a69c</color>
-    <color name="semi_transparent">#22000000</color>
+    <color name="semi_transparent">#44ffffff</color>
     <color name="adapter_divider_color">#ffeeeeee</color>
     <!-- activit background color-->
     <color name="activity_camera_bar_bk">#cc1c272d</color>
@@ -34,4 +34,11 @@
     <color name="recentnews_msgType_zan">#4caf50</color>
     <color name="recentnews_msgType_warning">#e6004f</color>
     <color name="recentnews_msgType_answer">#256a64</color>
+
+    <integer-array name="joy_theme_colors">
+        <item>@color/theme_color</item>
+        <item>@color/theme_color</item>
+        <item>@color/theme_color</item>
+        <item>@color/theme_color</item>
+    </integer-array>
 </resources>

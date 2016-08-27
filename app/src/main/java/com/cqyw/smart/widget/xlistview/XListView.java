@@ -29,7 +29,7 @@ import com.netease.nim.uikit.common.util.sys.TimeUtil;
 
 public class XListView extends ListView implements OnScrollListener {
 
-    private float mLastY = -1; // save event y
+    private float mLastY = -1; // saveAll event y
     private Scroller mScroller; // used for scroll back
     private OnScrollListener mScrollListener; // user's scroll listener
 

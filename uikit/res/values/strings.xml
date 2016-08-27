@@ -209,6 +209,32 @@
     <string name="joyyun_head_foler">AbhEad67a</string>
     <string name="joyyun_cover_folder">rh2CoveR34</string>
     <string name="joyyun_galphoto_folder">BhPhoTOssd</string>
+    <string name="joyyun_models_folder">se2ModeLs3Q</string>
     <string name="upyun_name">.b0.upaiyun.com</string>
+
+    <string-array name="cover_title">
+        <item>男生女生</item>
+        <item>伊周</item>
+        <item>Science</item>
+        <item>Nature</item>
+        <item>看天下</item>
+        <item>健美先生</item>
+        <item>经济学人</item>
+        <item>福布斯</item>
+        <item>TIME</item>
+        <item>EASY</item>
+        <item>瑞丽</item>
+        <item>PlayBoy</item>
+        <item>二次元狂热</item>
+        <item>意林</item>
+        <item>NBA</item>
+        <item>南方周末</item>
+        <item>上头条</item>
+    </string-array>
+
+    <string-array name="ar_title">
+        <item>霸王龙</item>
+        <item>功夫熊猫</item>
+    </string-array>
 
 </resources>

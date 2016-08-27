@@ -1,6 +1,9 @@
 package com.cqyw.smart.main.util;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -38,25 +41,34 @@ public class SnapnewsUtils {
      * @param location
      * @param callback
      */
-    public static void pullNewsFromServer(String nid, boolean ifNew, NimLocation location,  final NewsCallback<List<PublicSnapMessage>> callback) {
-        if (!NetworkUtil.isNetAvailable(AppContext.getContext())) {
-            callback.onResult(-1 , null, "网络无连接");
-        }
-        JoyCommClient.getInstance().getSnapnews(AppCache.getJoyId(), AppSharedPreference.getCacheJoyToken(), nid, ifNew, location, new ICommProtocol.CommCallback<List<PublicSnapMessage>>() {
+    public static void pullNewsFromServer(String nid, boolean ifNew, NimLocation location, final Activity context,
+                                          final NewsCallback<List<PublicSnapMessage>> callback) {
+        JoyCommClient.getInstance().getSnapnews(AppCache.getJoyId(), AppSharedPreference.getCacheJoyToken(), nid, ifNew,
+                location, new ICommProtocol.CommCallback<List<PublicSnapMessage>>() {
             @Override
-            public void onSuccess(List<PublicSnapMessage> messages) {
+            public void onSuccess(final List<PublicSnapMessage> messages) {
                 if (messages != null) {
-                    if (messages.size() == 0) {
-                        callback.onResult(0, messages, "没有更多新鲜事了");
-                    } else {
-                        callback.onResult(messages.size(), messages, null);
-                    }
+                    context.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (messages.size() == 0) {
+                                callback.onResult(0, messages, "没有更多新鲜事了");
+                            } else {
+                                callback.onResult(messages.size(), messages, null);
+                            }
+                        }
+                    });
                 }
             }
 
             @Override
-            public void onFailed(String code, String errorMsg) {
-                callback.onResult(-1, null, errorMsg);
+            public void onFailed(String code,final String errorMsg) {
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onResult(-1, null, errorMsg);
+                    }
+                });
             }
         });
     }
@@ -71,7 +83,7 @@ public class SnapnewsUtils {
         return list;
     }
 
-    public static Bundle getPubSnapListSaveBundle(LinkedList<PublicSnapMessage> list){
+    public static Bundle getPubSnapListSaveBundle(List<PublicSnapMessage> list){
         Bundle bundle = new Bundle();
         for (int i = 0; i < list.size(); i++) {
             bundle.putBundle("PM" + i, list.get(i).getSaveBundle());

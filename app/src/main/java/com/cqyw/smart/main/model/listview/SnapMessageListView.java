@@ -67,16 +67,16 @@ public class SnapMessageListView extends XListView {
     }
 
     private void init(Context context){
-        headerContent = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.layout_snap_msg_header, null);
-        addHeaderView(headerContent, null, false);
-
-        headImage = (CircleImageView)headerContent.findViewById(R.id.snap_msg_listHeader_head);
-        headImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        headerBg = (ImageView)headerContent.findViewById(R.id.snap_msg_listHeader_bg);
-
-        setRecyclerListener(recyclerListener);
-
-        gestureDetector = new GestureDetector(context, new GestureListener());
+//        headerContent = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.layout_snap_msg_header, null);
+//        addHeaderView(headerContent, null, false);
+//
+//        headImage = (CircleImageView)headerContent.findViewById(R.id.snap_msg_listHeader_head);
+//        headImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//        headerBg = (ImageView)headerContent.findViewById(R.id.snap_msg_listHeader_bg);
+//
+//        setRecyclerListener(recyclerListener);
+//
+//        gestureDetector = new GestureDetector(context, new GestureListener());
 
     }
 

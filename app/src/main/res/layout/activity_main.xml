@@ -3,11 +3,21 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_gray"
-    android:theme="@style/Theme.AppCompat.Light.NoActionBar"
     >
-    <include android:id="@+id/main_activity_actionbar"
-        layout="@layout/layout_action_bar_main"/>
+    <android.support.v7.widget.Toolbar
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/joy_theme_color"
+        app:contentInsetEnd="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
+        app:contentInsetStart="0dp">
+
+        <include layout="@layout/layout_toolbar_main" />
+
+    </android.support.v7.widget.Toolbar>
     <LinearLayout
         android:id="@+id/public_snapmessage_fragment"
         android:layout_width="match_parent"

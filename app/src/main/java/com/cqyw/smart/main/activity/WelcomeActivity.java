@@ -3,7 +3,6 @@ package com.cqyw.smart.main.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -13,13 +12,10 @@ import com.cqyw.smart.common.util.sys.SysInfoUtil;
 import com.cqyw.smart.config.AppCache;
 import com.cqyw.smart.friend.model.Extras;
 import com.cqyw.smart.login.LoginActivity;
-import com.cqyw.smart.main.adapter.WelcomeFragmentAdapter;
 import com.netease.nim.uikit.common.activity.TActivity;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.viewpagerindicator.CirclePageIndicator;
-import com.viewpagerindicator.PageIndicator;
 
 import java.util.ArrayList;
 
@@ -36,17 +32,10 @@ public class WelcomeActivity extends TActivity {
 
     private static boolean firstEnter = true; // 是否首次进入
 
-    // 导航界面数据
-    WelcomeFragmentAdapter mAdapter;
-
-    ViewPager mPager;
-
-    PageIndicator mIndicator;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome);
+//        setContentView(R.layout.activity_welcome);
 
         if (savedInstanceState != null) {
             setIntent(new Intent()); // 从堆栈恢复不再解析之前的intent
@@ -59,22 +48,6 @@ public class WelcomeActivity extends TActivity {
         }
     }
 
-
-    private void initWelcomeBg(){
-        getWindow().setBackgroundDrawableResource(R.drawable.welcome_bg_layer);
-    }
-
-    private void initWelcomeNavigation(){
-        mAdapter = new WelcomeFragmentAdapter(getSupportFragmentManager());
-
-        mPager = (ViewPager)findViewById(R.id.pager);
-        mPager.setAdapter(mAdapter);
-
-        mIndicator = (CirclePageIndicator)findViewById(R.id.indicator);
-        mIndicator.setViewPager(mPager);
-
-        findViewById(R.id.welcome_frament_fl).setVisibility(View.VISIBLE);
-    }
 
     @Override
     protected void onResume() {
@@ -194,7 +167,6 @@ public class WelcomeActivity extends TActivity {
      * 首次进入，打开欢迎界面
      */
     private void showSplashView() {
-        initWelcomeBg();
         customSplash = true;
     }
 

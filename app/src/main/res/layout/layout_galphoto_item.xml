@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<ImageView
+    android:id="@+id/image_view"
     android:layout_width="@dimen/user_profile_gallery_columnWidth"
-    android:layout_height="@dimen/user_profile_gallery_columnWidth">
-    <ImageView
-        android:id="@+id/image_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:padding="1.5dip"
-        android:background="@drawable/list_item_bg_selecter"/>
-</LinearLayout>
+    android:layout_height="@dimen/user_profile_gallery_columnWidth"
+    android:scaleType="fitCenter"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/joy_cover_loading_small"/>

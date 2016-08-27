@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/crop_bar_height"
+    android:layout_alignParentBottom="true"
+    android:background="@color/joy_camera_theme_color"
+    android:divider="@drawable/crop__divider"
+    android:gravity="center_vertical"
+    android:showDividers="middle"
+    tools:context=".common.media.picker.joycamera.activity.CoverBgEditActivity">
+
+    <ImageView
+        android:id="@+id/crop_bar_cancell"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:padding="15dp"
+        android:src="@drawable/close_icn3"
+        android:layout_weight="1"
+        android:onClick="onViewClick"
+        android:background="@drawable/btn_semi_lightwhite_selector"/>
+
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3">
+        <LinearLayout
+            android:id="@+id/crop_menu_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:showDividers="middle"
+            android:divider="@drawable/joy_cam_divider_gradient"
+            android:dividerPadding="@dimen/crop_bar_menu_divider_padding">
+            <RelativeLayout
+                android:id="@+id/crop_bar_rotate_menu"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="onViewClick"
+                android:background="@drawable/btn_semi_lightwhite_selector">
+                <ImageView
+                    android:id="@+id/crop_bar_rotate_menu_icn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/crop_menu_rotate"/>
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="20dp"
+                    android:layout_below="@id/crop_bar_rotate_menu_icn"
+                    android:text="旋转翻转"
+                    android:textSize="10sp"
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    android:layout_centerHorizontal="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/crop_bar_blur_menu"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="onViewClick"
+                android:background="@drawable/btn_semi_lightwhite_selector">
+                <ImageView
+                    android:id="@+id/crop_bar_blur_menu_icn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/crop_menu_blur"/>
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="20dp"
+                    android:layout_below="@id/crop_bar_blur_menu_icn"
+                    android:text="背景模糊"
+                    android:textSize="10sp"
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    android:layout_centerHorizontal="true"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+        <include layout="@layout/include_child_menu_blur"
+            android:id="@+id/crop_blur_child_menu_ll"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:visibility="gone"/>
+        <include layout="@layout/include_child_menu_rotate"
+            android:id="@+id/crop_rotate_child_menu_ll"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/crop_bar_ok"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:padding="15dp"
+        android:src="@drawable/complete_cin"
+        android:layout_weight="1"
+        android:onClick="onViewClick"
+        android:background="@drawable/btn_semi_lightwhite_selector"/>
+
+</LinearLayout>

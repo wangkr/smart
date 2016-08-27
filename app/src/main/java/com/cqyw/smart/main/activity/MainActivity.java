@@ -1,18 +1,23 @@
 package com.cqyw.smart.main.activity;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONArray;
@@ -20,10 +25,12 @@ import com.cqyw.smart.AppSharedPreference;
 import com.cqyw.smart.R;
 import com.cqyw.smart.common.http.ICommProtocol;
 import com.cqyw.smart.common.http.JoyCommClient;
+import com.cqyw.smart.common.http.JoyHttpClient;
 import com.cqyw.smart.config.AppCache;
 import com.cqyw.smart.config.AppConstants;
 import com.cqyw.smart.config.AppContext;
 import com.cqyw.smart.config.JoyServers;
+import com.cqyw.smart.contact.activity.UserProfileSettingActivity;
 import com.cqyw.smart.contact.extensioninfo.ExtensionInfoCache;
 import com.cqyw.smart.friend.activity.FriendActivity;
 import com.cqyw.smart.friend.model.Extras;
@@ -39,11 +46,12 @@ import com.cqyw.smart.main.service.RecentNewsService;
 import com.cqyw.smart.main.update.DownloadServices;
 import com.cqyw.smart.main.util.MainUtils;
 import com.cqyw.smart.util.SystemTools;
-import com.cqyw.smart.widget.circleview.CircleImageView;
 import com.cqyw.smart.widget.popwindow.HintDialog;
 import com.netease.nim.uikit.common.activity.TActionBarActivity;
 import com.netease.nim.uikit.common.fragment.TFragment;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialog;
+import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.storage.StorageType;
 import com.netease.nim.uikit.common.util.storage.StorageUtil;
@@ -53,6 +61,7 @@ import com.netease.nim.uikit.common.util.sys.TimeUtil;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.SystemMessageObserver;
 import com.netease.nimlib.sdk.msg.SystemMessageService;
 
@@ -64,25 +73,25 @@ import java.util.List;
  * Created by Kairong on 2015/11/11.
  * mail:wangkrhust@gmail.com
  */
-public class MainActivity extends TActionBarActivity implements View.OnClickListener,
-        MyLocationManager.NimLocationListener, ReminderManager.UnreadNumChangedCallback{
+public class MainActivity extends TActionBarActivity implements MyLocationManager.NimLocationListener, ReminderManager.UnreadNumChangedCallback{
     public static final String TAG = "MainActivity";
 
     public static final int REQ_SELECT_EDU = 123;
     private static final String EXTRA_APP_QUIT = "APP_QUIT";
     public static final String EXTRA_GO_FRIEND = "GO_FRIEND";
+    public static final String EXTRA_SEND_PUBLIC = "PUBLIC_MESSAGE";
+    public static final String EXTRA_SEND_SNAP = "SNAP_MESSAGE";
     private static boolean isOnFriendActivity = false;
+    private static final int REQUEST_ACCESS_LOCATION = 111;
+    public static final int REQUEST_ACCESS_CAMERA = 112;
 
-    // view
-    private RelativeLayout mainActionbarView;
+    private Toolbar toolbar;
 
-    private ImageView btn_main_tips;
+    private HeadImageView headImageView;
 
-    private ImageView btn_main_friend;
+    private ImageView toolbar_btn_tips;
 
-    private CircleImageView friend_tips_civ;
-
-    private CircleImageView tips_tips_civ;
+    private ImageView toolbar_btn_friend;
 
     // data
     public static MyLocationManager locationManager;
@@ -125,7 +134,15 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
 
     private void onParseIntent() {
         final Intent intent = getIntent();
-        if (intent.hasExtra(NimIntent.EXTRA_NOTIFY_CONTENT)) {
+        if (intent.hasExtra(EXTRA_SEND_PUBLIC)) {
+            if (messageFragment != null && messageFragment.isAdded()) {
+                messageFragment.sendPublicMessage((PublishMessage)intent.getSerializableExtra(EXTRA_SEND_PUBLIC));
+            }
+        } else if(intent.hasExtra(EXTRA_SEND_SNAP)) {
+            if (messageFragment != null && messageFragment.isAdded()) {
+                messageFragment.sendSnapMessage((PublishMessage) intent.getSerializableExtra(EXTRA_SEND_SNAP));
+            }
+        } else if (intent.hasExtra(NimIntent.EXTRA_NOTIFY_CONTENT)) {
             getHandler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -170,7 +187,6 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initActionBar();
 
         // 启动后台接受心跳
         Intent intent = new Intent("com.cqyw.smart.main.service.RECENT_MSG");
@@ -191,6 +207,11 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
 
         doOtherThings();
         onParseIntent();
+    }
+
+    @Override
+    protected boolean displayHomeAsUpEnabled() {
+        return false;
     }
 
     private void initLocation(){
@@ -218,6 +239,13 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     
     private void doOtherThings() {
         if (NetworkUtil.isNetAvailable(this)) {
+            // 申请权限
+            getHandler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checkPermission();
+                }
+            }, 100);
             // 检测更新
             getHandler().postDelayed(new Runnable() {
                 @Override
@@ -228,6 +256,22 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
                     }
                 }
             }, 1000);
+        }
+    }
+
+    private void checkPermission(){
+        if (AppContext.isAndroid6() && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ACCESS_LOCATION);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,  Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Toast.makeText(this, "请允许获取定位", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (AppContext.isAndroid6() && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_ACCESS_LOCATION);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,  Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                Toast.makeText(this, "请允许获取定位", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -256,36 +300,74 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     }
 
     protected void initView() {
+        toolbar = findView(R.id.tool_bar);
+        toolbar_btn_tips = (ImageView)toolbar.findViewById(R.id.toolbar_btn_tips);
+        toolbar_btn_friend = (ImageView)toolbar.findViewById(R.id.toolbar_btn_friend);
+        headImageView = (HeadImageView)toolbar.findViewById(R.id.toolbar_head);
+
+        toolbar_btn_tips.setOnClickListener(toolbarOnclickListener);
+        toolbar_btn_friend.setOnClickListener(toolbarOnclickListener);
+        headImageView.setOnClickListener(toolbarOnclickListener);
+
         refreshTipsdotView();
-        btn_main_friend.setOnClickListener(this);
-        btn_main_tips.setOnClickListener(this);
     }
 
-    private void initActionBar(){
-        mainActionbarView = (RelativeLayout)findViewById(R.id.main_activity_actionbar);
-        btn_main_friend = (ImageView)mainActionbarView.findViewById(R.id.btn_main_friend);
-        btn_main_tips = (ImageView)mainActionbarView.findViewById(R.id.btn_main_tips);
-        friend_tips_civ = (CircleImageView)mainActionbarView.findViewById(R.id.friend_tips_dot);
-        tips_tips_civ = (CircleImageView)mainActionbarView.findViewById(R.id.tips_tips_dot);
+    private View.OnClickListener toolbarOnclickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.toolbar_btn_friend:
+                    friend_unread_num = 0;
+                    refreshTipsdotView();
+                    isOnFriendActivity = true;
+                    FriendActivity.start(MainActivity.this);
+                    break;
+                case R.id.toolbar_btn_tips:
+                    if (tips_unread_num != 0) {
+                        tips_unread_num = 0;
+                        refreshTipsdotView();
+                        RecentNewsActivity.start(MainActivity.this);
+                    } else {
+                        tips_unread_num = 0;
+                        refreshTipsdotView();
+                        RecentNewsActivity.start(MainActivity.this);
+                    }
+                    break;
+                case R.id.toolbar_head:
+                    UserProfileSettingActivity.start(MainActivity.this, AppCache.getJoyId());
+                    break;
+            }
+        }
+    };
+
+
+    private void refreshHeadImage(){
+        headImageView.loadBuddyAvatar(AppCache.getJoyId());
     }
 
     /**
      * 刷新消息提示点
      */
     private void refreshTipsdotView() {
-        if (friend_tips_civ != null) {
-            friend_tips_civ.setVisibility(friend_unread_num > 0 ? View.VISIBLE : View.GONE);
-        }
-        if (tips_tips_civ != null) {
-            tips_tips_civ.setVisibility(tips_unread_num > 0 ? View.VISIBLE : View.GONE);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (toolbar_btn_friend != null) {
+                    toolbar_btn_friend.setImageResource(friend_unread_num > 0 ? R.drawable.btn_friend_with_reddot : R.drawable.btn_friend);
+                }
+                if (toolbar_btn_tips != null) {
+                    toolbar_btn_tips.setImageResource(tips_unread_num > 0 ? R.drawable.btn_tips_with_reddot : R.drawable.btn_tips);
+                }
+            }
+        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        requestSystemMessageUnreadCount();
+        requestMessageUnreadCount();
         refreshTipsdotView();
+        refreshHeadImage();
     }
 
     @Override
@@ -293,7 +375,6 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
         super.onResume();
         isOnFriendActivity = false;
         initLocation();
-        refreshTipsdotView();
     }
 
     @Override
@@ -321,33 +402,6 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     }
 
     @Override
-    public void onClick(View v) {
-        if (!AppCache.isStatusValid()) {
-            SelectEduInfoActivity.start(MainActivity.this,REQ_SELECT_EDU);
-            return;
-        }
-        switch (v.getId()) {
-            case R.id.btn_main_friend:
-                friend_unread_num = 0;
-                refreshTipsdotView();
-                isOnFriendActivity = true;
-                FriendActivity.start(this);
-                break;
-            case R.id.btn_main_tips:
-                if (tips_unread_num != 0) {
-                    tips_unread_num = 0;
-                    refreshTipsdotView();
-                    RecentNewsActivity.start(MainActivity.this);
-                } else {
-                    tips_unread_num = 0;
-                    refreshTipsdotView();
-                    RecentNewsActivity.start(MainActivity.this);
-                }
-                break;
-        }
-    }
-
-    @Override
     public void onBackPressed() {
         if((System.currentTimeMillis() - exitTime)>2000){
             Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
@@ -355,6 +409,7 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
         } else {
             if (messageFragment != null) {
                 messageFragment.onBackPressed();
+                JoyHttpClient.getInstance().release();
                 ExtensionInfoCache.clear();
             }
             getHandler().postDelayed(new Runnable() {
@@ -384,7 +439,7 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     private void registerObservers() {
         registerMsgUnreadInfoObserver(true);
         registerSystemMessageObservers(true);
-        requestSystemMessageUnreadCount();
+        requestMessageUnreadCount();
     }
 
     private void unregisterObservers() {
@@ -412,11 +467,12 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
     };
 
     /**
-     * 查询系统消息未读数
+     * 查询消息未读数
      */
-    private void requestSystemMessageUnreadCount() {
+    private void requestMessageUnreadCount() {
         int unread = NIMClient.getService(SystemMessageService.class).querySystemMessageUnreadCountBlock();
-        friend_unread_num += unread;
+        int unread_message = NIMClient.getService(MsgService.class).getTotalUnreadCount();
+        friend_unread_num += (unread + unread_message);
     }
 
     /**
@@ -531,4 +587,50 @@ public class MainActivity extends TActionBarActivity implements View.OnClickList
             updateInfo.show();
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    //    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater menuInflater = getMenuInflater();
+//        menuInflater.inflate(R.menu.main_activity_menu, menu);
+//        menu_main_tips = menu.findItem(R.id.main_activity_menu_tips);
+//        menu_main_friend = menu.findItem(R.id.main_activity_menu_friend);
+//        refreshTipsdotView();
+//        super.onCreateOptionsMenu(menu);
+//        return true;
+//    }
+
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (!AppCache.isStatusValid()) {
+//            SelectEduInfoActivity.start(MainActivity.this,REQ_SELECT_EDU);
+//            return false;
+//        }
+//        switch (item.getItemId()) {
+//            case R.id.main_activity_menu_friend:
+//                friend_unread_num = 0;
+//                refreshTipsdotView();
+//                isOnFriendActivity = true;
+//                FriendActivity.start(this);
+//                return true;
+//            case R.id.main_activity_menu_tips:
+//                if (tips_unread_num != 0) {
+//                    tips_unread_num = 0;
+//                    refreshTipsdotView();
+//                    RecentNewsActivity.start(MainActivity.this);
+//                } else {
+//                    tips_unread_num = 0;
+//                    refreshTipsdotView();
+//                    RecentNewsActivity.start(MainActivity.this);
+//                }
+//                return true;
+//            case android.R.id.home:
+//                UserProfileSettingActivity.start(this, AppCache.getJoyId());
+//                return true;
+//        }
+//        return false;
+//    }
 }

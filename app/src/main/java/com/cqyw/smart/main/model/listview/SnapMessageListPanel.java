@@ -1,12 +1,19 @@
 package com.cqyw.smart.main.model.listview;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.AbsListView;
+import android.widget.Toast;
 
 import com.cqyw.smart.AppSharedPreference;
 import com.cqyw.smart.R;
@@ -15,8 +22,8 @@ import com.cqyw.smart.common.http.JoyCommClient;
 import com.cqyw.smart.common.network.NetBroadcastReceiver;
 import com.cqyw.smart.config.AppCache;
 import com.cqyw.smart.config.AppContext;
-import com.cqyw.smart.contact.activity.UserProfileSettingActivity;
 import com.cqyw.smart.main.activity.MainActivity;
+import com.cqyw.smart.main.activity.SelectEduInfoActivity;
 import com.cqyw.smart.main.model.LikeMessage;
 import com.cqyw.smart.main.model.RefreshEnum;
 import com.cqyw.smart.main.service.CommentMessageDBService;
@@ -25,43 +32,55 @@ import com.cqyw.smart.main.service.PublicSnapMessageDBService;
 import com.cqyw.smart.main.util.MainUtils;
 import com.cqyw.smart.main.adapter.PublicSnapMsgAdapter;
 import com.cqyw.smart.main.model.PublicSnapMessage;
-import com.cqyw.smart.main.model.PublishSnapMessage;
+import com.netease.nim.uikit.NimUIKit;
+import com.netease.nim.uikit.common.media.picker.joycamera.ICamOnLineResMgr;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
 import com.cqyw.smart.main.util.SnapnewsUtils;
-import com.cqyw.smart.main.viewholder.PublicMsgViewHolderBase;
-import com.cqyw.smart.main.viewholder.PublicMsgViewHolderFactory;
+import com.cqyw.smart.main.viewholder.PublicMsgViewHolder;
 import com.cqyw.smart.util.Utils;
-import com.cqyw.smart.widget.xlistview.XListView;
-import com.netease.nim.uikit.common.adapter.TAdapterDelegate;
-import com.netease.nim.uikit.common.adapter.TViewHolder;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
+import com.marshalchen.ultimaterecyclerview.layoutmanagers.ScrollSmoothLineaerLayoutManager;
+import com.marshalchen.ultimaterecyclerview.swipe.SwipeItemManagerInterface;
+import com.marshalchen.ultimaterecyclerview.ui.floatingactionbutton.FloatingActionButton;
+import com.netease.nim.uikit.common.media.picker.joycamera.activity.JoyCameraActivity;
 import com.netease.nim.uikit.common.ui.dialog.CustomAlertDialog;
+import com.netease.nim.uikit.common.ui.dialog.DialogMaker;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialog;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialogHelper;
-import com.netease.nim.uikit.common.ui.listview.ListViewUtil;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.sys.ClipboardUtil;
 import com.netease.nim.uikit.common.util.sys.NetworkUtil;
-import com.netease.nim.uikit.common.util.sys.TimeUtil;
+import com.netease.nim.uikit.joycustom.upyun.JoyImageUtil;
+import com.netease.nimlib.sdk.AbortableFuture;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
+import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
+
+import jp.wasabeef.recyclerview.animators.FadeInAnimator;
 
 /**
  * Created by Kairong on 2015/11/16.
  * mail:wangkrhust@gmail.com
  */
-public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastReceiver.NetEventHandler {
+public class SnapMessageListPanel implements NetBroadcastReceiver.NetEventHandler {
     public static final String TAG = SnapMessageListPanel.class.getSimpleName();
     // container
     private Activity context;
     private View rootView;
 
     // message list view
-    private LinkedList<PublicSnapMessage> snapItems;
-    private LinkedList<PublicSnapMessage> mySnapItems;
-    private SnapMessageListView messageListView;
+    private List<PublicSnapMessage> snapItems;
+    private List<PublicSnapMessage> mySnapItems;
+    private AbortableFuture<String> uploadCoverFuture;
+
+    private UltimateRecyclerView messageListView;
+    private FloatingActionButton floatingActionButton;
+    private ScrollSmoothLineaerLayoutManager mLayoutManager;
     private PublicSnapMsgAdapter adapter;
     private MessageLoader messageLoader;
 
@@ -72,8 +91,6 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
 
     private Handler uiHandler;
 
-    private int headerCount = 0;
-
     private boolean isRefreshingLike = false;
 
     public SnapMessageListPanel(Activity context, View rootView) {
@@ -83,10 +100,7 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
     public SnapMessageListPanel(Activity context, View rootView, Bundle bundle) {
         this.rootView = rootView;
         this.context = context;
-        init();
-        if (bundle != null) {
-            reload(bundle);
-        }
+        init(bundle);
     }
 
     public void onDestroy() {
@@ -102,27 +116,101 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
         return false;
     }
 
-    public void reload(Bundle bundle) {
-        snapItems.clear();
-        mySnapItems.clear();
+    public void reload(final Bundle bundle) {
         // 重新load
         snapItems.addAll(SnapnewsUtils.getPubSnapListBySavedBundle(bundle.getBundle("data")));
         mySnapItems.addAll(SnapnewsUtils.getPubSnapListBySavedBundle(bundle.getBundle("mydata")));
         messageLoader = new MessageLoader(bundle.getBundle("messageLoader"));
 
-        messageListView.setXListViewListener(messageLoader);
-        ListViewUtil.scrollToPosition(messageListView, bundle.getInt("fVsbPos", 0), bundle.getInt("fVsbTop", 0));
+        messageListView.setDefaultOnRefreshListener(messageLoader);
+        messageListView.setOnLoadMoreListener(messageLoader);
+
+        adapter.notifyDataSetChanged();
     }
 
-    private void init() {
+    public void onSendSnapMessage(final PublishMessage publishMessage) {
+        final PublicSnapMessage sendMsg = MainUtils.createSnapMessage(publishMessage, MsgStatusEnum.sending, AttachStatusEnum.def);
+        adapter.insertFirst(sendMsg);
+        mySnapItems.add(0, sendMsg);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean result = JoyImageUtil.uploadPublicSnapSmart(new File(publishMessage.getLocalPath()), publishMessage.getSmart());
+                if (result) {
+                    Message msg = Message.obtain();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("PSM", sendMsg);
+                    msg.setData(bundle);
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                } else {
+                    handler.sendEmptyMessage(0);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            sendMsg.setMsgStatus(MsgStatusEnum.fail);
+                            adapter.notifyItemChanged(0);
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    public void onSendPublicMessage(final PublishMessage publishMessage) {
+        final PublicSnapMessage sendMsg = MainUtils.createSnapMessage(publishMessage, MsgStatusEnum.sending, AttachStatusEnum.def);
+        adapter.insertFirst(sendMsg);
+        mySnapItems.add(0, sendMsg);
+
+        uploadCoverFuture = JoyImageUtil.uploadCoverImage(new File(publishMessage.getLocalPath()));
+        uploadCoverFuture.setCallback(new RequestCallback<String>() {
+            @Override
+            public void onSuccess(String fileName) {
+                Message msg = Message.obtain();
+                sendMsg.setCover(fileName);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("PSM", sendMsg);
+                msg.setData(bundle);
+                msg.what = 1;
+                handler.sendMessage(msg);
+            }
+
+            @Override
+            public void onFailed(int i) {
+                handler.sendEmptyMessage(0);
+                uploadCoverFuture.abort();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        sendMsg.setMsgStatus(MsgStatusEnum.fail);
+                        adapter.notifyItemChanged(0);
+                    }
+                });
+            }
+
+            @Override
+            public void onException(Throwable throwable) {
+                handler.sendEmptyMessage(0);
+                uploadCoverFuture.abort();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        sendMsg.setMsgStatus(MsgStatusEnum.fail);
+                        adapter.notifyItemChanged(0);
+                    }
+                });
+            }
+        });
+    }
+
+    private void init(Bundle bundle) {
         this.uiHandler = new Handler();
         initService();
         NetBroadcastReceiver.register(this);
         // 上传查看过smart但上传失败的标记
         SnapnewsUtils.markFailedPublicSnapMsg();
 
-        initListView();
-        headerCount = messageListView.getHeaderViewsCount();
+        initListView(bundle);
     }
 
     private void initService() {
@@ -131,42 +219,174 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
         commentMessageDBService = new CommentMessageDBService(AppContext.getContext());
     }
 
-    private void initListView() {
+    private void initListView(Bundle bundle) {
         snapItems = new LinkedList<>();
         mySnapItems = new LinkedList<>();
 
-        adapter = new PublicSnapMsgAdapter(context, snapItems, this);
-        adapter.setEventListener(new MsgItemEventListener());
+        adapter = new PublicSnapMsgAdapter(context, new MsgItemEventListener(), snapItems);
+        adapter.setMode(SwipeItemManagerInterface.Mode.Single);
 
-        messageListView = (SnapMessageListView) rootView.findViewById(R.id.public_snapmessage_list);
-        messageListView.refreshHeadImage();// 初始化头像
-        messageListView.setOnHeadImageClickListener(new View.OnClickListener() {
+
+        mLayoutManager = new ScrollSmoothLineaerLayoutManager(context, LinearLayoutManager.VERTICAL, false, 500);
+
+        messageListView = (UltimateRecyclerView) rootView.findViewById(R.id.public_snapmessage_list);
+        messageListView.setLoadMoreView(R.layout.layout_load_more);
+        floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.public_snappicture_button);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UserProfileSettingActivity.start(context, AppCache.getJoyId()); // 设置头像点击监听
+                if (!AppCache.isStatusValid()) {
+                    SelectEduInfoActivity.start(context, MainActivity.REQ_SELECT_EDU);
+                    return;
+                }
+                startJoyCamera();
             }
         });
-
+        messageListView.setDefaultFloatingActionButton(floatingActionButton);
+        messageListView.showDefaultFloatingActionButton();
+        messageListView.setHasFixedSize(false);
+        messageListView.setLayoutManager(mLayoutManager);
+        messageListView.setItemAnimator(new FadeInAnimator());
         messageListView.requestDisallowInterceptTouchEvent(true);
-
+        messageListView.setRefreshing(false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
             messageListView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         }
+
+
+        enableEmptyViewPolicy();
         // adapter
         messageListView.setAdapter(adapter);
 
-        messageListView.setListViewEventListener(new SnapMessageListView.OnListViewEventListener() {
+        if (bundle != null) {
+            reload(bundle);
+        } else {
+            messageLoader = new MessageLoader(null);
+            messageListView.setDefaultOnRefreshListener(messageLoader);
+            messageListView.setOnLoadMoreListener(messageLoader);
+        }
+
+        messageListView.setRefreshing(true);
+
+        uiHandler.postDelayed(new Runnable() {
             @Override
-            public void onListViewStartScroll() {
-//                container.proxy.shouldCollapseInputPanel();
+            public void run() {
+                messageLoader.isRefreshing = true;
+                messageLoader.onRefresh();
+            }
+        },500);
+    }
+
+    public void onCameraPermissionGranted(){
+        startJoyCamera();
+    }
+
+    private void startJoyCamera(){
+        if (AppContext.isAndroid6() && ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.CAMERA}, MainActivity.REQUEST_ACCESS_CAMERA);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(context,  Manifest.permission.CAMERA)) {
+                Toast.makeText(context, "请允许拍照", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        if (AppSharedPreference.isFirstStartCam()) {
+            DialogMaker.showProgressDialog(context, "相机初始化...");
+            new Thread() {
+                public void run(){
+                    // 同步操作
+                    NimUIKit.getCamOnLineResMgr().initLocalReses(new ICamOnLineResMgr.Callback<Void>() {
+                        @Override
+                        public void onSuccess(Void v) {
+                            context.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    DialogMaker.dismissProgressDialog();
+                                    JoyCameraActivity.start(context, MainActivity.class);
+                                    AppSharedPreference.setFirstStartCam(false);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailed(String msg) {
+                            context.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    DialogMaker.dismissProgressDialog();
+                                    Toast.makeText(context, "本地资源读取失败", Toast.LENGTH_SHORT).show();
+                                    JoyCameraActivity.start(context, MainActivity.class);
+                                }
+                            });
+                        }
+                    });
+                }
+            }.start();
+
+        } else {
+            NimUIKit.getCamOnLineResMgr().initLocalReses(null);
+            JoyCameraActivity.start(context, MainActivity.class);
+        }
+
+    }
+
+
+    private MyHandler handler = new MyHandler(this);
+
+    private static class MyHandler extends Handler{
+        private WeakReference<SnapMessageListPanel> listPanelWeakReference;
+        public MyHandler(SnapMessageListPanel fragment) {
+            this.listPanelWeakReference = new WeakReference<SnapMessageListPanel>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            SnapMessageListPanel listPanel = listPanelWeakReference.get();
+            DialogMaker.dismissProgressDialog();
+            switch (msg.what) {
+                case 0:
+                    Utils.showLongToast(listPanel.context, "发表失败");
+                    break;
+                case 1:
+                    listPanel.sendPubSnapMessage((PublicSnapMessage) msg.getData().getSerializable("PSM"));
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public boolean sendPubSnapMessage(final PublicSnapMessage message) {
+        // send message to server and saveAll to db
+        JoyCommClient.getInstance().sendSnapnews(AppCache.getJoyId(), AppSharedPreference.getCacheJoyToken(), message, new ICommProtocol.CommCallback<String>() {
+            @Override
+            public void onSuccess(String nid) {
+                // 更新自己发送的snapmessage状态
+                message.setId(nid);
+                message.getLikeMessage().setNid(nid);
+                message.setMsgStatus(MsgStatusEnum.success);
+                onMsgSend();
+                Utils.showLongToast(context, "发表成功");
+            }
+
+            @Override
+            public void onFailed(String code, String errorMsg) {
+                // 发布失败的暂时不操作
+                message.setMsgStatus(MsgStatusEnum.fail);
+                adapter.notifyItemChanged(0);
+                Utils.showLongToast(context, errorMsg);
             }
         });
 
-        messageLoader = new MessageLoader();
-        messageListView.setXListViewListener(messageLoader);
-        messageListView.setPullLoadEnable(true);
-        messageListView.setPullRefreshEnable(true);
+        return true;
+    }
+
+    protected void enableEmptyViewPolicy() {
+        //  ultimateRecyclerView.setEmptyView(R.layout.empty_view, UltimateRecyclerView.EMPTY_KEEP_HEADER_AND_LOARMORE);
+        //    ultimateRecyclerView.setEmptyView(R.layout.empty_view, UltimateRecyclerView.EMPTY_KEEP_HEADER);
+        //  ultimateRecyclerView.setEmptyView(R.layout.empty_view, UltimateRecyclerView.EMPTY_SHOW_LOADMORE_ONLY);
+        messageListView.setEmptyView(R.layout.empty_view, UltimateRecyclerView.EMPTY_KEEP_HEADER_AND_LOARMORE);
     }
 
     // 刷新消息列表
@@ -180,56 +400,27 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
         });
     }
 
-    public void scrollToBottom() {
-        uiHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ListViewUtil.scrollToBottom(messageListView);
-            }
-        }, 200);
-    }
 
     public void scrollToItem(final int position) {
         uiHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                ListViewUtil.scrollToPosition(messageListView, position, 0);
+                messageListView.scrollVerticallyToPosition(position);
             }
-        }, 200);
+        }, 50);
     }
 
     // 发送消息后，更新本地消息列表
-    public void onMsgSend(PublicSnapMessage message) {
+    public void onMsgSend() {
         // add to listView and refresh
-        snapItems.addFirst(message);
-        mySnapItems.addFirst(message);
-        refreshMessageList();
+        adapter.notifyItemChanged(0);
         // 加载
         uiHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 messageLoader.onRefresh();
             }
-        }, 200);
-        scrollToItem(0);
-    }
-
-    /**
-     * *************** implements TAdapterDelegate ***************
-     */
-    @Override
-    public int getViewTypeCount() {
-        return PublicMsgViewHolderFactory.getViewTypeCount();
-    }
-
-    @Override
-    public Class<? extends TViewHolder> viewHolderAtPosition(int position) {
-        return PublicMsgViewHolderFactory.getViewHolderByType(snapItems.get(position));
-    }
-
-    @Override
-    public boolean enabled(int position) {
-        return false;
+        }, 100);
     }
 
     public void refreshItem(PublicSnapMessage message) {
@@ -250,18 +441,12 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
      */
     private void refreshViewHolderByIndex(final int index) {
         context.runOnUiThread(new Runnable() {
-
             @Override
             public void run() {
                 if (index < 0) {
                     return;
                 }
-
-                Object tag = ListViewUtil.getViewHolderByIndex(messageListView, index);
-                if (tag instanceof PublicMsgViewHolderBase) {
-                    PublicMsgViewHolderBase viewHolder = (PublicMsgViewHolderBase) tag;
-                    viewHolder.refreshCurrentItem();
-                }
+                adapter.notifyItemChanged(index);
             }
         });
     }
@@ -278,7 +463,7 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
     }
 
 
-    private class MessageLoader implements XListView.IXListViewListener {
+    private class MessageLoader implements SwipeRefreshLayout.OnRefreshListener, UltimateRecyclerView.OnLoadMoreListener {
         private int LOAD_MESSAGE_COUNT = 10;
 
         private RefreshEnum direction;
@@ -291,34 +476,19 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
 
         public boolean isLastRow = false;
 
-        public MessageLoader() {
-            messageListView.setOnScrollListener(new PauseOnScrollListener(ImageLoader.getInstance(), true, true));
-            if (isNetworkOk()) {
-                messageListView.setAutoRefreshing();
-                uiHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (messageListView.isPullRefreshing() || messageListView.isPullLoading()) {
-                            onLoad();
-                        }
-                    }
-                }, 5000);
-            } else {
-                SnapMessageListPanel.this.uiHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadFromLocal(true);
-                    }
-                }, 300);
-            }
-        }
+        public volatile boolean isRefreshing = false;
+
+        private int insertCount = 0;
 
         public MessageLoader(Bundle bundle) {
-            this.anchorIdx = bundle.getInt("anchorIdx");
-            this.anchorNid = bundle.getString("anchorNid");
-            this.isLastRow = bundle.getBoolean("isLastRow");
-            messageListView.setOnScrollListener(new PauseOnScrollListener(ImageLoader.getInstance(), true, true));
-            loadFromLocal(false);
+            if (bundle != null) {
+                this.anchorIdx = bundle.getInt("anchorIdx");
+                this.anchorNid = bundle.getString("anchorNid");
+                this.isLastRow = bundle.getBoolean("isLastRow");
+                loadFromLocal(false);
+            } else {
+                loadFromLocal(true);
+            }
         }
 
         public Bundle getBundle() {
@@ -331,7 +501,7 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
 
         private void loadFromDB() {
             if (snapItems.size() > 0) {
-                snapItems.clear();
+                adapter.removeAll();
             }
             if (mySnapItems.size() > 0) {
                 mySnapItems.clear();
@@ -341,15 +511,16 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
             List<PublicSnapMessage> _items = snapMessageDBService.findLatestPublicSnapMessages(LOAD_MESSAGE_COUNT);
             // 最多显示10条
             if (_items.size() > 10) {
-                snapItems.addAll(0, _items.subList(0, 10));
+                adapter.insert(_items.subList(0, 10));
             } else {
-                snapItems.addAll(_items);
+                adapter.insert(_items);
             }
 
             // 加载赞的头像
             for (PublicSnapMessage message : snapItems) {
                 LikeMessage likeMessage = likeMessageDBService.findLikeMessageByNid(message.getId());
                 message.setLikeMessage(likeMessage);
+                adapter.notifyDataSetChanged();
             }
 
 
@@ -361,11 +532,8 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
         private void loadFromLocal(boolean fromDatabase) {
             if (fromDatabase) {
                 loadFromDB();
-                // 刷新界面
-                refreshMessageList();
 
                 if (firstLoad) {
-                    messageListView.setRefreshTime(AppSharedPreference.getLastRefreshTime());
                     firstLoad = false;
                 }
             } else {
@@ -375,7 +543,7 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
                     message.setLikeMessage(likeMessage);
                 }
                 // 刷新界面
-                refreshMessageList();
+                adapter.notifyDataSetChanged();
             }
 
         }
@@ -396,7 +564,7 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
                 }
             } else if (direction == RefreshEnum.OLD_10) {
                 if (total > 0 && mytotal < total) {
-                    anchorNid = snapItems.getLast().getId();
+                    anchorNid = snapItems.get(snapItems.size()-1).getId();
                     anchorIdx = total;
                 } else {
                     anchorNid = "0";
@@ -429,19 +597,24 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
                 // 保存到本地数据库
                 likeMessageDBService.saveLikeMessageList(likeMessages);
                 isRefreshingLike = false;
-
-                // 刷新新鲜事
-                refreshMessageList();
+                if (direction.newerThan(RefreshEnum.OLD_10)) {
+                    adapter.notifyItemRangeInserted(0, insertCount);
+                    scrollToItem(0);
+                } else {
+                    adapter.notifyItemRangeInserted(anchorIdx, insertCount);
+                }
                 uiHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         onLoad();
                     }
-                }, 200);
+                }, 100);
             }
             @Override
             public void onFailed(String code, String errorMsg) {
                 isRefreshingLike = false;
+                isRefreshing = false;
+                messageListView.setRefreshing(false);
             }
         };
 
@@ -450,18 +623,15 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
             @Override
             public void onResult(int itemNum, List<PublicSnapMessage> data, String errorMsg) {
                 if (itemNum <= 0) {
+                    onLoad();
                     if (firstLoad) {
                         loadFromLocal(true);
                     } else {
                         Utils.showLongToast(context, "没有更多的新鲜事了");
-                        onLoad();
                     }
-
                     return;
                 }
-
                 onMessageLoaded(data);
-
             }
         };
 
@@ -471,7 +641,7 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
             initAnchor(direction);
 
             SnapnewsUtils.pullNewsFromServer(anchorNid, direction.newerThan(RefreshEnum.OLD_10),
-                    MainActivity.nimLocation, snapMsgCallback);
+                    MainActivity.nimLocation, context, snapMsgCallback);
 
         }
 
@@ -484,6 +654,8 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
          * @param messages
          */
         private void onMessageLoaded(List<PublicSnapMessage> messages) {
+            insertCount = 0;
+
             if (firstLoad) {
                 firstLoad = false;
             }
@@ -491,10 +663,19 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
             if ("0".equals(anchorNid)) {
                 snapItems.clear();
             }
+
             // 移除掉自己发送确未更新的
-            snapItems.removeAll(mySnapItems);
+            for(PublicSnapMessage psm : mySnapItems){
+                snapItems.remove(psm);
+            }
+
             // 添加数据到缓存
-            snapItems.addAll(anchorIdx, messages);
+            int position = anchorIdx;
+            for(PublicSnapMessage psm : messages){
+                snapItems.add(position++, psm);
+                insertCount++;
+            }
+
             // 添加到数据库
             snapMessageDBService.savePublicSnapMessageList(messages);
 
@@ -509,8 +690,12 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
                         }
                     }
                 }
-                // 自己发布未成功的置顶
-                snapItems.addAll(0, mySnapItems);
+
+                // 自己发布未成功的再次置顶
+                for(PublicSnapMessage psm : mySnapItems){
+                    snapItems.add(0, psm);
+                    insertCount++;
+                }
             }
 
 
@@ -523,10 +708,8 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
 
         // 加载/刷新完成调用函数
         private void onLoad() {
-            messageListView.stopRefresh();
-            messageListView.stopLoadMore();
-            messageListView.setRefreshTime(TimeUtil.getBeijingNowTime("yyyy-MM-dd HH:mm:ss"));
-            AppSharedPreference.saveLastRefreshTime();
+            isRefreshing = false;
+            messageListView.setRefreshing(false);
         }
 
 
@@ -539,14 +722,12 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
          */
         @Override
         public void onRefresh() {
-            // 刷新主页头像
-            messageListView.refreshHeadImage();
             if (isNetworkOk()) {
                 RefreshEnum direction;
                 if (snapItems.size() == 0 || snapItems.size() == mySnapItems.size()) {
                     direction = RefreshEnum.NEWEAST;
                 } else if (mySnapItems.size() > 0)  {
-                    direction = MainUtils.decideRefresh(mySnapItems.getFirst().getId(), snapItems.get(mySnapItems.size()).getId());
+                    direction = MainUtils.decideRefresh(mySnapItems.get(0).getId(), snapItems.get(mySnapItems.size()).getId());
                 } else {
                     direction = RefreshEnum.NEW_10;
                 }
@@ -555,9 +736,32 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
         }
 
         @Override
-        public void onLoadMore() {
-            if (isNetworkOk()) {
+        public void loadMore(int itemsCount, final int maxLastVisiblePosition) {
+            if (itemsCount - maxLastVisiblePosition < 2 && !isRefreshing && isNetworkOk()) {
                 loadFromRemote(RefreshEnum.OLD_10);
+            }
+        }
+
+
+        // 本地删除
+        public void deleteLocalMessageByNid(String nid) {
+            int idx = getItemIndex(nid);
+            if (idx != -1) {
+                int coms = snapItems.get(idx).getComment();
+                int likes = snapItems.get(idx).getLike();
+                snapItems.remove(idx);
+                adapter.notifyDataSetChanged();
+                insertCount--;
+                // /*删除赞*/
+                if (likes != 0) {
+                    likeMessageDBService.deleteLikeMessageByNid(nid);
+                }
+                /*删除评论*/
+                if (coms != 0) {
+                    commentMessageDBService.deleteCommentMessageByNid(nid);
+                }
+                /*删除新鲜事*/
+                snapMessageDBService.deletePublicSnapMessageByNid(nid);
             }
         }
     }
@@ -578,8 +782,7 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
                 @Override
                 public void run() {
                     Utils.showLongToast(context, context.getString(R.string.network_is_not_available));
-                    messageListView.stopRefresh();
-                    messageListView.stopLoadMore();
+                    messageLoader.onLoad();
                 }
             }, 100);
             return false;
@@ -588,75 +791,23 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
         return true;
     }
 
-    private class MsgItemEventListener implements PublicSnapMsgAdapter.ViewHolderEventListener {
+    private class MsgItemEventListener implements PublicMsgViewHolder.ViewHolderEventListener {
 
         @Override
         public void onFailedBtnClick(PublicSnapMessage message) {
-//            if (message.getDirect() == MsgDirectionEnum.Out) {
-//                // 发出的消息，如果是发送失败，直接重发，否则有可能是漫游到的多媒体消息，但文件下载
-//                if (message.getMsgStatus() == MsgStatusEnum.fail) {
-//                    resendMessage(message); // 重发
-//                } else {
-//                    if (message.getAttachStatus() == AttachStatusEnum.fail) {
-//                        showReDownloadConfirmDlg(message);
-//                    } else {
-//                        resendMessage(message);
-//                    }
-//                }
-//            } else {
-//                showReDownloadConfirmDlg(message);
-//            }
+
         }
 
         @Override
         public void onDeleteBtnClick(final PublicSnapMessage deleteMsg) {
-            EasyAlertDialog alertDialog = EasyAlertDialogHelper.createOkCancelDiolag(context, "删除", "确定删除该条新鲜事?", "删除", "取消",
-                    true, new EasyAlertDialogHelper.OnDialogActionListener() {
-                        @Override
-                        public void doCancelAction() {
-                        }
-
-                        @Override
-                        public void doOkAction() {
-                            // 服务器删除
-                            deleteItem(deleteMsg);
-                        }
-                    });
-            alertDialog.show();
+            // 服务器删除
+            deleteItem(deleteMsg);
         }
 
         @Override
         public boolean onViewHolderLongClick(View clickView, View viewHolderView, PublicSnapMessage item) {
-//            showLongClickAction(item);
             return false;
         }
-
-//        // 重新下载(对话框提示)
-//        private void showReDownloadConfirmDlg(final PublicSnapMessage message) {
-//            EasyAlertDialogHelper.OnDialogActionListener listener = new EasyAlertDialogHelper.OnDialogActionListener() {
-//
-//                @Override
-//                public void doCancelAction() {
-//                }
-//
-//                @Override
-//                public void doOkAction() {
-//                    // 正常情况收到消息后附件会自动下载。如果下载失败，可调用该接口重新下载
-//                    MainUtils.downloadPublicSnapMessageCover(message);
-//                    // 刷新界面
-//                    int index = getItemIndex(message.getId());
-//                    if (index >= 0 && index < snapItems.size()) {
-//                        PublicSnapMessage item = snapItems.get(index);
-//                        item.setAttachStatus(AttachStatusEnum.transferring);
-//                        refreshViewHolderByIndex(index);
-//                    }
-//                }
-//            };
-//
-//            final EasyAlertDialog dialog = EasyAlertDialogHelper.createOkCancelDiolag(context, null,
-//                    "重新加载封面?", true, listener);
-//            dialog.show();
-//        }
 
         // 重发消息到服务器
         private void resendMessage(final PublicSnapMessage message) {
@@ -670,18 +821,18 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
 
             // 调用自己发送函数
             JoyCommClient.getInstance().sendSnapnews(AppCache.getJoyId(), AppSharedPreference.getCacheJoyToken(),
-                    new PublishSnapMessage(message), new ICommProtocol.CommCallback<String>() {
+                    message, new ICommProtocol.CommCallback<String>() {
                         @Override
                         public void onSuccess(String nid) {
-                            message.setId(nid);
-                            message.setMsgStatus(MsgStatusEnum.success);
                             MainUtils.updateMySnapMessageStatus(message, 1);
+                            snapItems.get(index).setId(nid);
+                            snapItems.get(index).setMsgStatus(MsgStatusEnum.success);
                             refreshViewHolderByIndex(index);
                         }
 
                         @Override
                         public void onFailed(String code, String errorMsg) {
-                            message.setMsgStatus(MsgStatusEnum.fail);
+                            snapItems.get(index).setMsgStatus(MsgStatusEnum.fail);
                             refreshViewHolderByIndex(index);
                         }
                     });
@@ -811,31 +962,10 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
         }
 
     }
-    // 本地删除
-    public void deleteLocalMessageByNid(String nid) {
-        int idx = getItemIndex(nid);
-        if (idx != -1) {
-            int coms = snapItems.get(idx).getComment();
-            int likes = snapItems.get(idx).getLike();
-            snapItems.remove(idx);
-            adapter.notifyDataSetChanged();
-
-            // /*删除赞*/
-            if (likes != 0) {
-                likeMessageDBService.deleteLikeMessageByNid(nid);
-            }
-            /*删除评论*/
-            if (coms != 0) {
-                commentMessageDBService.deleteCommentMessageByNid(nid);
-            }
-            /*删除新鲜事*/
-            snapMessageDBService.deletePublicSnapMessageByNid(nid);
-        }
-    }
 
     // 本地删除
     public void deleteLocalMessage(PublicSnapMessage message) {
-        adapter.deleteItem(message);
+        adapter.removeItem(message);
 
         // /*删除赞*/
         if (message.getLike() != 0) {
@@ -855,13 +985,7 @@ public class SnapMessageListPanel implements TAdapterDelegate, NetBroadcastRecei
         bundle.putBundle("data", SnapnewsUtils.getPubSnapListSaveBundle(snapItems));
         bundle.putBundle("mydata", SnapnewsUtils.getPubSnapListSaveBundle(mySnapItems));
 
-        ListViewUtil.ListViewPosition lvp = getViewPosition();
-        bundle.putInt("fVsbPos", lvp.position);
-        bundle.putInt("fVsbTop", lvp.top);
         return bundle;
     }
 
-    public ListViewUtil.ListViewPosition getViewPosition() {
-        return ListViewUtil.getCurrentPositionFromListView(messageListView);
-    }
 }

@@ -3,6 +3,8 @@ package com.cqyw.smart.friend.fragment;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,16 +111,19 @@ public class FriendFragment extends TFragment implements OnPageChangeListener, R
     private void findViews() {
         tabs = findView(R.id.tabs);
         pager = findView(R.id.main_tab_pager);
-        RelativeLayout tabViewLayout = (RelativeLayout) getActivity().findViewById(R.id.friend_activity_actionbar);
-        tabViewLayout.findViewById(R.id.centerBack).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().onBackPressed();
-            }
-        });
-        tabViewLayout.findViewById(R.id.friend_tab_news_rl).setOnClickListener(tabClickListener);
-        tabViewLayout.findViewById(R.id.friend_tab_friends_rl).setOnClickListener(tabClickListener);
-        tabs.attachActionbarTabview(tabViewLayout);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            RelativeLayout tabViewLayout = (RelativeLayout) actionBar.getCustomView();
+            tabViewLayout.findViewById(R.id.btn_friend_tab_back).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getActivity().onBackPressed();
+                }
+            });
+            tabViewLayout.findViewById(R.id.friend_tab_news_rl).setOnClickListener(tabClickListener);
+            tabViewLayout.findViewById(R.id.friend_tab_friends_rl).setOnClickListener(tabClickListener);
+            tabs.attachActionbarTabview(tabViewLayout);
+        }
         tabs.setIndicatorColorResource(R.color.theme_color_light);
         tabs.setUnderlineColorResource(R.color.white);
         tabs.setIndicatorHeight(getResources().getDimensionPixelSize(R.dimen.pager_sliding_tab_strip_height));

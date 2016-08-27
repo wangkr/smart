@@ -1,5 +1,6 @@
 package com.cqyw.smart.login;
 
+import com.cqyw.smart.common.http.JoyHttpClient;
 import com.cqyw.smart.config.AppCache;
 import com.cqyw.smart.contact.extensioninfo.ExtensionInfoCache;
 import com.netease.nim.uikit.LoginSyncDataStatusObserver;
@@ -16,5 +17,6 @@ public class LogoutHelper {
         AppCache.clear();
         ExtensionInfoCache.clear();
         LoginSyncDataStatusObserver.getInstance().reset();
+        JoyHttpClient.getInstance().cancellAll();
     }
 }

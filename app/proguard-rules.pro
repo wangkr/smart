@@ -97,6 +97,8 @@
 -keep class com.netease.** {*;}
 -keep class com.alibaba.fastjson.** {*;}
 -keep class net.sqlcipher.** {*;}
+-keep class com.bonzaiengine.** {*;}
+
 
 ## java
 -keep class javax.**{*;}

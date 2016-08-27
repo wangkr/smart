@@ -174,7 +174,7 @@ public abstract class Task {
 	 * @param tr throwable
 	 */
 	protected void onException(Throwable tr) {
-		// save
+		// saveAll
 //		AppCrashHandler.getInstance(null).saveException(tr, false);
 	};
 	

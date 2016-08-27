@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Kairong on 2015/10/31.
@@ -48,6 +49,7 @@ public class JoyImageUtil {
     private static  String JOY_HEAD_FOLDER;
     private static  String JOY_COVER_FOLDER;
     private static  String JOY_GALPHOTO_FOLDER;
+    private static  String JOY_MODELS_FOLDER;
     private static UpYun joyyunComm;
     private static UpYun joyyunSmart;
 
@@ -68,6 +70,7 @@ public class JoyImageUtil {
         JOY_HEAD_FOLDER = NimUIKit.getContext().getString(R.string.joyyun_head_foler);
         JOY_COVER_FOLDER = NimUIKit.getContext().getString(R.string.joyyun_cover_folder);
         JOY_GALPHOTO_FOLDER = NimUIKit.getContext().getString(R.string.joyyun_galphoto_folder);
+        JOY_MODELS_FOLDER = NimUIKit.getContext().getString(R.string.joyyun_models_folder);
 
         // 初始化空间
         joyyunComm = new UpYun(BUCKET_NAME, OPERATOR_NAME, OPERATOR_PWD);
@@ -95,7 +98,9 @@ public class JoyImageUtil {
         V_720(6),
         V_1080(7),
         V_ORG(8),
-        V_300(9);
+        V_300(9),
+        V_COVERICON(10),
+        V_COVERSOURCE(11);
         private int value;
         ImageType(int value){
             this.value = value;
@@ -126,6 +131,46 @@ public class JoyImageUtil {
                     public void run() {
                         String fileName = new SimpleDateFormat(DATE_FORMAT).format(new Date(System.currentTimeMillis())) + UpYun.SEPARATOR + genJoyyunFilenameFromLocalPath(file.getPath());
                         String filePath = UpYun.SEPARATOR + JOY_HEAD_FOLDER + UpYun.SEPARATOR + fileName;
+                        boolean result = false;
+                        try {
+                            result = getJoyyunComm().writeFile(filePath, file, true);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            requestCallback.onException(e.getCause());
+                        }
+
+                        if (result) {
+                            requestCallback.onSuccess(fileName);
+                        } else {
+                            requestCallback.onFailed(-1);
+                        }
+                    }
+                }).start();
+            }
+        };
+        return uploadTask;
+    }
+
+    /**
+     * 上传头像
+     * @param file
+     * @return
+     */
+    public static AbortableFuture<String> uploadCoverImage(final File file) {
+        AbortableFuture<String> uploadTask = new AbortableFuture<String>() {
+            @Override
+            public boolean abort() {
+                UpYun._stop_lock.stop();
+                return false;
+            }
+
+            @Override
+            public void setCallback(final RequestCallback requestCallback) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String fileName = new SimpleDateFormat(DATE_FORMAT, Locale.CHINA).format(new Date()) + UpYun.SEPARATOR + genJoyyunFilenameFromLocalPath(file.getPath());
+                        String filePath = UpYun.SEPARATOR + JOY_COVER_FOLDER + UpYun.SEPARATOR + fileName;
                         boolean result = false;
                         try {
                             result = getJoyyunComm().writeFile(filePath, file, true);
@@ -212,6 +257,13 @@ public class JoyImageUtil {
                 v.setImageBitmap(loadedImage);
             }
         });
+    }
+
+    /**
+     * 获取在线资源路径
+     */
+    public static String getOnlineResAbsUrl(String filename) {
+        return URL + UpYun.SEPARATOR + JOY_MODELS_FOLDER + UpYun.SEPARATOR + filename;
     }
 
     /**
@@ -405,6 +457,12 @@ public class JoyImageUtil {
                 break;
             case V_1080:
                 suffix = "!1080";
+                break;
+            case V_COVERICON:
+                suffix = "!coverIcon";
+                break;
+            case V_COVERSOURCE:
+                suffix = "!coverSource";
                 break;
             default:
                 break;

@@ -255,7 +255,7 @@ public class PreviewImageFromLocalActivity extends TActionBarActivity {
 	public void onPause() {
 		// recycleBitmap(previewImageView);
 
-		// save the data source and recycle all bitmaps
+		// saveAll the data source and recycle all bitmaps
 		imageViewPager.setAdapter(null);
 		tempIndex = currentPostion;
 		currentPostion = -1;
