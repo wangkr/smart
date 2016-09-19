@@ -1,13 +1,10 @@
 package com.netease.nim.uikit.common.media.picker.joycamera.activity;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,24 +13,22 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.activity.TActionBarActivity;
 import com.netease.nim.uikit.common.media.picker.joycamera.Constant;
-import com.netease.nim.uikit.common.ui.dialog.DialogMaker;
 import com.netease.nim.uikit.common.ui.imageview.CropImageView;
 import com.netease.nim.uikit.common.util.media.BitmapDecoder;
 import com.netease.nim.uikit.common.util.media.ImageUtil;
 import com.netease.nim.uikit.common.util.storage.StorageType;
 import com.netease.nim.uikit.common.util.storage.StorageUtil;
 import com.netease.nim.uikit.common.util.string.StringUtil;
-import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.netease.nim.uikit.session.constant.Extras;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -49,10 +44,12 @@ public class CropImageActivity extends TActionBarActivity{
     private boolean showCropMenu = false;
     private boolean showRotateMenu = false;
     private volatile boolean isAnimating = false;
+    private boolean hasCrop = false;
 
     private Bitmap mBitmap;
+    private int[] bounds;
 
-    private LinearLayout crop_child_menu_crop_ll;
+    private HorizontalScrollView crop_child_menu_crop_hs;
     private LinearLayout crop_child_menu_rotate_ll;
 
     private String path;
@@ -79,8 +76,10 @@ public class CropImageActivity extends TActionBarActivity{
 
         Intent intent = getIntent();
         path = intent.getStringExtra(Constant.IMAGE_PATH);
+        bounds = BitmapDecoder.decodeBound(path);
 
-        cropImageView.setOutput(ScreenUtil.screenWidth, ScreenUtil.screenWidth);
+        cropImageView.setOutput(bounds[0], bounds[1]);
+
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -108,7 +107,7 @@ public class CropImageActivity extends TActionBarActivity{
             switch (msg.what){
                 case SAVE_IMAGE_SUCCESS:
                     String path = (String)msg.obj;
-                    PicturePreviewActivity.start(CropImageActivity.this, path, (Class)getIntent().getSerializableExtra(Extras.EXTRA_CALL_CLASS));
+                    PicturePreviewActivity.start(CropImageActivity.this, path, (Class)getIntent().getSerializableExtra(Extras.EXTRA_CALL_CLASS), 0);
                     break;
                 case SAVE_IMAGE_ERROR:
                     Toast.makeText(CropImageActivity.this, "出错了", Toast.LENGTH_SHORT).show();
@@ -126,7 +125,7 @@ public class CropImageActivity extends TActionBarActivity{
      * @date 2012-12-14 上午10:41:23
      */
     private void initViews() {
-        crop_child_menu_crop_ll = (LinearLayout) findViewById(R.id.crop_crop_child_menu_ll);
+        crop_child_menu_crop_hs = (HorizontalScrollView) findViewById(R.id.crop_crop_child_menu_ll);
         crop_child_menu_rotate_ll = (LinearLayout) findViewById(R.id.crop_rotate_child_menu_ll);
         cropImageView = (CropImageView)findViewById(R.id.crop_image_view);
 
@@ -153,6 +152,11 @@ public class CropImageActivity extends TActionBarActivity{
             m.postRotate(90);
             mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(), mBitmap.getHeight(), m, true);
             cropImageView.setImageBitmap(mBitmap);
+            if (!hasCrop) {
+                int w = mBitmap.getWidth();
+                int h = mBitmap.getHeight();
+                cropImageView.updateSelection(w, h);
+            }
             cropImageView.invalidate();
         } else if (id == R.id.crop_child_menu_fanzhuan) {
             Matrix m = new Matrix();
@@ -165,18 +169,29 @@ public class CropImageActivity extends TActionBarActivity{
                 int w = mBitmap.getWidth();
                 cropImageView.updateSelection(w, (int)(w * 0.75));
                 cropImageView.invalidate();
+                hasCrop = true;
             }
         } else if (id == R.id.crop_child_menu_3_4) {
             if (mBitmap != null) {
                 int w = mBitmap.getWidth();
                 cropImageView.updateSelection(w, (int)(w / 0.75));
                 cropImageView.invalidate();
+                hasCrop = true;
             }
         } else if (id == R.id.crop_child_menu_1_1) {
             if (mBitmap != null) {
                 int w = mBitmap.getWidth();
                 cropImageView.updateSelection(w, w);
                 cropImageView.invalidate();
+                hasCrop = true;
+            }
+        } else if (id == R.id.crop_child_men_none) {
+            if (mBitmap != null) {
+                int w = mBitmap.getWidth();
+                int h = mBitmap.getHeight();
+                cropImageView.updateSelection(w, h);
+                cropImageView.invalidate();
+                hasCrop = false;
             }
         }
     }
@@ -193,14 +208,14 @@ public class CropImageActivity extends TActionBarActivity{
     private void showChildMenu(int Id) {
         if (Id == R.id.crop_bar_crop_menu) {
             showCropMenu = true;
-            crop_child_menu_crop_ll.startAnimation(showAni);
+            crop_child_menu_crop_hs.startAnimation(showAni);
             isAnimating = true;
         } else if (Id == R.id.crop_bar_rotate_menu) {
             showRotateMenu = true;
             crop_child_menu_rotate_ll.startAnimation(showAni);
             isAnimating = true;
         } else if (Id == R.id.crop_child_menu_crop_back) {
-            crop_child_menu_crop_ll.startAnimation(hideAni);
+            crop_child_menu_crop_hs.startAnimation(hideAni);
             isAnimating = true;
         } else if (Id == R.id.crop_child_menu_rotate_back) {
             crop_child_menu_rotate_ll.startAnimation(hideAni);
@@ -224,8 +239,8 @@ public class CropImageActivity extends TActionBarActivity{
             @Override
             public void onAnimationEnd(Animation animation) {
                 if (showCropMenu) {
-                    crop_child_menu_crop_ll.clearAnimation();
-                    crop_child_menu_crop_ll.setVisibility(View.VISIBLE);
+                    crop_child_menu_crop_hs.clearAnimation();
+                    crop_child_menu_crop_hs.setVisibility(View.VISIBLE);
                 }
                 if (showRotateMenu) {
                     crop_child_menu_rotate_ll.clearAnimation();
@@ -247,8 +262,8 @@ public class CropImageActivity extends TActionBarActivity{
             @Override
             public void onAnimationEnd(Animation animation) {
                 if(showCropMenu){
-                    crop_child_menu_crop_ll.clearAnimation();
-                    crop_child_menu_crop_ll.setVisibility(View.GONE);
+                    crop_child_menu_crop_hs.clearAnimation();
+                    crop_child_menu_crop_hs.setVisibility(View.GONE);
                     showCropMenu = false;
                 }
                 if(showRotateMenu){

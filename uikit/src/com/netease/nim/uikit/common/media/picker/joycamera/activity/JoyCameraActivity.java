@@ -10,6 +10,8 @@ import com.bonzaiengine.io.Stream;
 import com.bonzaiengine.light.Light;
 import com.bonzaiengine.light.Lights;
 import com.bonzaiengine.math.Color3;
+import com.bonzaiengine.math.MathFunc;
+import com.bonzaiengine.math.Quat;
 import com.bonzaiengine.math.Transform;
 import com.bonzaiengine.math.Vec3;
 import com.bonzaiengine.model.Model;
@@ -40,11 +42,11 @@ import com.netease.nim.uikit.common.activity.TActionBarActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -68,11 +70,12 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.netease.nim.uikit.common.media.picker.PickImageHelper;
@@ -129,13 +132,23 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
     private ImageView cover_view;                // 封面图片
     private ImageView expand_button;             // 扩展按钮
     private ImageView gallery_button;            // 本地相册按钮
+    // 模型调整
+    private ImageView model_op_left;
+    private ImageView model_op_right;
+    private ImageView model_op_down;
+    private ImageView model_op_up;
+    private ImageView model_op_light;
+    private ImageView model_op_btn;
+    private SeekBar light_value_sb;
+    private FrameLayout model_op_fl;
+    private Rect model_op_fl_rect;
+
     private ImageView close_button;
     private ProgressBar load_model_pb;
     // added in v1.2.0
 //    private TextView mode_title;
     private ImageView tab_ar;
     private ImageView tab_cover;
-    private TextView  tab_normal;
     private LinearLayout previewing_barrier;
     private RecyclerView thumbIconList;
     private ThumbImageAdapter coverListAdapter;
@@ -152,6 +165,9 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
     private float xpos, ypos;
     private volatile float move_x;
     private volatile float move_z;
+    private volatile boolean longClickOp = false;
+    private volatile boolean clickOp = false;
+    private volatile int right_left = 0, up_down = 0, direction = 1;
 
     public enum State{NONE, SAVING, ERROR, DONE}
 
@@ -159,7 +175,7 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
     protected final Object lock = new Object();
     protected String saved_picture;
 
-    private CameraMode current_mode = CameraMode.NORMAL;
+    private CameraMode current_mode = CameraMode.AR;
     /*显示封面选项菜单*/
     private boolean ifCoverMenuShown = true;
 
@@ -167,10 +183,11 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
 
     private int barrier_height = 0;               // 拍照的遮幅高度
     private volatile int curCoverIndex = -1;       // 当前选择的封面
-    private volatile int curARModel = -1;         // 当前选择的模型
+    private volatile int curARModel = 0;         // 当前选择的模型
 
     public class StandaloneScene implements GLSurfaceView.Renderer, ScaleGestureDetector.OnScaleGestureListener{
         private final static boolean USE_LIGHT = true;
+        public volatile float light_value = 0.5f;
 
         private boolean transluscent;
         private boolean capture = false;
@@ -234,10 +251,9 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
 
             if(USE_LIGHT) {
                 lights = Lights.create(1);
-                for(int i = 0;i < 1; ++i) {
-                    Light l = lights.getLight(i);
+                for(Light l : lights) {
                     l.setAmbient(new Color3(0.5f, 0.5f, 0.5f));
-                    l.setDiffuse(new Color3(0.5f, 0.5f, 0.5f));
+                    l.setDiffuse(new Color3(light_value, light_value, light_value));
                     l.setRelTo(camera);
                     l.setEnabled(true);
                 }
@@ -315,7 +331,7 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
                 assets.shaders.load(gl);
             }
 
-            if (curARModel < 0) return;
+            if (curARModel <= 0) return;
 
             if (curARModel != lastARModel){
                 if (asyncModel != null){
@@ -352,7 +368,7 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
                 eye.add(ref);
                 eye.y /= 2;
                 eye.x = 0;
-                eye.z *=3;
+                eye.z *= 5;
 
                 // Compute a look at matrix
                 view.modelview.getMatrix().lookAt(eye, ref, Vec3.axisY);
@@ -371,6 +387,17 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
 
             if (model != null) {
                 Transform transform = new Transform();
+                if (longClickOp) {
+                    transform.setRotation(new Quat(up_down * MathFunc.sin(direction * 0.008f),
+                            right_left * MathFunc.sin(direction * 0.008f), 0, MathFunc.cos(direction * 0.008f)));
+                }
+
+                if (clickOp) {
+                    transform.setRotation(new Quat(up_down * MathFunc.sin(direction * 0.017f),
+                            right_left * MathFunc.sin(direction * 0.034f), 0, MathFunc.cos(direction * 0.034f)));
+                    clickOp = false;
+                }
+
                 //transform.setRotation(new Quat(0, MathFunc.sin(rotate_x), 0, MathFunc.cos(rotate_x)));
 
                 Vec3 posi = new Vec3();
@@ -384,6 +411,8 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
 
 
             if(USE_LIGHT) {
+                lights.getLight(0).setDiffuse(new Color3(light_value, light_value, light_value));
+                lights.getLight(0).setAmbient(new Color3(light_value, light_value, light_value));
                 lights.updateToView(view);
             }
 
@@ -412,6 +441,7 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
             try {
                 // Model rendering
                 if (model != null) {
+
                     Renderer.render(glApi, model, renderOptions);
                 }
             } catch (NullPointerException e){
@@ -448,6 +478,7 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
         public boolean onScaleBegin(ScaleGestureDetector detector) {
             isScaling = true;
             motionFrames = 0;
+            takePhotoHandler.obtainMessage(CameraHelper.MSG_HIDE_AR_PANEL).sendToTarget();
             return true;
         }
 
@@ -492,8 +523,12 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
                                 Canvas canvas = new Canvas(newb);
 
                                 Bitmap picture = BitmapFactory.decodeFile(saved_picture);
-                                canvas.drawBitmap(picture, 0, 0, null);
+                                Matrix m = new Matrix();
+                                m.postScale(ScreenUtil.screenWidth*1.0f/picture.getWidth(), ScreenUtil.screenHeight*1.0f/picture.getHeight());
+
+                                canvas.drawBitmap(picture, m, null);
                                 canvas.drawBitmap(bitmap, 0, 0, null);
+
                                 final String filePath = StorageUtil.getWritePath(new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.CHINA).format(new Date()), StorageType.TYPE_TEMP);
                                 File bitFile = new File(filePath);
                                 FileOutputStream out = new FileOutputStream(bitFile);
@@ -569,21 +604,10 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
 
         joyCamResMgr = NimUIKit.getCamOnLineResMgr();
 
-        if (savedInstanceState != null){
-            Bundle data = savedInstanceState.getBundle("JoyCameraData");
-            if (data != null){
-                current_mode = CameraMode.valueOf(data.getString("current_mode", "NORMAL"));
-                curARModel = data.getInt("curARModel", 0);
-                curCoverIndex = data.getInt("curCoverIndex", 0);
-            }
-        }
-
         initSurfaceView();
         initGlSurfaceView();
         // 初始化视图
         initViews();
-
-        resumeView();
 
         _takePhotoHandler.postDelayed(new Runnable() {
             @Override
@@ -591,6 +615,21 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
                 checkUpdate();
             }
         }, 500);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null){
+            Bundle data = savedInstanceState.getBundle("JoyCameraData");
+            if (data != null){
+                current_mode = CameraMode.valueOf(data.getString("current_mode", "NORMAL"));
+                curARModel = data.getInt("curARModel", 0);
+                curCoverIndex = data.getInt("curCoverIndex", 0);
+            }
+            resumeView();
+        }
+
     }
 
     private void checkUpdate(){
@@ -635,16 +674,14 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
             thumbIconList.swapAdapter(arListAdapter, false);
             cover_view.setVisibility(View.GONE);
             thumbIconList.setVisibility(View.VISIBLE);
-            gallery_button.setVisibility(View.GONE);
+            gallery_button.setVisibility(curARModel == 0 ? View.VISIBLE : View.GONE);
 
-            if (gl_surface != null){
+            if (gl_surface != null && curARModel > 0){
                 gl_surface.setVisibility(View.VISIBLE);
                 gl_surface.onResume();
             }
 
-            current_mode = CameraMode.AR;
             tab_cover.setBackgroundColor(Color.TRANSPARENT);
-            tab_normal.setBackgroundColor(Color.TRANSPARENT);
             previewing_barrier.setVisibility(View.GONE);
             cameraBottomBarRl.setBackgroundColor(Color.TRANSPARENT);
             cameraTopBarBg.setBackgroundColor(Color.TRANSPARENT);
@@ -663,9 +700,7 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
                 }
             }
 
-            current_mode = CameraMode.COVER;
             tab_ar.setBackgroundColor(Color.TRANSPARENT);
-            tab_normal.setBackgroundColor(Color.TRANSPARENT);
             cameraBottomBarRl.setBackgroundColor(getResources().getColor(R.color.joy_camera_theme_color));
             cameraTopBarBg.setBackgroundColor(getResources().getColor(R.color.joy_camera_theme_color));
             tab_cover.setBackgroundColor(getResources().getColor(R.color.joy_camera_focused_color));
@@ -710,6 +745,8 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
 
         coverListAdapter = new ThumbImageAdapter(this, joyCamResMgr.getCoverItems(), onCoverThumbClickEvent);
         arListAdapter = new ThumbImageAdapter(this, joyCamResMgr.getARItems(), onARThumbClickEvent);
+
+        thumbIconList.setAdapter(arListAdapter);
     }
 
     // 初始化视图资源
@@ -730,9 +767,15 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
         // added in v1.1.0
         tab_ar = (ImageView)findViewById(R.id.tab_ar_iv);
         tab_cover = (ImageView)findViewById(R.id.tab_cover_iv);
-        tab_normal = (TextView)findViewById(R.id.tab_normal_tv);
-
-
+        // added in v1.2.0
+        model_op_left   = (ImageView)findViewById(R.id.model_op_left_iv);
+        model_op_right  = (ImageView)findViewById(R.id.model_op_right_iv);
+        model_op_up     = (ImageView)findViewById(R.id.model_op_up_iv);
+        model_op_down   = (ImageView)findViewById(R.id.model_op_down_iv);
+        model_op_btn    = (ImageView)findViewById(R.id.model_operator_btn_iv);
+        light_value_sb  = (SeekBar)findViewById(R.id.model_light_operator_sb);
+        model_op_light  = (ImageView)findViewById(R.id.model_op_light_iv);
+        model_op_fl     = (FrameLayout)findViewById(R.id.model_operator_fl);
         // 设置监听
         expand_button.setOnClickListener(onClickListener);
         gallery_button.setOnClickListener(onClickListener);
@@ -740,8 +783,27 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
         switch_camera.setOnClickListener(onClickListener);
         tab_ar.setOnClickListener(onClickListener);
         tab_cover.setOnClickListener(onClickListener);
-        tab_normal.setOnClickListener(onClickListener);
         close_button.setOnClickListener(onClickListener);
+        model_op_btn.setOnClickListener(onClickListener);
+        // added v1.2.0
+        model_op_left.setOnClickListener(onModelOpClick);
+        model_op_right.setOnClickListener(onModelOpClick);
+        model_op_up.setOnClickListener(onModelOpClick);
+        model_op_down.setOnClickListener(onModelOpClick);
+        model_op_light.setOnClickListener(onModelOpClick);
+
+        model_op_left.setOnLongClickListener(onLongClickListener);
+        model_op_right.setOnLongClickListener(onLongClickListener);
+        model_op_up.setOnLongClickListener(onLongClickListener);
+        model_op_down.setOnLongClickListener(onLongClickListener);
+
+        model_op_left.setOnTouchListener(onModelOpTouchListener);
+        model_op_right.setOnTouchListener(onModelOpTouchListener);
+        model_op_up.setOnTouchListener(onModelOpTouchListener);
+        model_op_down.setOnTouchListener(onModelOpTouchListener);
+
+        light_value_sb.setProgress(50);
+        light_value_sb.setOnSeekBarChangeListener(onLightValueChange);
         // 切换摄像头图标的显示
         View shutter = findViewById(R.id.shutter);
         if(shutter != null){
@@ -778,12 +840,13 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
         }
 
         initRV();
-
     }
 
     private ThumbImageHolder.OnThumbClickEvent onCoverThumbClickEvent = new ThumbImageHolder.OnThumbClickEvent() {
         @Override
         public void onDownload(final CamOnLineRes item, final int position) {
+            joyCamResMgr.addUsedtimes(item);
+
             item.setStatus(CamOnLineRes.Status.DOWNLOADING);
             coverListAdapter.notifyItemChanged(position);
 
@@ -822,6 +885,8 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
 
         @Override
         public void onSelect(CamOnLineRes item) {
+            joyCamResMgr.addUsedtimes(item);
+
             if(item.getLocalIndex() != curCoverIndex){
                 ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(item.getCachePath()), cover_view);
                 curCoverIndex = item.getLocalIndex();
@@ -832,6 +897,8 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
     private ThumbImageHolder.OnThumbClickEvent onARThumbClickEvent = new ThumbImageHolder.OnThumbClickEvent() {
         @Override
         public void onDownload(final CamOnLineRes item,final int position) {
+            joyCamResMgr.addUsedtimes(item);
+
             item.setStatus(CamOnLineRes.Status.DOWNLOADING);
             arListAdapter.notifyItemChanged(position);
 
@@ -870,8 +937,33 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
 
         @Override
         public void onSelect(CamOnLineRes item) {
-            if(item.getLocalIndex() != curARModel){
-                curARModel = item.getLocalIndex();
+            if (item.getLocalIndex() == 0){
+                if (curARModel == 0)  return;
+                load_model_pb.setVisibility(View.GONE);
+                showAROpPannel(false);
+
+                if (current_mode == CameraMode.AR) {
+                    if (gl_surface != null){
+                        gl_surface.onPause();
+                        gl_surface.setVisibility(View.GONE);
+                    }
+                }
+                curARModel = 0;
+            } else {
+                joyCamResMgr.addUsedtimes(item);
+                if (item.getLocalIndex() != curARModel) {
+                    if (curARModel == 0){
+                        showAROpPannel(true);
+                        curARModel = item.getLocalIndex();
+                        if (gl_surface != null){
+                            gl_surface.onResume();
+                            gl_surface.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    else {
+                        curARModel = item.getLocalIndex();
+                    }
+                }
             }
         }
     };
@@ -901,12 +993,12 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
 
     @Override
     public boolean onTouchEvent(MotionEvent me) {
-        if (current_mode == CameraMode.AR) {
+        if (current_mode == CameraMode.AR && curARModel > 0) {
             if (me.getAction() == MotionEvent.ACTION_DOWN
                     || me.getAction() == MotionEvent.ACTION_UP
                     || me.getAction() == MotionEvent.ACTION_CANCEL) {
                 continue_tag1 = false;
-                return false;
+                return super.onTouchEvent(me);
             }
 
             if (me.getAction() == MotionEvent.ACTION_MOVE) {
@@ -938,6 +1030,97 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
         return super.onTouchEvent(me);
     }
 
+    private SeekBar.OnSeekBarChangeListener onLightValueChange = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (fromUser)
+                standaloneScene.light_value = progress*1.0f / 100;
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
+    private View.OnClickListener onModelOpClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v.getId() ==  R.id.model_op_left_iv) {
+                direction = -1;
+                right_left = 1;
+                up_down = 0;
+                clickOp = true;
+            } else if(v.getId() == R.id.model_op_right_iv) {
+                direction = 1;
+                right_left = 1;
+                up_down = 0;
+                clickOp = true;
+            } else if(v.getId() == R.id.model_op_down_iv) {
+                direction = 1;
+                right_left = 0;
+                up_down = 1;
+                clickOp = true;
+            } else if(v.getId() == R.id.model_op_up_iv) {
+                direction = -1;
+                right_left = 0;
+                up_down = 1;
+                clickOp = true;
+            } else if(v.getId() == R.id.model_op_light_iv) {
+                light_value_sb.setVisibility(light_value_sb.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            }
+        }
+    };
+
+    private View.OnTouchListener onModelOpTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch(event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_UP:
+                    longClickOp = false;
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+            }
+            return false;
+        }
+    };
+
+    private View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if (v.getId() ==  R.id.model_op_left_iv) {
+                direction = -1;
+                right_left = 1;
+                up_down = 0;
+            } else if(v.getId() == R.id.model_op_right_iv) {
+                direction = 1;
+                right_left = 1;
+                up_down = 0;
+            } else if(v.getId() == R.id.model_op_down_iv) {
+                direction = 1;
+                right_left = 0;
+                up_down = 1;
+            } else if(v.getId() == R.id.model_op_up_iv) {
+                direction = -1;
+                right_left = 0;
+                up_down = 1;
+            }
+
+            LogUtil.d(TAG, "Action long click");
+            longClickOp = true;
+            return true;
+        }
+    };
+
     private View.OnClickListener onClickListener = new View.OnClickListener(){
         // 全局控件点击事件监听
         @Override
@@ -966,8 +1149,12 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
             else if(v.getId() == R.id.camera_close_iv) {
                 onBackPressed();
             }
+            else if(v.getId() == R.id.model_operator_btn_iv) {
+                model_op_fl.setVisibility(model_op_fl.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                light_value_sb.setVisibility(View.GONE);
+            }
             else {
-                if (v.getId() == R.id.tab_ar_iv || v.getId() == R.id.tab_cover_iv || v.getId() == R.id.tab_normal_tv) {
+                if (v.getId() == R.id.tab_ar_iv || v.getId() == R.id.tab_cover_iv) {
                     switchCameraMode(v.getId());
                 }
             }
@@ -980,34 +1167,28 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
                 thumbIconList.swapAdapter(arListAdapter, false);
 
                 cover_view.setVisibility(View.GONE);
-                thumbIconList.setVisibility(View.VISIBLE);
-                gallery_button.setVisibility(View.GONE);
+                gallery_button.setVisibility(curARModel == 0 ? View.VISIBLE : View.GONE);
                 previewing_barrier.setVisibility(View.GONE);
 
-                if (gl_surface != null){
+                if (gl_surface != null && curARModel > 0){
+                    model_op_btn.setVisibility(View.VISIBLE);
                     gl_surface.setVisibility(View.VISIBLE);
                     gl_surface.onResume();
                 }
 
                 current_mode = CameraMode.AR;
                 tab_cover.setBackgroundColor(Color.TRANSPARENT);
-                tab_normal.setBackgroundColor(Color.TRANSPARENT);
                 cameraTopBarBg.setBackgroundColor(Color.TRANSPARENT);
                 cameraBottomBarRl.setBackgroundColor(Color.TRANSPARENT);
                 tab_ar.setBackgroundColor(getResources().getColor(R.color.joy_camera_focused_color));
-                if (curARModel < 0) {
-                    curARModel = 0;
-                }
-//                mode_title.setText("AR模式");
             }
         }
         else if(resId == R.id.tab_cover_iv) {
             if (current_mode != CameraMode.COVER){
                 load_model_pb.setVisibility(View.GONE);
+                showAROpPannel(false);
                 thumbIconList.swapAdapter(coverListAdapter, false);
                 cover_view.setVisibility(View.VISIBLE);
-                gallery_button.setVisibility(View.VISIBLE);
-                thumbIconList.setVisibility(View.VISIBLE);
 
                 if (current_mode == CameraMode.AR) {
                     if (gl_surface != null){
@@ -1018,42 +1199,15 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
 
                 current_mode = CameraMode.COVER;
                 tab_ar.setBackgroundColor(Color.TRANSPARENT);
-                tab_normal.setBackgroundColor(Color.TRANSPARENT);
                 previewing_barrier.setVisibility(View.VISIBLE);
                 cameraTopBarBg.setBackgroundColor(getResources().getColor(R.color.joy_camera_theme_color));
                 cameraBottomBarRl.setBackgroundColor(getResources().getColor(R.color.joy_camera_theme_color));
                 tab_cover.setBackgroundColor(getResources().getColor(R.color.joy_camera_focused_color));
-//                mode_title.setText("封面模式");
                 // 设置封面
                 if (curCoverIndex < 0) {
                     curCoverIndex = 0;
                 }
                 ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(joyCamResMgr.getItem(CamOnLineRes.Type.COVER, curCoverIndex).getCachePath()), cover_view);
-            }
-        }
-
-        else if(resId == R.id.tab_normal_tv) {
-            if (current_mode != CameraMode.NORMAL){
-                cover_view.setVisibility(View.GONE);
-                load_model_pb.setVisibility(View.GONE);
-                thumbIconList.setVisibility(View.GONE);
-                gallery_button.setVisibility(View.VISIBLE);
-
-                if (current_mode == CameraMode.AR) {
-                    if (gl_surface != null){
-                        gl_surface.onPause();
-                        gl_surface.setVisibility(View.GONE);
-                    }
-                }
-
-                current_mode = CameraMode.NORMAL;
-                tab_ar.setBackgroundColor(Color.TRANSPARENT);
-                tab_cover.setBackgroundColor(Color.TRANSPARENT);
-                previewing_barrier.setVisibility(View.GONE);
-                cameraTopBarBg.setBackgroundColor(Color.TRANSPARENT);
-                cameraBottomBarRl.setBackgroundColor(Color.TRANSPARENT);
-                tab_normal.setBackgroundColor(getResources().getColor(R.color.joy_camera_focused_color));
-//                mode_title.setText("原图模式");
             }
         }
     }
@@ -1149,11 +1303,12 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
                             CoverBgEditActivity.start(theActivity, Uri.fromFile(new File(savedPath)), theActivity.curCoverIndex,
                                     (Class)theActivity.getIntent().getSerializableExtra(Extras.EXTRA_CALL_CLASS));
                             break;
-                        case NORMAL:
-                            DialogMaker.dismissProgressDialog();
-                            CropImageActivity.start(theActivity, savedPath,(Class)theActivity.getIntent().getSerializableExtra(Extras.EXTRA_CALL_CLASS));
-                            break;
                         case AR:
+                            if (theActivity.curARModel == 0){
+                                DialogMaker.dismissProgressDialog();
+                                CropImageActivity.start(theActivity, savedPath,(Class)theActivity.getIntent().getSerializableExtra(Extras.EXTRA_CALL_CLASS));
+                                break;
+                            }
                             synchronized (theActivity.lock) {
                                 theActivity.save_picture_state = State.DONE;
                                 theActivity.lock.notifyAll();
@@ -1175,6 +1330,10 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
                     break;
                 case CameraHelper.MSG_TAKE_PICTURE:
                     theActivity.startTakePhotoThread();
+                    break;
+                case CameraHelper.MSG_HIDE_AR_PANEL:
+                    theActivity.model_op_fl.setVisibility(View.GONE);
+                    theActivity.light_value_sb.setVisibility(View.GONE);
                     break;
                 case CameraHelper.MSG_EXIT_APP:
                     DialogMaker.dismissProgressDialog();
@@ -1207,6 +1366,19 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
             focus_view.setVisibility(View.GONE);
         }
     }
+    private void showAROpPannel(boolean show){
+        if (show) {
+            gallery_button.setVisibility(View.GONE);
+            model_op_btn.setVisibility(View.VISIBLE);
+        }
+        else {
+            gallery_button.setVisibility(View.VISIBLE);
+            light_value_sb.setVisibility(View.GONE);
+            model_op_btn.setVisibility(View.GONE);
+            model_op_fl.setVisibility(View.GONE);
+        }
+    }
+
     /**
      * 显示/隐藏 封面选项面板
      */
@@ -1234,7 +1406,7 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
         pickImageOption.crop = false;
         pickImageOption.multiSelect = false;
 
-        PickImageActivity.start(this, current_mode == CameraMode.NORMAL ? REQ_NORMAL_PICKIMAGE : REQ_COVER_PICKIMAGE,
+        PickImageActivity.start(this, current_mode == CameraMode.AR ? REQ_NORMAL_PICKIMAGE : REQ_COVER_PICKIMAGE,
                 PickImageActivity.FROM_LOCAL, null, false, 1 , false, false, 0, 0);
     }
 
@@ -1316,24 +1488,20 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
      * 带自动对焦功能的拍照
      */
     private void takePhoto(){
-        switch (current_mode) {
-            case NORMAL:
-            case COVER:
-                // 后置摄像头拍照
-                if(cameraHelper.camera_position == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                    if (!cameraHelper.focusing) {
-                        // 当前为对焦完成状态则快速拍照
-                        DialogMaker.showProgressDialog(JoyCameraActivity.this, "").setCancelable(false);
-                        startTakePhotoThread();
-                    }
-                } else if(cameraHelper.camera_position == Camera.CameraInfo.CAMERA_FACING_FRONT){// 前置摄像头拍照
+        if ((current_mode == CameraMode.AR &&  curARModel == 0) || current_mode == CameraMode.COVER) {
+            // 后置摄像头拍照
+            if(cameraHelper.camera_position == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                if (!cameraHelper.focusing) {
+                    // 当前为对焦完成状态则快速拍照
                     DialogMaker.showProgressDialog(JoyCameraActivity.this, "").setCancelable(false);
                     startTakePhotoThread();
                 }
-                break;
-            case AR:
-                standaloneScene.startCapture();
-                break;
+            } else if(cameraHelper.camera_position == Camera.CameraInfo.CAMERA_FACING_FRONT){// 前置摄像头拍照
+                DialogMaker.showProgressDialog(JoyCameraActivity.this, "").setCancelable(false);
+                startTakePhotoThread();
+            }
+        } else {
+            standaloneScene.startCapture();
         }
 
     }
@@ -1357,10 +1525,16 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
     @Override
     protected void onPause() {
         super.onPause();
-        joyCamResMgr.saveAll();
         if (current_mode == CameraMode.AR) {
             gl_surface.onPause();
         }
+        joyCamResMgr.uploadUsedtimes();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        joyCamResMgr.saveAll();
     }
 
     @Override
@@ -1417,7 +1591,7 @@ public class JoyCameraActivity extends TActionBarActivity implements SurfaceHold
                 break;
             case REQ_CROP_IMAGE:
                 PicturePreviewActivity.start(this, saved_picture,
-                        (Class)getIntent().getSerializableExtra(Extras.EXTRA_CALL_CLASS));
+                        (Class)getIntent().getSerializableExtra(Extras.EXTRA_CALL_CLASS), 0);
                 break;
         }
     }

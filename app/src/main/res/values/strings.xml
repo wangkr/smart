@@ -94,6 +94,7 @@
     <string name="api_set_unmatch">userinfo/unmatch</string>
     <string name="api_set_match">userinfo/match</string>
     <string name="api_get_models">news/get_models</string>
+    <string name="api_count_models">heartbeat/count_models</string>
 
     <string name="api_name_register">register/index</string>
     <string name="api_name_resetpassword">register/find_pass</string>

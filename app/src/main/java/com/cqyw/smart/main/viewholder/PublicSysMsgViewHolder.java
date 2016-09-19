@@ -2,8 +2,6 @@ package com.cqyw.smart.main.viewholder;
 
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.cqyw.smart.AppSharedPreference;
 import com.cqyw.smart.R;
@@ -17,18 +15,17 @@ import com.cqyw.smart.contact.activity.UserProfileSettingActivity;
 import com.cqyw.smart.main.activity.SnapMsgCommentActivity;
 import com.cqyw.smart.main.adapter.LikeHeadImageAdapter;
 import com.cqyw.smart.util.Utils;
+import com.cqyw.smart.widget.popwindow.ImageShower;
 import com.netease.nim.uikit.common.adapter.TAdapterDelegate;
 import com.netease.nim.uikit.common.adapter.TViewHolder;
-import com.netease.nim.uikit.common.util.log.LogUtil;
+import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
 import com.netease.nim.uikit.common.util.media.ImageUtil;
 import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.netease.nim.uikit.joycustom.upyun.JoyImageUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.download.ImageDownloader;
-import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 
 import java.io.File;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -47,7 +44,7 @@ public class PublicSysMsgViewHolder extends PublicMsgViewHolderBase{
     protected void bindContentView() {
         snapCover.setVisibility(View.VISIBLE);
         if (!TextUtils.isEmpty(message.getCover())) {
-            JoyImageUtil.bindCoverImageView(snapCover, message.getCover(), JoyImageUtil.ImageType.V_COVERICON);
+            JoyImageUtil.bindCoverImageView(snapCover, message.getCover(), JoyImageUtil.ImageType.V_4TO3);
         } else if(!TextUtils.isEmpty(message.getCoverLocalPath())){
             File file = new File(message.getCoverLocalPath());
             if (!file.exists()) {
@@ -117,7 +114,11 @@ public class PublicSysMsgViewHolder extends PublicMsgViewHolderBase{
 
     @Override
     protected void onItemClick() {
-        SnapMsgCommentActivity.start(getContext(), message);
+        if ((message.getType() & PublishMessage.MessageType.PUB.value()) > 0) {
+            ImageShower.showImage(getContext(), message);
+        } else if ((message.getType() & PublishMessage.MessageType.SNAP.value()) > 0) {
+            SnapMsgCommentActivity.start(getContext(), message, false);
+        }
     }
 
     @Override

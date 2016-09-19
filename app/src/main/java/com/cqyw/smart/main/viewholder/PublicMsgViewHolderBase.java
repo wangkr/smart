@@ -124,7 +124,7 @@ public abstract class PublicMsgViewHolderBase extends UltimateRecyclerviewViewHo
 
     // 内容区域长按事件响应处理。该接口的优先级比adapter中有长按事件的处理监听高，当该接口返回为true时，adapter的长按事件监听不会被调用到。
     protected boolean onItemLongClick() {
-        if (message.getType() == PublishMessage.MessageType.SNAP.value()) {
+        if ((message.getType() & PublishMessage.MessageType.SNAP.value()) > 0) {
             // 查看阅后即焚
             if (message.getStatus() == 1) {// 没有过期
                 // 自己可以永久查看
@@ -186,7 +186,7 @@ public abstract class PublicMsgViewHolderBase extends UltimateRecyclerviewViewHo
         // 显示查看量
         viewer_tv.setText(message.getViewer());
         // 显示官方账号标记
-        if (message.getType() == PublishMessage.MessageType.SYSTEM.value()) {
+        if ((message.getType() & PublishMessage.MessageType.SYSTEM.value()) > 0) {
             msgTagContainer.setVisibility(View.VISIBLE);
         } else {
             msgTagContainer.setVisibility(View.GONE);
@@ -256,7 +256,7 @@ public abstract class PublicMsgViewHolderBase extends UltimateRecyclerviewViewHo
      * 设置已读/未读标记
      */
     private void setReadStatus(){
-        if (message.getType() == PublicMsgViewHolderFactory.PUB_NEWS) {
+        if ((message.getType() & PublicMsgViewHolderFactory.PUB_NEWS) > 0) {
             readStatus_tv.setVisibility(View.GONE);
         } else {
             readStatus_tv.setVisibility(View.VISIBLE);

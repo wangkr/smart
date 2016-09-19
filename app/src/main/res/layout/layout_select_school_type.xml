@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:visibility="visible">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@color/white"
+        >
+
+        <TextView
+            android:id="@+id/type_university_tv"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/text_gray_dark"
+            android:background="@drawable/select_item_background"
+            android:text="大学僧"
+            android:textSize="18sp"
+            android:gravity="center"
+            />
+
+        <View style="@style/InputBoxDivider1"/>
+        <TextView
+            android:id="@+id/type_middle_school_tv"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/text_gray_dark"
+            android:background="@drawable/select_item_background"
+            android:text="中学僧"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+        <View style="@style/InputBoxDivider1"/>
+        <TextView
+            android:id="@+id/type_primary_school_tv"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textColor="@color/text_gray_dark"
+            android:background="@drawable/select_item_background"
+            android:text="小学僧"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+    </LinearLayout>
+
+</LinearLayout>

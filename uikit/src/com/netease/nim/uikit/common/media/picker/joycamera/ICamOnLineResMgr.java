@@ -2,8 +2,10 @@ package com.netease.nim.uikit.common.media.picker.joycamera;
 
 import com.netease.nim.uikit.common.media.picker.joycamera.model.CamOnLineRes;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 在线资源管理
@@ -24,13 +26,16 @@ public interface ICamOnLineResMgr {
      */
     void initLocalReses(Callback<Void> callback);
     void pullOnlineReses(Callback<Integer> callback);
+    void uploadUsedtimes();
     void downloadSingleRes(CamOnLineRes res, Callback<CamOnLineRes> callback);
     void saveAll();
     void saveSingleRes(CamOnLineRes res);
+    void addUsedtimes(CamOnLineRes res);
     void downloadSingleObj(String url,  final String path, Callback callback);
     void checkLocalResesExist(List<CamOnLineRes> res, CamOnLineRes.Type type, Callback callback);
 
     List<CamOnLineRes> getARItems();
     List<CamOnLineRes> getCoverItems();
+    Map<Integer, Integer> getUsedTimes();
     CamOnLineRes getItem(CamOnLineRes.Type type, int position);
 }

@@ -76,6 +76,8 @@ public class CameraHelper {
     public final static int MSG_TAKE_PICTURE = 3237;
     /*终止主线程*/
     public final static int MSG_EXIT_APP = 3238;
+    /*隐藏AR操作面版*/
+    public final static int MSG_HIDE_AR_PANEL = 3239;
 
 
     public int flashLightMode;
@@ -197,19 +199,20 @@ public class CameraHelper {
             List<Camera.Size> supPrewSizes = photoParameters.getSupportedPreviewSizes();
             List<Camera.Size> supPicSizes = photoParameters.getSupportedPictureSizes();
             int k = findK(supPrewSizes,ScreenUtil.screenWidth * ScreenUtil.screenHeight);
-            int k2 = findK(supPicSizes,ScreenUtil.screenWidth * ScreenUtil.screenHeight);
+            int k2 = findK(supPicSizes,(int)(1.5f*ScreenUtil.screenWidth * 1.5f*ScreenUtil.screenHeight));
 
-            if (supPrewSizes.get(k).width * supPrewSizes.get(k).height != supPicSizes.get(k2).width*supPicSizes.get(k2).height) {
-                float pre_ratio = supPrewSizes.get(k).width*1.0f / supPrewSizes.get(k).height;
-                float pic_ratio = supPicSizes.get(k2).width*1.0f / supPicSizes.get(k2).height;
+            double pre_ratio = supPrewSizes.get(k).width*1.0f / supPrewSizes.get(k).height;
+            double pic_ratio = supPicSizes.get(k2).width*1.0f / supPicSizes.get(k2).height;
+
+            if (Math.abs(pre_ratio-pic_ratio) > 0.01) {
                 int temp = k2;
-                while(pre_ratio != pic_ratio && ++temp < supPicSizes.size()){
+                while(Math.abs(pre_ratio-pic_ratio) > 0.01 && ++temp < supPicSizes.size()){
                     pic_ratio = supPicSizes.get(temp).width*1.0f / supPicSizes.get(temp).height;
                 }
 
                 if (temp == supPicSizes.size()) {
                     temp = k2;
-                    while (pre_ratio != pic_ratio && --temp >= 0){
+                    while (Math.abs(pre_ratio-pic_ratio) > 0.01 && --temp >= 0){
                         pic_ratio = supPicSizes.get(temp).width*1.0f / supPicSizes.get(temp).height;
                     }
 
@@ -580,26 +583,28 @@ public class CameraHelper {
     private void savePictureToCache(Bitmap saved_photo/*, int orientation, int barrier_height*/) {
         // 旋转90度
         Matrix m = new Matrix();
+        Bitmap bitmap2, temp = null;
         if(camera_position == Camera.CameraInfo.CAMERA_FACING_BACK) {
-            m.postScale(prewSizeBack.width*1.0f/picSizeBack.width, prewSizeBack.height*1.0f/picSizeBack.height);
+//            m.postScale(prewSizeBack.width*1.0f/picSizeBack.width, prewSizeBack.height*1.0f/picSizeBack.height);
             m.postRotate(90);
-            saved_photo = Bitmap.createBitmap(saved_photo, 0, 0, saved_photo.getWidth(), saved_photo.getHeight(),  m, true);
-        } else if(camera_position == Camera.CameraInfo.CAMERA_FACING_FRONT){
+            bitmap2 = Bitmap.createBitmap(saved_photo, 0, 0, saved_photo.getWidth(), saved_photo.getHeight(),  m, true);
+        } else {
             m.postScale(1, -1);   //镜像垂直翻转
-            saved_photo = Bitmap.createBitmap(saved_photo, 0, 0, saved_photo.getWidth(), saved_photo.getHeight(),  m, true);
+            temp = Bitmap.createBitmap(saved_photo, 0, 0, saved_photo.getWidth(), saved_photo.getHeight(),  m, true);
             m.reset();
             m.postRotate(-90);    // 旋转90°
-            saved_photo = Bitmap.createBitmap(saved_photo, 0, 0, saved_photo.getWidth(), saved_photo.getHeight(),  m, true);
+            bitmap2 = Bitmap.createBitmap(temp, 0, 0, saved_photo.getWidth(), saved_photo.getHeight(),  m, true);
         }
 
         String filename = StringUtil.makeMd5(new SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA).format(new Date()));
         File file = new File(StorageUtil.getDirectoryByDirType(StorageType.TYPE_TEMP), filename);
         savedPhotoPath = file.getPath();
 
+
         /*保存成临时文件*/
         try {
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
-            saved_photo.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            bitmap2.compress(Bitmap.CompressFormat.JPEG, 100, bos);
             bos.flush();    // 刷新此缓冲区的输出流
             bos.close();    // 关闭此输出流并释放与此流有关的所有系统资源
             save_photo_state = SAVED_PHOTO;
@@ -611,10 +616,16 @@ public class CameraHelper {
             handler.sendEmptyMessage(SAVED_ERROR);
         } finally {
             // 释放内存
-            if(saved_photo!=null&&!saved_photo.isRecycled()){
-                saved_photo.recycle();
-                System.gc();
+            if (temp != null && !temp.isRecycled()){
+                temp.recycle();
             }
+            if (bitmap2 != null && !bitmap2.isRecycled()){
+                bitmap2.recycle();
+            }
+            if(!saved_photo.isRecycled()){
+                saved_photo.recycle();
+            }
+            System.gc();
         }
     }
 

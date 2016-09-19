@@ -3,11 +3,9 @@ package com.cqyw.smart.friend.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 
 import com.cqyw.smart.JActionBarActivity;
 import com.cqyw.smart.R;
@@ -16,9 +14,7 @@ import com.cqyw.smart.friend.model.Extras;
 import com.cqyw.smart.main.activity.MainActivity;
 import com.cqyw.smart.session.SessionHelper;
 import com.netease.nim.uikit.LoginSyncDataStatusObserver;
-import com.netease.nim.uikit.common.cache.BitmapCache;
 import com.netease.nim.uikit.common.ui.dialog.DialogMaker;
-import com.netease.nim.uikit.session.emoji.StickerManager;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
@@ -64,7 +60,7 @@ public class FriendActivity extends JActionBarActivity {
         setContentView(R.layout.activity_friend_tab);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setCustomView(R.layout.fragment_friend_tab);
+            actionBar.setCustomView(R.layout.layout_friend_tab);
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         }
     }

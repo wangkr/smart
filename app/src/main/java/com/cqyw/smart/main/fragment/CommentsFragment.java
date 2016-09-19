@@ -12,11 +12,9 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +45,7 @@ import com.cqyw.smart.main.viewholder.LikeHeadImageViewHolder;
 import com.cqyw.smart.main.viewholder.PublicMsgViewHolderFactory;
 import com.cqyw.smart.util.Utils;
 import com.cqyw.smart.widget.MyGridView;
+import com.cqyw.smart.widget.popwindow.ImageShower;
 import com.cqyw.smart.widget.popwindow.SimpleUserInfoDialog;
 import com.cqyw.smart.widget.xlistview.XListView;
 import com.netease.nim.uikit.cache.NimUserInfoCache;
@@ -54,7 +53,6 @@ import com.netease.nim.uikit.common.adapter.TAdapterDelegate;
 import com.netease.nim.uikit.common.adapter.TViewHolder;
 import com.netease.nim.uikit.common.fragment.TFragment;
 import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
-import com.netease.nim.uikit.common.ui.dialog.DialogMaker;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialog;
 import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialogHelper;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
@@ -66,11 +64,7 @@ import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.netease.nim.uikit.common.util.sys.TimeUtil;
 import com.netease.nim.uikit.joycustom.upyun.JoyImageUtil;
 import com.netease.nim.uikit.uinfo.UserInfoHelper;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
-import com.netease.nimlib.sdk.uinfo.UserService;
-import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
@@ -579,7 +573,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
 
     // 内容区域长按事件响应处理。该接口的优先级比adapter中有长按事件的处理监听高，当该接口返回为true时，adapter的长按事件监听不会被调用到。
     protected boolean onItemLongClick() {
-        if (message.getType() == PublishMessage.MessageType.SNAP.value()) {
+        if ((message.getType() & PublishMessage.MessageType.SNAP.value()) > 0) {
             // 查看阅后即焚
             if (message.getStatus() == 1) {// 没有过期
                 // 自己可以永久查看
@@ -619,7 +613,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
 
         snapCover = findView(R.id.snap_msg_content_image);
         snapText = findView(R.id.snap_msg_content_text);
-        if (message.getType() == PublishMessage.MessageType.SYSTEM.value()) {
+        if ((message.getType() & PublishMessage.MessageType.SYSTEM.value()) > 0) {
             msgTagContainer.setVisibility(View.VISIBLE);
         } else {
             msgTagContainer.setVisibility(View.GONE);
@@ -648,7 +642,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
         setHeadImageView();
         distance_tv.setVisibility(View.GONE);
         time_tv.setText(TimeUtil.getJoyTimeShowString(message.getIntime(), false));
-        if (message.getType() == PublicMsgViewHolderFactory.PUB_NEWS) {
+        if ((message.getType() & PublicMsgViewHolderFactory.PUB_NEWS) > 0) {
             readStatus_tv.setVisibility(View.GONE);
         } else {
             readStatus_tv.setVisibility(View.VISIBLE);
@@ -658,7 +652,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
         readStatus_tv.setEnabled(message.getStatus() == 1 &&
                 (TextUtils.equals(message.getUid(), AppCache.getJoyId()) || message.getRead() == 0));
 
-        if (message.getType() == PublishMessage.MessageType.SYSTEM.value()) {
+        if ((message.getType() & PublishMessage.MessageType.SYSTEM.value()) > 0) {
             msgTagContainer.setVisibility(View.VISIBLE);
         }
 
@@ -677,7 +671,7 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
 
         snapCover.setVisibility(View.VISIBLE);
         if (!TextUtils.isEmpty(message.getCover())) {
-            JoyImageUtil.bindCoverImageView(snapCover, message.getCover(), JoyImageUtil.ImageType.V_COVERICON);
+            JoyImageUtil.bindCoverImageView(snapCover, message.getCover(), JoyImageUtil.ImageType.V_4TO3);
         } else if(!TextUtils.isEmpty(message.getCoverLocalPath())){
             File file = new File(message.getCoverLocalPath());
             if (!file.exists()) {
@@ -860,6 +854,15 @@ public class CommentsFragment extends TFragment implements TAdapterDelegate, Vie
                 }
             };
         }
+
+        snapCover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ((message.getType() & PublishMessage.MessageType.PUB.value()) > 0) {
+                    ImageShower.showImage(getContext(), message);
+                }
+            }
+        });
 //        viewer_all_tv.setOnClickListener(viewAllJoClickListener);
     }
 

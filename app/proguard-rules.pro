@@ -98,6 +98,7 @@
 -keep class com.alibaba.fastjson.** {*;}
 -keep class net.sqlcipher.** {*;}
 -keep class com.bonzaiengine.** {*;}
+-keep class com.umeng.**{*;}
 
 
 ## java

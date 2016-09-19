@@ -121,7 +121,7 @@
     <!-- 标题栏“上一步”样式-->
     <style name="actionBar_leftTitle_style">
         <item name="android:gravity">left|center_vertical</item>
-        <item name="android:divider">@drawable/divider_darktheme</item>
+        <item name="android:divider">@drawable/actionbar_divider</item>
         <item name="android:showDividers">middle</item>
         <item name="android:dividerPadding">10dp</item>
     </style>
@@ -135,16 +135,16 @@
     </style>
 
     <style name="actionBar_backBtn_style">
-        <item name="android:layout_width">@dimen/actionbar_backbtn_width</item>
-        <item name="android:layout_height">@dimen/actionBar_height</item>
-        <item name="android:padding">13dp</item>
-        <item name="android:src">@drawable/btn_back</item>
-        <item name="android:background">@drawable/semitransparent_black_bg</item>
+        <item name="android:layout_width">?attr/actionBarSize</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:padding">18dp</item>
+        <item name="android:src">@drawable/back_arrow_actionbar</item>
+        <item name="android:background">@drawable/btn_transparent_bg</item>
     </style>
 
     <style name="actionBar_backTxt_style">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">@dimen/actionBar_height</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="android:gravity">left|center_vertical</item>
         <item name="android:padding">14dp</item>
         <item name="android:textSize">@dimen/actionBar_title_Size</item>
@@ -319,6 +319,15 @@
     <style name="WelcomeEntranceActionBarTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowBackground">@drawable/welcome_bg</item>
+    </style>
+
+    <style name="Dialog_fullscreen" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFullscreen">true</item>
+        <!--全屏-->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 无标题 -->
+        <item name="android:windowBackground">@color/black</item>
+        <!-- 背景透明 -->
     </style>
 
 </resources>

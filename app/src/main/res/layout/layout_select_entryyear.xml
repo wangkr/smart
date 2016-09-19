@@ -16,60 +16,55 @@
         android:gravity="center_horizontal"
         >
         <TextView
-            android:id="@+id/entry_2015"
+            android:id="@+id/entry1"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:textColor="@color/text_gray_dark"
             android:background="@drawable/select_item_background"
-            android:text="2015 年"
             android:textSize="18sp"
             android:gravity="center"/>
 
         <View style="@style/InputBoxDivider1"/>
 
         <TextView
-            android:id="@+id/entry_2014"
+            android:id="@+id/entry2"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:textColor="@color/text_gray_dark"
             android:background="@drawable/select_item_background"
-            android:text="2014 年"
             android:textSize="18sp"
             android:gravity="center"/>
 
         <View style="@style/InputBoxDivider1"/>
 
         <TextView
-            android:id="@+id/entry_2013"
+            android:id="@+id/entry3"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:textColor="@color/text_gray_dark"
             android:background="@drawable/select_item_background"
-            android:text="2013 年"
             android:textSize="18sp"
             android:gravity="center"/>
 
         <View style="@style/InputBoxDivider1"/>
 
         <TextView
-            android:id="@+id/entry_2012"
+            android:id="@+id/entry4"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:textColor="@color/text_gray_dark"
             android:background="@drawable/select_item_background"
-            android:text="2012 年"
             android:textSize="18sp"
             android:gravity="center"/>
 
         <View style="@style/InputBoxDivider1"/>
 
         <TextView
-            android:id="@+id/entry_2011"
+            android:id="@+id/entry5"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:textColor="@color/text_gray_dark"
             android:background="@drawable/select_item_background"
-            android:text="2011 年"
             android:textSize="18sp"
             android:gravity="center"/>
 

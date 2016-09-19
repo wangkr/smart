@@ -14,6 +14,70 @@
         android:layout_height="match_parent"
         />
 
+    <ImageView
+        android:id="@+id/model_operator_btn_iv"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/model_operator_icn"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/camera_top_bar_bg"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginLeft="5dp"
+        android:visibility="gone"/>
+
+    <FrameLayout
+        android:id="@+id/model_operator_fl"
+        android:layout_marginTop="@dimen/camera_top_bar_height"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/circle_black_bg"
+        android:layout_toLeftOf="@id/model_operator_btn_iv"
+        android:padding="10dp"
+        android:visibility="gone">
+        <ImageView
+            android:id="@+id/model_op_up_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/btn_up_rotate"
+            android:layout_gravity="center_horizontal|top"/>
+        <ImageView
+            android:id="@+id/model_op_down_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/btn_down_rotate"
+            android:layout_gravity="center_horizontal|bottom"/>
+        <ImageView
+            android:id="@+id/model_op_left_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/btn_left_rotate"
+            android:layout_gravity="center_vertical|start"/>
+        <ImageView
+            android:id="@+id/model_op_right_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/btn_right_rotate"
+            android:layout_gravity="center_vertical|end"/>
+        <ImageView
+            android:id="@+id/model_op_light_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/light_value"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
+    <SeekBar
+        android:id="@+id/model_light_operator_sb"
+        android:layout_below="@id/model_operator_fl"
+        android:layout_alignRight="@id/model_operator_fl"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:visibility="gone"
+        />
+
     <ProgressBar
         android:id="@+id/load_model_progress_pb"
         android:layout_width="60dp"
@@ -131,14 +195,15 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/camera_bottom_bar"
         android:padding="5dp"
-        android:background="#88000000"
+        android:background="#66000000"
         >
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/thumb_icon_list"
             android:layout_width="match_parent"
             android:layout_height="115dp"
             android:background="@color/transparent"
-            android:visibility="gone"
+            android:visibility="visible"
             />
 
         <View
@@ -156,20 +221,12 @@
             android:showDividers="middle|end"
             android:id="@+id/toolbar"
             >
-            <TextView
-                android:id="@+id/tab_normal_tv"
-                android:layout_width="40dp"
-                android:layout_height="35dp"
-                android:text="原图"
-                android:gravity="center"
-                android:textColor="#aaaaaa"
-                android:textSize="@dimen/text_size_15"
-                android:background="@color/joy_camera_focused_color"/>
             <ImageView
                 android:id="@+id/tab_ar_iv"
                 android:layout_width="40dp"
                 android:layout_height="35dp"
-                android:src="@drawable/ar_icn"/>
+                android:src="@drawable/ar_icn"
+                android:background="@color/joy_camera_focused_color"/>
             <ImageView
                 android:id="@+id/tab_cover_iv"
                 android:layout_width="40dp"

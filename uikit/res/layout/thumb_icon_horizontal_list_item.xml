@@ -12,14 +12,16 @@
         android:id="@+id/img_list_item"
         android:layout_width="60dp"
         android:layout_height="80dp"
+        android:scaleType="fitXY"
         />
     <ImageView
         android:id="@+id/download_vs"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:src="@drawable/download_icn"
-        android:padding="10dp"
         android:visibility="gone"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="2dp"
         />
     <ProgressBar
         android:id="@+id/progress_bar_pb"

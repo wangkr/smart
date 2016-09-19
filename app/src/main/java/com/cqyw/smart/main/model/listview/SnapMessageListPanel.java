@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
@@ -242,6 +243,7 @@ public class SnapMessageListPanel implements NetBroadcastReceiver.NetEventHandle
                 startJoyCamera();
             }
         });
+
         messageListView.setDefaultFloatingActionButton(floatingActionButton);
         messageListView.showDefaultFloatingActionButton();
         messageListView.setHasFixedSize(false);
@@ -400,6 +402,9 @@ public class SnapMessageListPanel implements NetBroadcastReceiver.NetEventHandle
         });
     }
 
+    public void scrollToTop(){
+        mLayoutManager.smoothScrollToPosition(messageListView.mRecyclerView, null, 0);
+    }
 
     public void scrollToItem(final int position) {
         uiHandler.postDelayed(new Runnable() {

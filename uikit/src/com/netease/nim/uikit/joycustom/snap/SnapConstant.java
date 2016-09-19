@@ -52,62 +52,62 @@ public class SnapConstant {
             {"5282fcb044f951f11d3136318bc11e6d.jpg","44f7f938b861ba7f6fb60856c37a14bc.jpg","58145d8fe22a7c9bdc2a2e1487ba88de.jpg",
                     "f513820b7a79f83caad6764717732cc7.jpg","42007cadc3b50f7cf576098e9c47a763.jpg","7872bfecba604553ffc4d9df4dbc2a53.jpg"}};
 
-    private static final int[] snap_coverIds_others = {R.drawable.cover_others1, R.drawable.cover_others2, R.drawable.cover_others3,
-            R.drawable.cover_others4, R.drawable.cover_others5, R.drawable.cover_others6};
-    private static final int[] snap_coverIds_cute = {R.drawable.cover_cute1, R.drawable.cover_cute2, R.drawable.cover_cute3,
-            R.drawable.cover_cute4, R.drawable.cover_cute5, R.drawable.cover_cute6};
-    private static final int[] snap_coverIds_erciyuan = {R.drawable.cover_erciyuan1, R.drawable.cover_erciyuan2, R.drawable.cover_erciyuan3,
-            R.drawable.cover_erciyuan4, R.drawable.cover_erciyuan5, R.drawable.cover_erciyuan6};
-    private static final int[] snap_coverIds_single = {R.drawable.cover_single1, R.drawable.cover_single2, R.drawable.cover_single3,
-            R.drawable.cover_single4, R.drawable.cover_single5, R.drawable.cover_single6};
-    private static final int[] snap_coverIds_wenyi = {R.drawable.cover_wenyi1, R.drawable.cover_wenyi2, R.drawable.cover_wenyi3,
-            R.drawable.cover_wenyi4, R.drawable.cover_wenyi5, R.drawable.cover_wenyi6};
+//    private static final int[] snap_coverIds_others = {R.drawable.cover_others1, R.drawable.cover_others2, R.drawable.cover_others3,
+//            R.drawable.cover_others4, R.drawable.cover_others5, R.drawable.cover_others6};
+//    private static final int[] snap_coverIds_cute = {R.drawable.cover_cute1, R.drawable.cover_cute2, R.drawable.cover_cute3,
+//            R.drawable.cover_cute4, R.drawable.cover_cute5, R.drawable.cover_cute6};
+//    private static final int[] snap_coverIds_erciyuan = {R.drawable.cover_erciyuan1, R.drawable.cover_erciyuan2, R.drawable.cover_erciyuan3,
+//            R.drawable.cover_erciyuan4, R.drawable.cover_erciyuan5, R.drawable.cover_erciyuan6};
+//    private static final int[] snap_coverIds_single = {R.drawable.cover_single1, R.drawable.cover_single2, R.drawable.cover_single3,
+//            R.drawable.cover_single4, R.drawable.cover_single5, R.drawable.cover_single6};
+//    private static final int[] snap_coverIds_wenyi = {R.drawable.cover_wenyi1, R.drawable.cover_wenyi2, R.drawable.cover_wenyi3,
+//            R.drawable.cover_wenyi4, R.drawable.cover_wenyi5, R.drawable.cover_wenyi6};
 
     /**
      * 获取本地封面id
      * @param cover
      * @return
      */
-    public static int[] getSnapCoverIds(SnapCover cover){
-        switch (cover){
-            case OTHERS:
-                return snap_coverIds_others;
-            case CUTE:
-                return snap_coverIds_cute;
-            case ERCIYUAN:
-                return snap_coverIds_erciyuan;
-            case SINGLE:
-                return snap_coverIds_single;
-            case WENYI:
-                return snap_coverIds_wenyi;
-            default:
-                return snap_coverIds_cute;
-        }
-    }
+//    public static int[] getSnapCoverIds(SnapCover cover){
+//        switch (cover){
+//            case OTHERS:
+//                return snap_coverIds_others;
+//            case CUTE:
+//                return snap_coverIds_cute;
+//            case ERCIYUAN:
+//                return snap_coverIds_erciyuan;
+//            case SINGLE:
+//                return snap_coverIds_single;
+//            case WENYI:
+//                return snap_coverIds_wenyi;
+//            default:
+//                return snap_coverIds_cute;
+//        }
+//    }
 
-    /**
-     * 获取封面resId
-     */
-    @DrawableRes
-    public static int getSnapCoverResId(int coverIndex, int pagerIndex) {
-        if (coverIndex > 5) {
-            return snap_coverIds_others[0];
-        }
-        switch (pagerIndex) {
-            case 0:
-                return snap_coverIds_others[coverIndex];
-            case 1:
-                return snap_coverIds_single[coverIndex];
-            case 2:
-                return snap_coverIds_erciyuan[coverIndex];
-            case 3:
-                return snap_coverIds_cute[coverIndex];
-            case 4:
-                return snap_coverIds_wenyi[coverIndex];
-            default:
-                return snap_coverIds_others[0];
-        }
-    }
+//    /**
+//     * 获取封面resId
+//     */
+//    @DrawableRes
+//    public static int getSnapCoverResId(int coverIndex, int pagerIndex) {
+//        if (coverIndex > 5) {
+//            return snap_coverIds_others[0];
+//        }
+//        switch (pagerIndex) {
+//            case 0:
+//                return snap_coverIds_others[coverIndex];
+//            case 1:
+//                return snap_coverIds_single[coverIndex];
+//            case 2:
+//                return snap_coverIds_erciyuan[coverIndex];
+//            case 3:
+//                return snap_coverIds_cute[coverIndex];
+//            case 4:
+//                return snap_coverIds_wenyi[coverIndex];
+//            default:
+//                return snap_coverIds_others[0];
+//        }
+//    }
 
     /**
      * 获取封面类别号1

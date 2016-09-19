@@ -36,7 +36,7 @@ public class SnapMsgCommentActivity extends JActionBarActivity {
     public static void start(Context context, PublicSnapMessage message, boolean comment) {
         Intent intent = new Intent(context, SnapMsgCommentActivity.class);
         intent.putExtra(Extras.EXTRA_PUBLICSNAP, message);
-        intent.putExtra(Extras.EXTRA_COMMENT, comment);
+        intent.putExtra(Extras.EXTRA_COMMENT, false);
         ((Activity)context).startActivityForResult(intent, COMMENT);
     }
     @Override

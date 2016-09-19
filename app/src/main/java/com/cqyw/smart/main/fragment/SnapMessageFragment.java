@@ -44,6 +44,10 @@ public class SnapMessageFragment extends TFragment {
         snapMessageListPanel.onSendSnapMessage(message);
     }
 
+    public void scrollToTop(){
+        snapMessageListPanel.scrollToTop();
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

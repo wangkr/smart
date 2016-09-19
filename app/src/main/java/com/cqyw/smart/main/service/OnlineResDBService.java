@@ -10,8 +10,10 @@ import com.netease.nim.uikit.common.media.picker.joycamera.model.CamOnLineRes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -50,11 +52,45 @@ public class OnlineResDBService {
         return stringList;
     }
 
+    public void saveResUsedtimes(Map<Integer, Integer> map){
+        SQLiteDatabase db = accountDBOpenHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (Integer id : map.keySet()) {
+                db.execSQL("replace into onlineres_stat(_id, _times)values(?,?)", new Object[]{id, map.get(id)});
+            }
+            db.setTransactionSuccessful();
+        }
+        finally {
+            db.endTransaction();
+        }
+    }
+
+    public void deleteAllResUsedtimes(){
+        SQLiteDatabase db = accountDBOpenHelper.getWritableDatabase();
+        db.execSQL("delete from onlineres_stat");
+        db.close();
+    }
+
+    public HashMap<Integer,Integer> findAllResUsedtimes(){
+        SQLiteDatabase db = accountDBOpenHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from onlineres_stat", new String[]{});
+        HashMap<Integer, Integer> res = new HashMap<>();
+        while (cursor.moveToNext()){
+            Integer id = cursor.getInt(cursor.getColumnIndex("_id"));
+            Integer time = cursor.getInt(cursor.getColumnIndex("_times"));
+            res.put(id, time);
+        }
+        cursor.close();
+        db.close();
+        return  res;
+    }
+
     public void saveSingleRes(CamOnLineRes res) {
         SQLiteDatabase db = accountDBOpenHelper.getWritableDatabase();
         db.execSQL("replace into joycamera_onlineres(_id, url, icon_url, cache_path, icon_cache_path, param_cache_paths, _status, _type, local_index) values" +
                 "(?, ?, ?, ?, ?, ?, ?, ?, ?)", new Object[]{res.getId(), res.getUrl(), res.getIconUrl(),
-                res.getCachePath(), res.getIconCachePath(), makeString(res.getParamCachePaths()), res.getStatus().name(), res.getType().name(), res.getLocalIndex()});
+                res.getCachePath(), res.getIconCachePath(), "", res.getStatus().name(), res.getType().name(), res.getLocalIndex()});
         db.close();
     }
 
@@ -65,7 +101,7 @@ public class OnlineResDBService {
             for (CamOnLineRes res : camOnLineRes) {
                 db.execSQL("replace into joycamera_onlineres(_id, url, icon_url, cache_path, icon_cache_path, param_cache_paths, _status, _type, local_index) values" +
                         "(?, ?, ?, ?, ?, ?, ?, ?, ?)", new Object[]{res.getId(), res.getUrl(), res.getIconUrl(),
-                res.getCachePath(), res.getIconCachePath(), makeString(res.getParamCachePaths()), res.getStatus().name(), res.getType().name(), res.getLocalIndex()});
+                res.getCachePath(), res.getIconCachePath(), "", res.getStatus().name(), res.getType().name(), res.getLocalIndex()});
             }
             db.setTransactionSuccessful();
         } finally {
@@ -87,7 +123,7 @@ public class OnlineResDBService {
             colr.setIconUrl(cursor.getString(cursor.getColumnIndex("icon_url")));
             colr.setCachePath(cursor.getString(cursor.getColumnIndex("cache_path")));
             colr.setIconCachePath(cursor.getString(cursor.getColumnIndex("icon_cache_path")));
-            colr.setParamCachePaths(splitString(cursor.getString(cursor.getColumnIndex("param_cache_paths"))));
+//            colr.setParamCachePaths(splitString(cursor.getString(cursor.getColumnIndex("param_cache_paths"))));
             colr.setStatus(CamOnLineRes.Status.valueOf(cursor.getString(cursor.getColumnIndex("_status"))));
             colr.setType(CamOnLineRes.Type.valueOf(cursor.getString(cursor.getColumnIndex("_type"))));
             colr.setLocalIndex(cursor.getInt(cursor.getColumnIndex("local_index")));

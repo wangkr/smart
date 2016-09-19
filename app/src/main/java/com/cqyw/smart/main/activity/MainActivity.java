@@ -109,6 +109,8 @@ public class MainActivity extends TActionBarActivity implements MyLocationManage
 
     private long exitTime = 0;
 
+    private long toolbarFirstClickTime = 0;
+
     // service
 
     public static void start(Context context) {
@@ -277,7 +279,7 @@ public class MainActivity extends TActionBarActivity implements MyLocationManage
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!AppCache.isStatusValid() && event.getAction() == MotionEvent.ACTION_MOVE) {
+        if (!AppCache.isStatusValid() && event.getAction() == MotionEvent.ACTION_DOWN) {
             SelectEduInfoActivity.start(MainActivity.this,REQ_SELECT_EDU);
             return true;
         }
@@ -308,6 +310,19 @@ public class MainActivity extends TActionBarActivity implements MyLocationManage
         toolbar_btn_tips.setOnClickListener(toolbarOnclickListener);
         toolbar_btn_friend.setOnClickListener(toolbarOnclickListener);
         headImageView.setOnClickListener(toolbarOnclickListener);
+
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                long  curTime = System.currentTimeMillis();
+                if (curTime - toolbarFirstClickTime < 500){
+                    messageFragment.scrollToTop();
+                    toolbarFirstClickTime = 0;
+                } else {
+                    toolbarFirstClickTime = curTime;
+                }
+            }
+        });
 
         refreshTipsdotView();
     }
@@ -520,10 +535,10 @@ public class MainActivity extends TActionBarActivity implements MyLocationManage
         switch (requestCode) {
             case REQ_SELECT_EDU:
                 // 显示导航信息
-                Dialog hintDialog = new HintDialog(MainActivity.this, R.style.dialog_default_style);
-                hintDialog.setCanceledOnTouchOutside(true);
-                hintDialog.setCancelable(true);
-                hintDialog.show();
+//                Dialog hintDialog = new HintDialog(MainActivity.this, R.style.dialog_default_style);
+//                hintDialog.setCanceledOnTouchOutside(true);
+//                hintDialog.setCancelable(true);
+//                hintDialog.show();
                 break;
             default:
                 if (messageFragment != null ) {

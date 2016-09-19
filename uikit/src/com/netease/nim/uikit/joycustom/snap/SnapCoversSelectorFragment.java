@@ -99,10 +99,10 @@ public class SnapCoversSelectorFragment extends TFragment {
         public SnapCoverSeletorAdapter(FragmentManager fm, int count){
             super(fm);
             fragments = new SnapCoverFragment[count];
-            for(SnapConstant.SnapCover cover: SnapConstant.SnapCover.values()){
-                fragments[cover.index] = SnapCoverFragment.newInstance(getContext(),cover.index,
-                        SnapConstant.getSnapCoverIds(cover), SnapConstant.getSnapCoverCategory(cover));
-            }
+//            for(SnapConstant.SnapCover cover: SnapConstant.SnapCover.values()){
+//                fragments[cover.index] = SnapCoverFragment.newInstance(getContext(),cover.index,
+//                        SnapConstant.getSnapCoverIds(cover), SnapConstant.getSnapCoverCategory(cover));
+//            }
         }
 
         @Override

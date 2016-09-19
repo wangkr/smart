@@ -13,7 +13,7 @@ import com.netease.nim.uikit.common.util.string.MD5;
  */
 public class AccountDBOpenHelper extends SQLiteOpenHelper{
     public AccountDBOpenHelper(Context context) {
-        super(context, "cache" + AppCache.getJoyId()+".db", null, 5);
+        super(context, "cache" + AppCache.getJoyId()+".db", null, 6);
     }
 
     @Override
@@ -30,6 +30,8 @@ public class AccountDBOpenHelper extends SQLiteOpenHelper{
         // added db5
         db.execSQL("CREATE TABLE joycamera_onlineres (_id INTEGER PRIMARY KEY, url TEXT, icon_url TEXT, cache_path TEXT, " +
                 "icon_cache_path TEXT, param_cache_paths TEXT, _status TEXT, _type TEXT, local_index INTEGER)");
+        // added db6
+        db.execSQL("CREATE TABLE onlineres_stat (_id INTEGER PRIMARY KEY, _times INTEGER)");
     }
 
     @Override
@@ -62,6 +64,9 @@ public class AccountDBOpenHelper extends SQLiteOpenHelper{
 
                 db.execSQL("CREATE TABLE joycamera_onlineres (_id INTEGER PRIMARY KEY, url TEXT, icon_url TEXT, cache_path TEXT, " +
                         "icon_cache_path TEXT, param_cache_paths TEXT, _status TEXT, _type TEXT,local_index INTEGER)");
+            case 5:// added on db6
+                db.execSQL("CREATE TABLE onlineres_stat(_id INTEGER PRIMARY KEY, _times INTEGER)");
+                break;
         }
 
     }

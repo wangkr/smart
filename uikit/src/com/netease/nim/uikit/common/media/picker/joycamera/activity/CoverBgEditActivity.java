@@ -165,7 +165,7 @@ public class CoverBgEditActivity extends TActionBarActivity implements SeekBar.O
                 case SAVE_IMAGE_SUCCESS:
                     DialogMaker.dismissProgressDialog();
                     String path = (String)msg.obj;
-                    PicturePreviewActivity.start(CoverBgEditActivity.this, path, (Class)getIntent().getSerializableExtra(Extras.EXTRA_CALL_CLASS));
+                    PicturePreviewActivity.start(CoverBgEditActivity.this, path, (Class)getIntent().getSerializableExtra(Extras.EXTRA_CALL_CLASS),1);
                     break;
                 case SAVE_IMAGE_ERROR:
                     DialogMaker.dismissProgressDialog();

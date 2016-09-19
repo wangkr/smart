@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_gray"
+    android:background="#fafafa"
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:theme="@style/Theme.AppCompat.Light.NoActionBar"
@@ -17,6 +17,11 @@
         android:orientation="vertical"
         android:background="@color/transparent"
         android:gravity="center_horizontal">
+        <!-- 选择学历信息1-->
+        <include layout="@layout/layout_select_school_type"
+            android:id="@+id/select_school_type_layout"
+            />
+
         <!-- 选择省份信息-->
         <include layout="@layout/layout_select_province"
             android:id="@+id/select_province_layout"/>
@@ -25,7 +30,7 @@
         <include layout="@layout/layout_select_university"
             android:id="@+id/select_university_layout" />
 
-        <!-- 选择学历信息-->
+        <!-- 选择学历信息2-->
         <include layout="@layout/layout_select_grade"
             android:id="@+id/select_grade_layout"/>
 

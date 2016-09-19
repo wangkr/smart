@@ -21,8 +21,8 @@
             android:layout_height="40dp"
             android:textColor="@color/text_gray_dark"
             android:background="@drawable/select_item_background"
-            android:text="本科"
-            android:textSize="18sp"
+            android:text="本科生"
+            android:textSize="@dimen/text_size_18"
             android:gravity="center"/>
 
         <View style="@style/InputBoxDivider1"/>
@@ -34,7 +34,7 @@
             android:textColor="@color/text_gray_dark"
             android:background="@drawable/select_item_background"
             android:text="研究生"
-            android:textSize="18sp"
+            android:textSize="@dimen/text_size_18"
             android:gravity="center"/>
 
         <View style="@style/InputBoxDivider1"/>
@@ -45,8 +45,8 @@
             android:layout_height="40dp"
             android:textColor="@color/text_gray_dark"
             android:background="@drawable/select_item_background"
-            android:text="博士"
-            android:textSize="18sp"
+            android:text="博士生"
+            android:textSize="@dimen/text_size_18"
             android:gravity="center"/>
     </LinearLayout>
 

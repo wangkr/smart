@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,7 @@ public class CamOnLineResMgr implements ICamOnLineResMgr {
 
     private static List<CamOnLineRes> coverItems = new CopyOnWriteArrayList<>();
     private static List<CamOnLineRes> arItems = new CopyOnWriteArrayList<>();
+    private static Map<Integer, Integer> usedTimes = Collections.synchronizedMap(new HashMap<Integer, Integer>());
     private static HashSet<Integer> localIds = new HashSet<>();
     private static boolean inited = false;
     private static CamOnLineResMgr INSTANCE;
@@ -65,6 +68,7 @@ public class CamOnLineResMgr implements ICamOnLineResMgr {
         InputStream in = am.open(assetPath);
         byte[] buffer = new byte[1024];
         int lengh = in.read(buffer);
+
         while(lengh > 0){
             out.write(buffer, 0, lengh);
             lengh = in.read(buffer);
@@ -136,17 +140,13 @@ public class CamOnLineResMgr implements ICamOnLineResMgr {
             colr.setType(CamOnLineRes.Type.AR);
             colr.setStatus(CamOnLineRes.Status.DEFAULT);
             colr.setLocalIndex(index++);
-            List<String> params = new ArrayList<String>();
             for(String path : map.get(id)){
                 if (AR_EXT.equals(FileUtil.getExtensionName(path))){
                     colr.setCachePath(path);
                 } else if (ICON_EXT.equals(FileUtil.getExtensionName(path))) {
                     colr.setIconCachePath(path);
-                } else {
-                    params.add(path);
                 }
             }
-            colr.setParamCachePaths(params);
 
             colrAR.add(colr);
         }
@@ -162,6 +162,34 @@ public class CamOnLineResMgr implements ICamOnLineResMgr {
     }
 
     @Override
+    public void uploadUsedtimes() {
+        if (usedTimes.size() == 0) return;
+
+        JoyCommClient.getInstance().uploadResUsedtimes(AppCache.getJoyId(), AppCache.getJoyToken(), usedTimes, new ICommProtocol.CommCallback<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                usedTimes.clear();
+                onlineResDBService.deleteAllResUsedtimes();
+            }
+
+            @Override
+            public void onFailed(String code, String errorMsg) {
+
+            }
+        });
+    }
+
+    @Override
+    public void addUsedtimes(CamOnLineRes res) {
+        if (usedTimes.containsKey(res.getId())){
+            Integer times = usedTimes.get(res.getId());
+            usedTimes.put(res.getId(), times+1);
+        } else {
+            usedTimes.put(res.getId(), 1);
+        }
+    }
+
+    @Override
     public void saveSingleRes(CamOnLineRes res) {
         onlineResDBService.saveSingleRes(res);
     }
@@ -170,6 +198,7 @@ public class CamOnLineResMgr implements ICamOnLineResMgr {
     public void saveAll() {
         onlineResDBService.saveAllOnlineRes(arItems);
         onlineResDBService.saveAllOnlineRes(coverItems);
+        onlineResDBService.saveResUsedtimes(usedTimes);
     }
 
     private void checkExist(List<CamOnLineRes> onLineRess, CamOnLineRes.Type type) throws IOException{
@@ -179,11 +208,6 @@ public class CamOnLineResMgr implements ICamOnLineResMgr {
         for (CamOnLineRes colr: onLineRess){
             if (colr.getStatus() == CamOnLineRes.Status.COMPLETE) {
                 boolean ise = checkFileExist(colr.getCachePath());
-                if (ise) {
-                    for(String path : colr.getParamCachePaths()) {
-                        ise &= checkFileExist(path);
-                    }
-                }
 
                 ise &= checkFileExist(colr.getIconCachePath());
 
@@ -192,11 +216,6 @@ public class CamOnLineResMgr implements ICamOnLineResMgr {
                 }
             } else if (colr.getStatus() == CamOnLineRes.Status.DEFAULT) {
                 boolean ise = checkFileExist(colr.getCachePath());
-                if (ise) {
-                    for(String path : colr.getParamCachePaths()) {
-                        ise &= checkFileExist(path);
-                    }
-                }
 
                 ise &= checkFileExist(colr.getIconCachePath());
 
@@ -208,9 +227,10 @@ public class CamOnLineResMgr implements ICamOnLineResMgr {
                             colr.setCachePath(sdcard_dir + folder + colr.getId() + "/" + p);
                         } else if (ICON_EXT.equals(FileUtil.getExtensionName(p))) {
                             colr.setIconCachePath(sdcard_dir + folder + colr.getId() + "/" + p);
-                        } else {
-                            colr.getParamCachePaths().add(sdcard_dir + folder + colr.getId() + "/" + p);
                         }
+//                        else {
+//                            colr.getParamCachePaths().add(sdcard_dir + folder + colr.getId() + "/" + p);
+//                        }
                     }
                 }
             }
@@ -270,6 +290,8 @@ public class CamOnLineResMgr implements ICamOnLineResMgr {
 
         arItems.addAll(colrAR);
         coverItems.addAll(colrCover);
+
+        usedTimes.putAll(onlineResDBService.findAllResUsedtimes());
 
         if (callback != null)
         callback.onSuccess(null);
@@ -369,7 +391,6 @@ public class CamOnLineResMgr implements ICamOnLineResMgr {
         }
 
         if (!checkFileExist(res.getCachePath())){
-
             result = JoyHttpClient.getInstance().downLoadFileSync(res.getUrl(), makeCachePath(res, res.getUrl()));
 
             // 主资源下载完成
@@ -381,13 +402,14 @@ public class CamOnLineResMgr implements ICamOnLineResMgr {
                     List<String> paths = ZipUtils.upZipFile(zipFile, unzipDir);
                     // 删除压缩文件以节省空间
                     zipFile.delete();
-                    res.setParamCachePaths(new ArrayList<String>());
                     for (String p : paths) {
-                        if (AR_EXT.equals(FileUtil.getExtensionName(p))) {
+                        if (AR_EXT.equals(FileUtil.getExtensionName(p)))
+                        {
                             res.setCachePath(p);
-                        } else {
-                            res.getParamCachePaths().add(p);
                         }
+//                        else {
+//                            res.getParamCachePaths().add(p);
+//                        }
                     }
                 } catch (IOException e) {
                     result = false;
@@ -430,6 +452,11 @@ public class CamOnLineResMgr implements ICamOnLineResMgr {
     @Override
     public List<CamOnLineRes> getCoverItems() {
         return coverItems;
+    }
+
+    @Override
+    public Map<Integer, Integer> getUsedTimes() {
+        return usedTimes;
     }
 
     @Override

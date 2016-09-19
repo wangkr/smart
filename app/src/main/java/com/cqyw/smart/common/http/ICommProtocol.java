@@ -13,6 +13,7 @@ import com.cqyw.smart.main.model.RecentSnapNews;
 import com.cqyw.smart.main.model.SchoolInfo;
 import com.netease.nim.uikit.common.media.picker.joycamera.model.CamOnLineRes;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,4 +65,5 @@ public interface ICommProtocol extends JoyHttpProtocol {
 
     // 相机资源管理
     void getOnlineRes(String id, String token, CommCallback<Map<String,List<CamOnLineRes>>> callback);
+    void uploadResUsedtimes(String id, String token, Map<Integer, Integer> map, CommCallback<Void> callback);
 }

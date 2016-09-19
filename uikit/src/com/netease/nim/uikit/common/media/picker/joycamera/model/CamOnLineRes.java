@@ -98,7 +98,7 @@ public class CamOnLineRes implements Serializable {
         this.iconUrl = res.getIconUrl();
         this.cachePath = res.getCachePath();
         this.iconCachePath = res.getIconCachePath();
-        this.paramCachePaths = res.getParamCachePaths();
+//        this.paramCachePaths = res.getParamCachePaths();
         this.status = res.getStatus();
         this.type = res.getType();
         this.localIndex = res.getLocalIndex();

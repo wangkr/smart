@@ -5,7 +5,6 @@ package com.netease.nim.uikit.common.media.picker.joycamera.model;
  * mail:wangkrhust@gmail.com
  */
 public enum CameraMode {
-    NORMAL,
     COVER,
     AR
 }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +24,7 @@ import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.activity.TActionBarActivity;
 import com.netease.nim.uikit.common.media.picker.joycamera.Constant;
 import com.netease.nim.uikit.common.media.picker.joycamera.model.PublishMessage;
+import com.netease.nim.uikit.common.media.picker.util.BitmapUtil;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.storage.StorageUtil;
 import com.netease.nim.uikit.joycustom.snap.SelectSnapCoverImageActivity;
@@ -50,7 +53,7 @@ public class PicturePreviewActivity extends TActionBarActivity {
     private ImageView preview_image_iv;
     private ImageView cover_image_iv;
     private CheckBox message_type_cb;
-    private Button more_cover_bt;
+    private int type = 0; // 0-非封面 1-封面
     private boolean isSaved = false;
     private String imagePath;
     private int coverIndex = 0;
@@ -58,11 +61,12 @@ public class PicturePreviewActivity extends TActionBarActivity {
     private boolean isSnapMessage = false;
 
 
-    public static void start(Context context, String path, Class<?> callClass){
+    public static void start(Context context, String path, Class<?> callClass, int type){
         Intent intent = new Intent();
         intent.putExtra(Constant.IMAGE_PATH, path);
         intent.setClass(context, PicturePreviewActivity.class);
         intent.putExtra(Extras.EXTRA_CALL_CLASS, callClass);
+        intent.putExtra(Extras.EXTRA_TYPE, type);
         context.startActivity(intent);
     }
     @Override
@@ -75,7 +79,6 @@ public class PicturePreviewActivity extends TActionBarActivity {
         preview_image_iv = (ImageView)findViewById(R.id.preview_image_iv);
         cover_image_iv = (ImageView)findViewById(R.id.cover_image_iv);
         message_type_cb = (CheckBox)findViewById(R.id.message_type);
-        more_cover_bt = (Button)findViewById(R.id.more_cover_bt);
 
         cover_image_iv.setVisibility(View.GONE);
 
@@ -91,18 +94,15 @@ public class PicturePreviewActivity extends TActionBarActivity {
             file.mkdir();
         }
 
-        more_cover_bt.setOnClickListener(onClickListener);
         message_type_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isSnapMessage = isChecked;
                 if (isChecked) {
                     cover_image_iv.setVisibility(View.VISIBLE);
-                    more_cover_bt.setVisibility(View.VISIBLE);
                     cover_image_iv.startAnimation(ainim);
                 } else {
                     cover_image_iv.setVisibility(View.GONE);
-                    more_cover_bt.setVisibility(View.GONE);
                 }
             }
         });
@@ -123,6 +123,7 @@ public class PicturePreviewActivity extends TActionBarActivity {
     private void parseIntent(){
         Intent intent = getIntent();
         imagePath = intent.getStringExtra(Constant.IMAGE_PATH);
+        type = intent.getIntExtra(Extras.EXTRA_TYPE, 0);
         LogUtil.d("PPPP", imagePath);
         ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(imagePath), preview_image_iv);
     }
@@ -186,13 +187,46 @@ public class PicturePreviewActivity extends TActionBarActivity {
         if(bitmap == null){
             return "";
         }
-
         File file = new File(fileName);
-        if(file.createNewFile()) {
-            FileOutputStream fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
+
+        if (type == 1){
+            if(file.createNewFile()) {
+                FileOutputStream fos = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                fos.flush();
+                fos.close();
+            }
+        }
+        else if(type == 0) {
+            Bitmap waterMark = BitmapFactory.decodeResource(getResources(), R.drawable.joy_watermark);
+
+            Bitmap canvasBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(canvasBitmap);
+            canvas.drawBitmap(bitmap, 0, 0, null);
+
+            int minWatermarkSize = Math.min((int) (bitmap.getWidth() * 0.1), (int) (bitmap.getHeight() * 0.1));
+            if (waterMark.getWidth() > minWatermarkSize) {
+                Matrix m = new Matrix();
+                m.postScale(minWatermarkSize * 1.0f / waterMark.getWidth(), minWatermarkSize * 1.0f / waterMark.getHeight());
+                waterMark = Bitmap.createBitmap(waterMark, 0, 0, waterMark.getWidth(), waterMark.getHeight(), m, true);
+            }
+
+            // 画水印
+            int wmLeft = (int) (bitmap.getWidth() * 0.05);
+            int wmTop = bitmap.getHeight() - (int) (bitmap.getHeight() * 0.05) - waterMark.getHeight();
+            canvas.drawBitmap(waterMark, wmLeft, wmTop, null);
+
+            if (file.createNewFile()) {
+                FileOutputStream fos = new FileOutputStream(file);
+                canvasBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                fos.flush();
+                fos.close();
+            }
+
+            if (!waterMark.isRecycled())
+                waterMark.recycle();
+            if (!canvasBitmap.isRecycled())
+                canvasBitmap.recycle();
         }
 
         Constant.refreshGallery(this,file);
@@ -205,18 +239,18 @@ public class PicturePreviewActivity extends TActionBarActivity {
             return;
         }
 
-        switch (requestCode) {
-            case REQ_SELECT_COVER:
-                int ci = data.getIntExtra(Extras.EXTRA_COVER_INDEX, -1);
-                int pi = data.getIntExtra(Extras.EXTRA_PAGER_INDEX, -1);
-                if (ci < 0 || pi < 0 || (coverIndex == ci && pagerIndex == pi)) {
-                    return;
-                }
-                coverIndex = ci;
-                pagerIndex = pi;
-
-                cover_image_iv.setImageResource(SnapConstant.getSnapCoverResId(coverIndex, pagerIndex));
-                break;
-        }
+//        switch (requestCode) {
+//            case REQ_SELECT_COVER:
+//                int ci = data.getIntExtra(Extras.EXTRA_COVER_INDEX, -1);
+//                int pi = data.getIntExtra(Extras.EXTRA_PAGER_INDEX, -1);
+//                if (ci < 0 || pi < 0 || (coverIndex == ci && pagerIndex == pi)) {
+//                    return;
+//                }
+//                coverIndex = ci;
+//                pagerIndex = pi;
+//
+//                cover_image_iv.setImageResource(SnapConstant.getSnapCoverResId(coverIndex, pagerIndex));
+//                break;
+//        }
     }
 }

@@ -100,7 +100,8 @@ public class JoyImageUtil {
         V_ORG(8),
         V_300(9),
         V_COVERICON(10),
-        V_COVERSOURCE(11);
+        V_COVERSOURCE(11),
+        V_4TO3(12);
         private int value;
         ImageType(int value){
             this.value = value;
@@ -463,6 +464,9 @@ public class JoyImageUtil {
                 break;
             case V_COVERSOURCE:
                 suffix = "!coverSource";
+                break;
+            case V_4TO3:
+                suffix = "!4to3";
                 break;
             default:
                 break;

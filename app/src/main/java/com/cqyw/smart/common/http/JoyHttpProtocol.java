@@ -62,6 +62,7 @@ public interface JoyHttpProtocol {
     String REQUEST_KEY_VID = "vid";
     String REQUEST_KEY_VCODE = "vcode";
     String REQUEST_KEY_PHONES = "phones";
+    String REQUEST_KEY_TIMES = "times";
 
     // result
     String RESULT_KEY_DATA = "data";

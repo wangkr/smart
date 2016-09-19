@@ -71,6 +71,7 @@ public class JoyCommClient implements ICommProtocol{
     public static String API_SET_UNMATCH;
     public static String API_SET_MATCH;
     public static String API_GET_MODELS;
+    public static String API_COUNT_MODELS;
 
     private static JoyCommClient instance = null;
 
@@ -116,6 +117,7 @@ public class JoyCommClient implements ICommProtocol{
         API_SET_MATCH        = AppContext.getContext().getString(R.string.api_set_match);
         API_SET_UNMATCH      = AppContext.getContext().getString(R.string.api_set_unmatch);
         API_GET_MODELS       = AppContext.getContext().getString(R.string.api_get_models);
+        API_COUNT_MODELS     = AppContext.getContext().getString(R.string.api_count_models);
 
     }
 
@@ -448,6 +450,57 @@ public class JoyCommClient implements ICommProtocol{
                 }
             }
         },true, false);
+    }
+
+    @Override
+    public void uploadResUsedtimes(String id, String token, Map<Integer, Integer> map,final CommCallback<Void> callback) {
+        String url = JoyServers.joyServer() + API_COUNT_MODELS;
+
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put(HEADER_CONTENT_TYPE, "application/x-www-form-urlencoded; charset=utf-8");
+
+        final JSONObject jsonObject = new JSONObject();
+        jsonObject.put(REQUEST_KEY_ID, id);
+        jsonObject.put(REQUEST_KEY_TOKEN, token);
+//        int[][] data = new int[map.size()][2];
+//        int i = 0;
+        JSONArray jsonArray = new JSONArray();
+        for(Integer i : map.keySet()){
+            JSONObject jo = new JSONObject();
+            jo.put(REQUEST_KEY_ID, i);
+            jo.put(REQUEST_KEY_TIMES, map.get(i));
+            jsonArray.add(jo);
+        }
+        jsonObject.put(REQUEST_KEY_DATA, jsonArray);
+
+        LogUtil.d(TAG, jsonObject.toJSONString());
+
+        JoyHttpClient.getInstance().execute(url, headers, jsonObject, new JoyHttpClient.JoyHttpCallback() {
+            @Override
+            public void onResponse(String response, int code, String errorMsg) {
+                if (code != 0) {
+                    LogUtil.e(TAG, "update userinfo to joyserver failed : code = " + code + ", errorMsg = " + errorMsg);
+                    if (callback != null) {
+                        callback.onFailed(code + "", errorMsg);
+                    }
+                    return;
+                }
+
+                try {
+                    JSONObject resObj = JSONObject.parseObject(response);
+                    String resCode = resObj.getString(RESULT_KEY_CODE).substring(4, 6);
+                    if (resCode.equals(STATUS_CODE_SUCCESS)) {
+                        callback.onSuccess(null);
+                    } else {
+                        String error = resObj.getString(RESULT_KEY_MSG);
+                        callback.onFailed(resCode, error);
+                    }
+                } catch (JSONException e) {
+                    callback.onFailed("-1", e.getMessage());
+                }
+            }
+        }, true, true);
+
     }
 
     @Override
